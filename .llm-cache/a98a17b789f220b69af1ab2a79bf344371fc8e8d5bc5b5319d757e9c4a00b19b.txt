@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "Expresses dismay at a decision without targeting a person", "coarse": false}

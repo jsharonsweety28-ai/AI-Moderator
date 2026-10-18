@@ -1,0 +1,1 @@
+{"decision": "recipient_only", "reason": "你和作者是互相打趣的老熟人，语气也在你们平时的调戏范围内，所以只有 TA 能正常看到。"}

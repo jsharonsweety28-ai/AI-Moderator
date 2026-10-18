@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "This is a factual account of being called an idiot in a meeting, not an attack on anyone.", "coarse": false, "target": "none"}

@@ -1,0 +1,1 @@
+{"score": 0.62, "category": "insult", "reason": "This is a degrading and dismissive insult aimed at a specific person, suggesting they are incompetent in everything they do.", "coarse": false, "target": "person"}

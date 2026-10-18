@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This is a brief, informal question expressing disapproval of a decision without targeting any person.", "coarse": false}

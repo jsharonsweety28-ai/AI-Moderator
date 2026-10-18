@@ -1,0 +1,1 @@
+{"score": 0.85, "category": "threat", "reason": "This implies a threat of real-world harm to coerce the recipient's behavior.", "coarse": true, "target": "person"}

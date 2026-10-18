@@ -1,0 +1,1 @@
+{"score": 0.12, "category": "clean", "reason": "This is a substantive critique of the argument's logic, not an attack on the person.", "coarse": false, "target": "work"}

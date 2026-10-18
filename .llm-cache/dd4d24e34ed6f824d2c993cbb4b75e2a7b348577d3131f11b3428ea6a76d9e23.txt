@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "harassment", "reason": "This is a direct declaration of personal hatred aimed at another person.", "coarse": false}

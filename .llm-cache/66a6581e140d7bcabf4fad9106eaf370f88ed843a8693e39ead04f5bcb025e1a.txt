@@ -1,0 +1,1 @@
+{"score": 0.28, "category": "insult", "reason": "This dismisses the person's writing ability, but stays short of a personal insult.", "coarse": false, "target": "person"}

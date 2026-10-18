@@ -1,0 +1,1 @@
+{"score": 0.32, "category": "insult", "reason": "This dismisses and ridicules your design work by claiming a child could do better.", "coarse": false}

@@ -1,0 +1,1 @@
+{"score": 0.38, "category": "insult", "reason": "This criticizes Maya's work as consistently disappointing, which is blunt personal criticism of her output.", "coarse": false, "target": "work"}

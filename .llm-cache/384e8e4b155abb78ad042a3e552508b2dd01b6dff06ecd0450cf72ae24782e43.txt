@@ -1,0 +1,1 @@
+{"score": 0.20, "category": "clean", "reason": "This criticizes the app's direction but doesn't target a specific person.", "coarse": false}

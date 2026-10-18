@@ -1,0 +1,1 @@
+{"score": 0.02, "category": "clean", "reason": "यह एक सराहनामय टिप्पणी है जिसमें लेखक की तारीफ की गई है।", "coarse": false, "target": "work"}

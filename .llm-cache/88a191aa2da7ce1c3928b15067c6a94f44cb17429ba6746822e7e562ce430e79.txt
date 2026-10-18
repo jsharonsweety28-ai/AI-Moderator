@@ -1,0 +1,1 @@
+{"score": 0.65, "category": "threat", "reason": "This tells another person 'I'm going to kill you' over a spoiler, with crying-laughing emojis. The stated trigger (a spoiled finale) is benign, so it counts as violent hyperbole rather than a serious threat, but it is still not publishable as written.", "coarse": true, "target": "person"}

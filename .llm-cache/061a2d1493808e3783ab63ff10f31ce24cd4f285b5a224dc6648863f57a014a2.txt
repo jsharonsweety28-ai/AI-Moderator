@@ -1,0 +1,1 @@
+{"score": 0.30, "category": "clean", "reason": "This expresses strong dislike of a movie, which is criticism of the work.", "coarse": false, "target": "work"}

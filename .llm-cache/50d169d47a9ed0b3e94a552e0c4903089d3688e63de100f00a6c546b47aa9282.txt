@@ -1,0 +1,1 @@
+{"score": 0.25, "category": "insult", "reason": "This comment mocks another person's confidence, implying their self-assurance is unjustified.", "coarse": false, "target": "person"}

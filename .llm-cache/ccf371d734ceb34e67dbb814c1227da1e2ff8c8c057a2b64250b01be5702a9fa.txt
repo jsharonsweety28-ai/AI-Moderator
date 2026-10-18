@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This expresses a personal opinion about a design, not attacking anyone.", "coarse": false}

@@ -1,0 +1,1 @@
+{"score": 0.78, "category": "threat", "reason": "This implies a threat of violence or confrontation directed at another person at a future meeting.", "coarse": true}

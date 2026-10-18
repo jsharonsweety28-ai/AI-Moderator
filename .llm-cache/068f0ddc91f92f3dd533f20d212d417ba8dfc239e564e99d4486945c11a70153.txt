@@ -1,0 +1,1 @@
+{"score": 0.95, "category": "self_harm", "reason": "dit à une personne de se suicider en lui faisant croire que personne ne la regretterait", "coarse": true}

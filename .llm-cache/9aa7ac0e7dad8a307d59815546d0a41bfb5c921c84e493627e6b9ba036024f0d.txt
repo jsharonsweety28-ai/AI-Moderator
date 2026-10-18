@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "insult", "reason": "This dismisses and demeans the person being addressed, calling them pathetic and claiming everyone is tired of them.", "coarse": false, "target": "person"}

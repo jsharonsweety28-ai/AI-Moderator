@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "This is constructive feedback about a recipe's saltiness with a helpful suggestion.", "coarse": false, "target": "work"}

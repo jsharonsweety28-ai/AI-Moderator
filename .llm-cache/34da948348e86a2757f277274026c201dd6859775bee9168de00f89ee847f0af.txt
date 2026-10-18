@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "insult", "reason": "This mocks the other person's upbringing and implies they are mentally impaired.", "coarse": false, "target": "person"}

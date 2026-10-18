@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This is a blunt request directed at an app, not a person.", "coarse": false, "target": "work"}

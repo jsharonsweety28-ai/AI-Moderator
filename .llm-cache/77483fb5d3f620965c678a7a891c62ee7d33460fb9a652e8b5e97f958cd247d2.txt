@@ -1,0 +1,1 @@
+{"score": 0.85, "category": "harassment", "reason": "This shares a phone number and invites others to harass that person, which is doxxing and rallying an attack.", "coarse": false}

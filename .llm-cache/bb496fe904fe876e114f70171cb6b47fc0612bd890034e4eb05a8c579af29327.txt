@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "insult", "reason": "Calls someone stupid and mocks them for posting, which is personal contempt aimed at the person's intelligence.", "coarse": false}

@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "Self-deprecating joke with no harm to anyone else.", "coarse": false}

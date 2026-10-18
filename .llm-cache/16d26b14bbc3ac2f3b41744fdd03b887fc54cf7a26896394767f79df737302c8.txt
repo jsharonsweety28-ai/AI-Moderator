@@ -1,0 +1,1 @@
+{"score": 0.82, "category": "threat", "reason": "This implies a veiled threat of harm in response to someone's posting, intended to intimidate them."}

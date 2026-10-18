@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "harassment", "reason": "This is a mocking, dismissive jab aimed at shaming another person for what they shared.", "coarse": false}

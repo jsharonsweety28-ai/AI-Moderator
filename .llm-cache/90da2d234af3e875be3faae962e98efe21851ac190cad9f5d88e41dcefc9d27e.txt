@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This is a mild opinion about a redesign, not an attack on a person.", "coarse": false, "target": "work"}

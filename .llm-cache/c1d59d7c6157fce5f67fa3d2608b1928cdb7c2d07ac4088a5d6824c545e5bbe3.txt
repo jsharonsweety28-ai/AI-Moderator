@@ -1,0 +1,1 @@
+{"score": 0.95, "category": "harassment", "reason": "This coerces someone into sharing intimate images by threatening to expose ones already possessed.", "coarse": false, "target": "person"}

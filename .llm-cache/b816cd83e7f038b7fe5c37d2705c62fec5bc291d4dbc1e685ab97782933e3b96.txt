@@ -1,0 +1,1 @@
+{"score":0.02,"category":"clean","reason":"This expresses enthusiastic praise with profanity used only for emphasis.","coarse":true}

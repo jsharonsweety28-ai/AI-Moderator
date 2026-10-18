@@ -1,0 +1,1 @@
+{"score": 0.65, "category": "threat", "reason": "This threatens violence against another person, even though the trigger is trivial and a crying-laughing emoji is attached.", "coarse": true, "target": "person"}

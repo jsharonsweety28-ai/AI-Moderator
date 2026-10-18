@@ -1,0 +1,1 @@
+{"score": 0.50, "category": "harassment", "reason": "This expresses personal contempt aimed directly at another person.", "coarse": false}

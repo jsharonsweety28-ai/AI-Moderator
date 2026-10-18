@@ -1,0 +1,1 @@
+{"score": 0.02, "category": "clean", "reason": "A congratulatory remark with a friendly question about the project's timeline.", "coarse": false, "target": "none"}

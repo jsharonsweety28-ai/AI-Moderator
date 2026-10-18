@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "This is a statement of personal dislike for a movie, which is criticism of a work rather than an attack on a person.", "coarse": false}

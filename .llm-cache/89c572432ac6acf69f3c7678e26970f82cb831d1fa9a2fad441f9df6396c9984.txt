@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "This is a brief slang remark with no target or harmful content.", "coarse": false, "target": "none"}

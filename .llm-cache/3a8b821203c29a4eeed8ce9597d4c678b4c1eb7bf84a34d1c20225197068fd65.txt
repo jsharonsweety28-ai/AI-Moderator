@@ -1,0 +1,1 @@
+{"score": 0.72, "category": "harassment", "reason": "Combines a dismissive insult with a social rejection claim aimed at putting down a person.", "coarse": true}

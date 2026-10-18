@@ -1,0 +1,1 @@
+{"score": 0.80, "category": "insult", "reason": "This tells another person their opinion is worthless and attacks their worth as a person.", "coarse": false, "target": "person"}

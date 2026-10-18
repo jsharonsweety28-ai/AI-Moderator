@@ -1,0 +1,1 @@
+{"score": 0.22, "category": "clean", "reason": "Frustrated criticism of the feature's functionality with no personal attack.", "coarse": true, "target": "work"}

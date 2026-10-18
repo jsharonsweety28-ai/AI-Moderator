@@ -1,0 +1,1 @@
+{"score": 0.18, "category": "clean", "reason": "Skeptical remark about the potential of something, with no personal attack.", "coarse": false, "target": "work"}

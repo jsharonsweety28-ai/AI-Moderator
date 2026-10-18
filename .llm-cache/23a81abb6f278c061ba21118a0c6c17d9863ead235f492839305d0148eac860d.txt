@@ -1,0 +1,1 @@
+{"score": 0.80, "category": "harassment", "reason": "This dismisses another person as worthless and tells them to cry, combining hostile contempt with a degrading insult.", "coarse": false, "target": "person"}

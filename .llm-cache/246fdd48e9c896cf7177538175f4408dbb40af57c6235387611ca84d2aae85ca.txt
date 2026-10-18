@@ -1,0 +1,1 @@
+{"score": 0.03, "category": "clean", "reason": "This is a casual remark about sharing something in a group chat, with no attack or target.", "coarse": false, "target": "none"}

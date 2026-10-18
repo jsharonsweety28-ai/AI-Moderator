@@ -1,0 +1,1 @@
+{"score": 0.72, "category": "insult", "reason": "This dismisses and devalues the other person, telling them their opinion and they themselves are worthless.", "coarse": true}

@@ -1,0 +1,1 @@
+{"score": 0.30, "category": "insult", "reason": "This comments mockingly calls out someone's confidence without profanity or a clear target.", "coarse": false, "target": "person"}

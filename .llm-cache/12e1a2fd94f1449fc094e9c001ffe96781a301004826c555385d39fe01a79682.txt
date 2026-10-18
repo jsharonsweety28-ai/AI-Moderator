@@ -1,0 +1,1 @@
+{"score": 0.10, "category": "clean", "reason": "This is a brief sarcastic reaction questioning approval of something, with no personal attack.", "coarse": false}

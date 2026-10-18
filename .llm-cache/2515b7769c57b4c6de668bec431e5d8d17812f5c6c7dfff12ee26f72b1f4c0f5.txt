@@ -1,0 +1,1 @@
+{"score": 0.95, "category": "threat", "reason": "This threatens to find and intimidate someone in person based on something they did online.", "coarse": true}

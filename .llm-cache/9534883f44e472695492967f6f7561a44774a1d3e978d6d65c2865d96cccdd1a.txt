@@ -1,0 +1,1 @@
+{"score": 0.72, "category": "insult", "reason": "Degrading personal insults targeting both the person's appearance and intelligence.", "coarse": false}

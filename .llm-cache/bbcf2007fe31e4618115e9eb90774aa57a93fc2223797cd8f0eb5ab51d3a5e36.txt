@@ -1,0 +1,1 @@
+{"score": 0.10, "category": "clean", "reason": "This is a single slang word with no target or harmful content.", "coarse": false}

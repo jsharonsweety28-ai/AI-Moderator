@@ -1,0 +1,1 @@
+{"score": 0.92, "category": "threat", "reason": "This threatens violence against another person with no benign trigger stated.", "coarse": true, "target": "person"}

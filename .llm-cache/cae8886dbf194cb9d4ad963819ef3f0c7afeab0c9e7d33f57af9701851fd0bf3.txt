@@ -1,0 +1,1 @@
+{"score":0.45,"category":"harassment","reason":"This directly expresses hatred toward another person.","coarse":false}

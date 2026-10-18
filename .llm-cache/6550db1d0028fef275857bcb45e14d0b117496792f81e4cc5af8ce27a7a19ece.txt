@@ -1,0 +1,1 @@
+{"score": 0.75, "category": "threat", "reason": "This comment issues an ambiguous but menacing warning that hints at possible real-world harm in response to the recipient's posts.", "coarse": false}

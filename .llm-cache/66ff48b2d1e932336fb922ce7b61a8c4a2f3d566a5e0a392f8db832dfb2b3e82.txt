@@ -1,0 +1,1 @@
+{"score": 0.65, "category": "threat", "reason": "This is a violent threat wrapped in humor over spoiling a finale — the spoofed benign trigger doesn't fully neutralize it as written.", "coarse": true, "target": "person"}

@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "This comment reports someone else's behavior without insulting or threatening anyone.", "coarse": false, "target": "person"}

@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "A harmless, casual message about sharing something in a group chat."}

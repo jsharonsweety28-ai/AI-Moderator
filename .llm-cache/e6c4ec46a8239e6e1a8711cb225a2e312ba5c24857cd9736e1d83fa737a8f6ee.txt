@@ -1,0 +1,1 @@
+{"score": 0.97, "category": "self_harm", "reason": "This is a bare instruction to drink bleach, which is a potentially lethal act.", "coarse": false, "target": "none"}

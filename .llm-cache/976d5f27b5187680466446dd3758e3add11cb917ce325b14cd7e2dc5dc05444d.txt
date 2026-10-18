@@ -1,0 +1,1 @@
+{"score": 0.20, "category": "clean", "reason": "This is straightforward criticism of the redesign as a piece of work.", "coarse": false, "target": "work"}

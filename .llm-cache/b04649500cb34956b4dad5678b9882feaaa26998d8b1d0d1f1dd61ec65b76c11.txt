@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "This expresses a calm disagreement with a conclusion, with no personal attack or hostility.", "coarse": false, "target": "work"}

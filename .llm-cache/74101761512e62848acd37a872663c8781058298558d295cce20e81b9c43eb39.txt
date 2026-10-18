@@ -1,0 +1,1 @@
+{"score": 0.62, "category": "harassment", "reason": "This directs hostile competitive aggression at another person with an intimidating tone.", "coarse": false, "target": "person"}

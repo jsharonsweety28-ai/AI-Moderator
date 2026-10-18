@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "harassment", "reason": "This dismissively mocks a person and ridicules them for embarrassing themselves, which is a personal attack.", "coarse": false}

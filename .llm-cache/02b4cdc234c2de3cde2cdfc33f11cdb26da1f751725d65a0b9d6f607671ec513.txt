@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "insult", "reason": "This calls another person a bitch in a mocking tone.", "coarse": true, "target": "person"}

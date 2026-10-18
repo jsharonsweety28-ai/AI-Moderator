@@ -1,0 +1,1 @@
+{"score": 0.00, "category": "clean", "reason": "Asks a neutral question about coffee preparation.", "coarse": false, "target": "none"}

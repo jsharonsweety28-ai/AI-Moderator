@@ -1,0 +1,1 @@
+{"score": 0.10, "category": "clean", "reason": "This points out a logical flaw in someone's argument.", "coarse": false}

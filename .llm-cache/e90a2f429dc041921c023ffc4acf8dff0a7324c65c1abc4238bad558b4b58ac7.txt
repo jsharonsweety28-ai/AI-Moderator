@@ -1,0 +1,1 @@
+{"score": 0.65, "category": "threat", "reason": "This makes a violent joke about killing someone for eating the author's fries.", "coarse": true, "target": "person"}

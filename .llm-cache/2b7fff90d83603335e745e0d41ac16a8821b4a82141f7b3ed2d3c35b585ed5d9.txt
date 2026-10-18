@@ -1,0 +1,1 @@
+{"score": 0.85, "category": "threat", "reason": "This implies physical confrontation if they meet, reading as a conditional threat of violence.", "coarse": true, "target": "person"}

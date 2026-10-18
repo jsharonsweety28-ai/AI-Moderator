@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This shares a personal negative experience with a restaurant's service and food.", "coarse": false}

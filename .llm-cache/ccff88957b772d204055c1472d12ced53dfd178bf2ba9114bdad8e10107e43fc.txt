@@ -1,0 +1,1 @@
+{"score": 0.52, "category": "insult", "reason": "This calls your reading comprehension or judgment dumb and tells you to feel ashamed of yourself.", "coarse": false, "target": "person"}

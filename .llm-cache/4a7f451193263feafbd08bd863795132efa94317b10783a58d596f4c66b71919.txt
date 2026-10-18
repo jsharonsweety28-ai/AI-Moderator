@@ -1,0 +1,1 @@
+{"score": 0.72, "category": "harassment", "reason": "Insults your appearance and tells you to remove a photo to avoid bothering others.", "coarse": false, "target": "person"}

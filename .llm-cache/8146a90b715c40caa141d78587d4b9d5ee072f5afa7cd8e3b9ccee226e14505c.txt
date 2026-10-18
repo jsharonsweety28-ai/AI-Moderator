@@ -1,0 +1,1 @@
+{"score": 0.02, "category": "clean", "reason": "this shares early work and asks for gentle feedback", "coarse": false, "target": "none"}

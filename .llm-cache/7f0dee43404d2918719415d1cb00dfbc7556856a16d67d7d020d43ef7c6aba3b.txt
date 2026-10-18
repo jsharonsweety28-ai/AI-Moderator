@@ -1,0 +1,1 @@
+{"score": 0.65, "category": "threat", "reason": "This is violent hyperbole with a stated trivially benign trigger (someone eating the speaker's fries).", "coarse": true, "target": "person"}

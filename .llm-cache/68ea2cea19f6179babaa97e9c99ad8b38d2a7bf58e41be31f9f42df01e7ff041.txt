@@ -1,0 +1,1 @@
+{"score": 0.20, "category": "clean", "reason": "This is a direct disagreement and a statement of intent to continue disagreeing, with no personal insults or attacks.", "coarse": false}

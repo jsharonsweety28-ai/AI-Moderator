@@ -1,0 +1,1 @@
+{"score": 0.78, "category": "harassment", "reason": "This calls another user pathetic and worthless as a developer and tells them to delete their account.", "coarse": true, "target": "person"}

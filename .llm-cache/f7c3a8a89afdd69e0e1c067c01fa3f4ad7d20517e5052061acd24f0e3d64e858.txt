@@ -1,0 +1,1 @@
+{"score": 0.92, "category": "threat", "reason": "this is a direct statement of intent to kill someone", "coarse": true, "target": "person"}

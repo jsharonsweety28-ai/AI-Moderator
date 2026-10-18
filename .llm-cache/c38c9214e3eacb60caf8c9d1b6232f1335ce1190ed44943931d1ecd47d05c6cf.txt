@@ -1,0 +1,1 @@
+{"score": 0.95, "category": "harassment", "reason": "This shares someone's phone number and encourages others to harass them by calling/texting en masse.", "coarse": true}

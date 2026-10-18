@@ -1,0 +1,1 @@
+{"score": 0.50, "category": "insult", "reason": "This dismisses and belittles another person, telling them their voice is unwanted.", "coarse": true, "target": "person"}

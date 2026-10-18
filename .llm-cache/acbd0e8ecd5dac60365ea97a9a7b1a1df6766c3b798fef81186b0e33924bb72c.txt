@@ -1,0 +1,1 @@
+{"score": 0.92, "category": "hate", "reason": "This tells women they should be excluded from coding and confined to domestic roles, targeting them as a group.", "coarse": true, "target": "person"}

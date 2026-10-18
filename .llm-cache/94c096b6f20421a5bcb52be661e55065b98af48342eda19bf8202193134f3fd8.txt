@@ -1,0 +1,1 @@
+{"score": 0.18, "category": "insult", "reason": "This dismisses the app's work with a sweeping negative judgment.", "coarse": false, "target": "work"}

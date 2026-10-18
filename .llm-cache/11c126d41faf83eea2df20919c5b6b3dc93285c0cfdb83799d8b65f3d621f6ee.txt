@@ -1,0 +1,1 @@
+{"score": 0.32, "category": "insult", "reason": "Dismissive comment criticizing the person's work as having made things worse.", "coarse": false, "target": "work"}

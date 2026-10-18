@@ -1,0 +1,1 @@
+{"score": 0.65, "category": "threat", "reason": "This uses violent language about killing someone, even though the stated trigger (eating fries) is trivially benign.", "coarse": true, "target": "person"}

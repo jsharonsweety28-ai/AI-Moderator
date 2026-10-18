@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "insult", "reason": "This tells the person to feel ashamed about their upbringing and education.", "coarse": false, "target": "person"}

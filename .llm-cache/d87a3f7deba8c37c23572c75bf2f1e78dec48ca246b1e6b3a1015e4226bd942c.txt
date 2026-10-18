@@ -1,0 +1,1 @@
+{"score": 0.42, "category": "insult", "reason": "Dismisses the person's competence by implying a beginner made the work.", "coarse": false, "target": "person"}

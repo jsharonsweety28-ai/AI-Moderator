@@ -1,0 +1,1 @@
+{"score": 0.95, "category": "harassment", "reason": "This rallies others to harass a specific person by mass-reporting, inbox flooding, and pressuring her to delete her account.", "coarse": false}

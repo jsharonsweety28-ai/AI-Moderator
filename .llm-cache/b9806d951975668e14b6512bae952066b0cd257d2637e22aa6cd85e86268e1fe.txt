@@ -1,0 +1,1 @@
+{"score": 0.25, "category": "clean", "reason": "Criticism of the work, not the person, with mild snark.", "coarse": false, "target": "work"}

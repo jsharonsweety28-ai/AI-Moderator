@@ -1,0 +1,1 @@
+{"score": 0.75, "category": "threat", "reason": "This is a veiled threat suggesting the recipient could be harmed, which reads as intimidation regardless of intent.", "coarse": true}

@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "calls the other person's thinking braindead, a personal dismissal of their intelligence", "coarse": false, "target": "person"}

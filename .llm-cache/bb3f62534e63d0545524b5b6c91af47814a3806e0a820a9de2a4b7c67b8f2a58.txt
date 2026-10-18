@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "This dismisses and mocks another person's character by implying they have a pattern of giving up on projects.", "coarse": false, "target": "person"}

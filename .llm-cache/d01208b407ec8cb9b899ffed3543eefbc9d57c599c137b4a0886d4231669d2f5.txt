@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "This is a personal declaration of hatred directed at another person.", "coarse": false}

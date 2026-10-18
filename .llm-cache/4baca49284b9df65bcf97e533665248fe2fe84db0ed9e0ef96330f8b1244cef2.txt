@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This offers brief, mild criticism of something's quality without targeting a person.", "coarse": false}

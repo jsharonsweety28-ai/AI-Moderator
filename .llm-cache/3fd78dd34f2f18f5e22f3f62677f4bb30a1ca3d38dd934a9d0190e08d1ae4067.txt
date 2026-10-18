@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "States a preference politely with a brief disclaimer."}

@@ -1,0 +1,1 @@
+{"score": 0.20, "category": "clean", "reason": "This is blunt criticism of the service and food quality.", "coarse": false, "target": "work"}

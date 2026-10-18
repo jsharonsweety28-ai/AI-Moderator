@@ -1,0 +1,1 @@
+{"score": 0.30, "category": "insult", "reason": "Criticizes the design work using a comparison that insults the creator's competence.", "coarse": false, "target": "work"}

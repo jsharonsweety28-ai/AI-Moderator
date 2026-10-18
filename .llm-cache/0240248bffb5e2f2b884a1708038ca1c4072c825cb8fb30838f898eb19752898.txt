@@ -1,0 +1,1 @@
+{"score": 0.65, "category": "insult", "reason": "This demeans the person by attacking both their appearance and intelligence.", "coarse": true, "target": "person"}

@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "insult", "reason": "This dismisses and mocks you as a person by claiming you have no likers and have declined in quality.", "coarse": false, "target": "person"}

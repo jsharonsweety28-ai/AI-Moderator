@@ -1,0 +1,1 @@
+{"score": 0.92, "category": "hate", "reason": "This dehumanizes an entire group of people by labeling all of them as criminals.", "coarse": false, "target": "person"}

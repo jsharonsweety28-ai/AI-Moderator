@@ -1,0 +1,1 @@
+{"score": 0.95, "category": "threat", "reason": "This is a direct threat promising to find the recipient's address and harm them.", "coarse": true, "target": "person"}

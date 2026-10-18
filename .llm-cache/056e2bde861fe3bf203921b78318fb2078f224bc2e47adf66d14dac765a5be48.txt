@@ -1,0 +1,1 @@
+{"score": 0.50, "category": "insult", "reason": "This dismisses the other person's writing ability by comparing it to a young child's.", "coarse": false, "target": "person"}

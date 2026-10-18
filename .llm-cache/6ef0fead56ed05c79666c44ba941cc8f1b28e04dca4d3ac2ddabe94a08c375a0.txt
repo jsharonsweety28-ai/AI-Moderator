@@ -1,0 +1,1 @@
+{"score": 0.82, "category": "threat", "reason": "This warns another person of consequences if they continue posting, functioning as a veiled threat of retaliation.", "coarse": false}

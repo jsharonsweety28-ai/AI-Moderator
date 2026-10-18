@@ -1,0 +1,1 @@
+{"score": 0.18, "category": "clean", "reason": "This is mild mockery directed at someone's self-promotion, not a personal attack.", "coarse": false}

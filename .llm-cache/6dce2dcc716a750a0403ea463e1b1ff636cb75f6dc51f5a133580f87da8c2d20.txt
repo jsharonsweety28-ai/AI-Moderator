@@ -1,0 +1,1 @@
+{"score": 0.52, "category": "harassment", "reason": "This mocks someone's appearance and pressures them to remove their own photo.", "coarse": false}

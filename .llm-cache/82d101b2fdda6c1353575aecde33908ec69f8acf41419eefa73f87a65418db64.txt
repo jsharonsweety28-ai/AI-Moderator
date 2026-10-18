@@ -1,0 +1,1 @@
+{"score": 0.40, "category": "insult", "reason": "Mockery aimed at the person, calling their effort embarrassing.", "coarse": false, "target": "person"}

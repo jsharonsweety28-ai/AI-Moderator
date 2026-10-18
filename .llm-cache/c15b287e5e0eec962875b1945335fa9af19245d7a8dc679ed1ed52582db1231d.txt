@@ -1,0 +1,1 @@
+{"score": 0.62, "category": "harassment", "reason": "This mocks the person's appearance and pressures them to delete the photo, which is a personal attack aimed at making them feel bad about themselves.", "coarse": false, "target": "person"}

@@ -1,0 +1,1 @@
+{"score": 0.52, "category": "insult", "reason": "This dismisses and belittles your design skill by implying even a child does it better.", "coarse": false}

@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "Comments on something (likely a policy or change) without attacking a person.", "coarse": false}

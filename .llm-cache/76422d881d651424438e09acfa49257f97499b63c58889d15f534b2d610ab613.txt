@@ -1,0 +1,1 @@
+{"score":0.12,"category":"clean","reason":"this expresses a negative opinion about the design without attacking a person"}

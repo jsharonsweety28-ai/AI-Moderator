@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "Disagrees with the reasoning in a specific paragraph, no personal attack.", "coarse": false, "target": "work"}

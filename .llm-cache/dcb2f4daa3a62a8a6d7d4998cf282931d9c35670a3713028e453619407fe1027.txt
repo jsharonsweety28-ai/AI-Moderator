@@ -1,0 +1,1 @@
+{"score": 0.20, "category": "clean", "reason": "Negative opinion about a previous version with mild sarcasm, not targeting a person.", "coarse": false}

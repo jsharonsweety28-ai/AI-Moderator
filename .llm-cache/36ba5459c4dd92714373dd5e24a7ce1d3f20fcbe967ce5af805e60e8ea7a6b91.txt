@@ -1,0 +1,1 @@
+{"score":0.82,"category":"threat","reason":"This implies that the addressed person will face serious trouble at a future meetup.","coarse":true}

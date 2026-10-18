@@ -1,0 +1,1 @@
+{"score": 0.95, "category": "threat", "reason": "This is a direct statement of intent to kill another person, with an emoji that does not constitute a stated benign trigger.", "coarse": true}

@@ -1,0 +1,1 @@
+{"score": 0.10, "category": "clean", "reason": "This is a brief exclamation expressing surprise or mild displeasure, with no target or attack.", "coarse": false}

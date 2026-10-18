@@ -1,0 +1,1 @@
+{"score": 0.02, "category": "clean", "reason": "This describes an experience of being insulted without insulting anyone in the comment itself.", "coarse": false, "target": "none"}

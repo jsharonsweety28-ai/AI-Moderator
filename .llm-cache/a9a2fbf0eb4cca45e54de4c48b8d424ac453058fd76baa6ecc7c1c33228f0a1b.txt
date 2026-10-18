@@ -1,0 +1,1 @@
+{"score": 0.78, "category": "harassment", "reason": "This dismisses and demeans you as a person, declaring that everyone is tired of you.", "coarse": false, "target": "person"}

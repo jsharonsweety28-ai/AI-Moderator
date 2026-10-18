@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This comments on someone's behavior (showing off a settings page) without targeting them as a person.", "coarse": false}

@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "insult", "reason": "This dismisses and mocks another person's intelligence with a repeated pattern of contempt.", "coarse": false, "target": "person"}

@@ -1,0 +1,1 @@
+{"score": 0.18, "category": "clean", "reason": "Dismissive remark about something being a waste of time, with no specific target or personal attack.", "coarse": false, "target": "none"}

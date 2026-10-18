@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This is a general criticism of the app, not an attack on any person.", "coarse": false}

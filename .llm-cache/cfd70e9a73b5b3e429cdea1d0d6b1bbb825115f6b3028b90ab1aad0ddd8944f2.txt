@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "Este comentario llama a otra persona \"payaso\" y la descalifica diciéndole que no tiene idea de lo que habla.", "coarse": false}

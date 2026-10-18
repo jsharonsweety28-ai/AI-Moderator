@@ -1,0 +1,1 @@
+{"score": 0.00, "category": "clean", "reason": "This is a friendly congratulatory comment asking about someone’s experience.", "coarse": false, "target": "none"}

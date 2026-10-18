@@ -1,0 +1,1 @@
+{"score": 0.02, "category": "clean", "reason": "Self-deprecating humor about forgetting keys, no target.", "coarse": false}

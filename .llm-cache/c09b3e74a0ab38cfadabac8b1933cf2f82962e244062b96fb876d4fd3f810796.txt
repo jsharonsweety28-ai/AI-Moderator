@@ -1,0 +1,1 @@
+{"score": 0.35, "category": "insult", "reason": "this dismisses the person or their work as mediocre", "coarse": false, "target": "work"}

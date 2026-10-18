@@ -1,0 +1,1 @@
+{"score": 0.92, "category": "threat", "reason": "This is a threat of real-world harm that implies locating and physically targeting someone."}

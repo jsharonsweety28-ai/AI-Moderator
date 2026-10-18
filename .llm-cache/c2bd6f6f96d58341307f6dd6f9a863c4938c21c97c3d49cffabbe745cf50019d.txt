@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This is friendly competitive banter congratulating someone on winning a round.", "coarse": false}

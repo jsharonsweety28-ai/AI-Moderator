@@ -1,0 +1,1 @@
+{"score": 0.35, "category": "insult", "reason": "This dismisses the person's competence and tells them to give up on their work.", "coarse": false, "target": "person"}

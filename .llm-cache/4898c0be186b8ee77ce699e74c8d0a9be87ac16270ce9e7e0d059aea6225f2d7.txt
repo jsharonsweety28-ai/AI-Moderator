@@ -1,0 +1,1 @@
+{"score": 0.72, "category": "threat", "reason": "This implies a potential physical confrontation with another person at a meetup.", "coarse": false}

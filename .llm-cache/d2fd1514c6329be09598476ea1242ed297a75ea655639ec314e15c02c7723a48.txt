@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "This demeans another person's intelligence and writing ability as childish.", "coarse": false}

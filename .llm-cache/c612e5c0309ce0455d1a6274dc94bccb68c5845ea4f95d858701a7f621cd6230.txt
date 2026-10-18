@@ -1,0 +1,1 @@
+{"score": 0.65, "category": "threat", "reason": "This threatens violence against another person over spoilers, with the emoji doing nothing to soften it.", "coarse": true, "target": "person"}

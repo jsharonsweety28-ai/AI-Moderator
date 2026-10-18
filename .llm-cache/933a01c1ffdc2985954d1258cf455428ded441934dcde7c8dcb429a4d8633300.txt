@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "insult", "reason": "This directs a hostile insult at a person, expressing contempt for who they are.", "coarse": true, "target": "person"}

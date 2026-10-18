@@ -1,0 +1,1 @@
+{"score": 0.95, "category": "threat", "reason": "This threatens to locate and harm another person, combining a doxxing threat with an implied promise of retaliation.", "coarse": true}

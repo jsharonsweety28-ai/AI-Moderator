@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "insult", "reason": "This calls the other person a clown and dismisses their knowledge as worthless.", "coarse": true}

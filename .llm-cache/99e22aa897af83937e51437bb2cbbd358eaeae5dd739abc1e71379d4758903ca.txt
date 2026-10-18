@@ -1,0 +1,1 @@
+{"score": 0.35, "category": "insult", "reason": "Mocks the target's confidence, expressing dismissive contempt without profanity.", "coarse": false}

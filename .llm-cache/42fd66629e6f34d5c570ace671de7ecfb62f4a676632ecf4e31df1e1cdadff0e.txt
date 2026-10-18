@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "This dismisses and ridicules a person by implying their education was wasted, which is a personal attack on their intelligence and worth.", "coarse": false}

@@ -1,0 +1,1 @@
+{"score": 0.72, "category": "insult", "reason": "Calls Maya a fraud and demeans her work with a hostile insult.", "coarse": true}

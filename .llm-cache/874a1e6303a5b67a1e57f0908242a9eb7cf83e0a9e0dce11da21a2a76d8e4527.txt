@@ -1,0 +1,1 @@
+{"score": 0.10, "category": "clean", "reason": "This comment reports being called an idiot in a meeting without responding abusively toward anyone.", "coarse": false}

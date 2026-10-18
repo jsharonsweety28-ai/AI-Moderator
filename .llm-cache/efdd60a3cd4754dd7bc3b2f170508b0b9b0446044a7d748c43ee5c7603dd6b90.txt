@@ -1,0 +1,1 @@
+{"score": 0.02, "category": "clean", "reason": "warm compliment about the person with no criticism", "coarse": false, "target": "none"}

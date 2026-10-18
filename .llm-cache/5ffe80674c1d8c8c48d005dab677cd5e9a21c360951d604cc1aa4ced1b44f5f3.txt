@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "This dismisses and insults someone's ability by calling them average.", "coarse": false}

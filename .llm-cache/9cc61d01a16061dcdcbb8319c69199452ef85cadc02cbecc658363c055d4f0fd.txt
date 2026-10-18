@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "This is a polite expression of opinion with a courtesy disclaimer.", "coarse": false}

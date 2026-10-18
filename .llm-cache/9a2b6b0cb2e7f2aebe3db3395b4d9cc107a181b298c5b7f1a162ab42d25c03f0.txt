@@ -1,0 +1,1 @@
+{"score": 0.00, "category": "clean", "reason": "यह एक सराहनात्मक और धन्यवाद भरा संदेश है।", "coarse": false, "target": "none"}

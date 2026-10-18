@@ -1,0 +1,1 @@
+{"score": 0.88, "category": "hate", "reason": "This demeans women as a group by excluding them from coding and confining them to domestic roles, using contemptuous and dehumanizing language.", "coarse": true}

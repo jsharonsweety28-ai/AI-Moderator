@@ -1,0 +1,1 @@
+{"score": 0.70, "category": "threat", "reason": "This is violent hyperbole tied to a trivially benign trigger — your fries being eaten — so it reads as a joke, but it's still an aggressive threat aimed at a person.", "coarse": false, "target": "person"}

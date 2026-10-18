@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "This is self-deprecating humor directed at the author themselves with no target.", "coarse": false}

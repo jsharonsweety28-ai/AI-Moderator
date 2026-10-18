@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "This is a casual comment about sharing something with friends, with no target or harm.", "coarse": false}

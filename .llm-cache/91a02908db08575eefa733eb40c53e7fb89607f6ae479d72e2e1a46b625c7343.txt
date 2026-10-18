@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "Asks politely for a source, no targeting or hostility.", "coarse": false}

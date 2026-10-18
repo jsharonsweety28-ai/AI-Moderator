@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "This dismisses another person with a name-calling insult.", "coarse": false, "target": "person"}

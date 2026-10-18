@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This expresses a negative opinion about the app's trajectory, directed at the work rather than the person.", "coarse": false, "target": "work"}

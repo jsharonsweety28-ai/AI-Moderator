@@ -1,0 +1,1 @@
+{"score": 0.30, "category": "insult", "reason": "This comments on the author's confidence in a dismissive, mocking way, sneering at them rather than their work.", "coarse": false, "target": "person"}

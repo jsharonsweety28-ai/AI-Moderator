@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "This is a brief expression of confusion or surprise about something, with no personal attack.", "coarse": false}

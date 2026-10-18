@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This is blunt criticism of a thing, not an attack on a person.", "coarse": false}

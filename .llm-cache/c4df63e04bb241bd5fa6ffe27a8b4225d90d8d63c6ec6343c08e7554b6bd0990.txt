@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "This is a personal insult mocking someone's writing ability.", "coarse": false}

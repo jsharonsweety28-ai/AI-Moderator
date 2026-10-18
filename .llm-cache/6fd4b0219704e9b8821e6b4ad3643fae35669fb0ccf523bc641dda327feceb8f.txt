@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "Este comentario expresa entusiasmo positivo sobre algo que disfrutó.", "coarse": false}

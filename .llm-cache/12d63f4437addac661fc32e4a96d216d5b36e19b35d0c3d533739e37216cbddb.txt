@@ -1,0 +1,1 @@
+{"score": 0.65, "category": "threat", "reason": "This jokingly threatens to kill you over a spoiled finale, using violent hyperbole tied to a benign trigger.", "coarse": true, "target": "person"}

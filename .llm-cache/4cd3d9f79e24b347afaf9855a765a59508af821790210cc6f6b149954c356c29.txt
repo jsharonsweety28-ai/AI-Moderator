@@ -1,0 +1,1 @@
+{"score": 0.92, "category": "threat", "reason": "This warns another person of potential harm and implies consequences for what they post, which reads as a veiled threat of real-world violence.", "coarse": true, "target": "person"}

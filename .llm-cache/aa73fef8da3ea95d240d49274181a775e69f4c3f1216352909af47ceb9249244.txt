@@ -1,0 +1,1 @@
+{"score": 0.90, "category": "threat", "reason": "यह कमेंट किसी को उसके घर को जलाने की धमकी दे रहा है।", "coarse": true}

@@ -1,0 +1,1 @@
+{"score": 0.18, "category": "insult", "reason": "Questions something with mild profanity but no targeted insult.", "coarse": true}

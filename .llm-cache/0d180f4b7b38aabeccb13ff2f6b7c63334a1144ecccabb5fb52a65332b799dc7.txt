@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "Mild opinion statement with a casual qualifier, no targeting of anyone.", "coarse": false}

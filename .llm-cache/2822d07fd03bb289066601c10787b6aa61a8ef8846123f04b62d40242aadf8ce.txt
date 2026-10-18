@@ -1,0 +1,1 @@
+{"score": 0.35, "category": "insult", "reason": "This criticizes the person for not testing their work before releasing it.", "coarse": false, "target": "person"}

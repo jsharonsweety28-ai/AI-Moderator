@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "यह एक सरल प्रशंसा और धन्यवाद है।", "coarse": false}

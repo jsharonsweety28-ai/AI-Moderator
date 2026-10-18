@@ -1,0 +1,1 @@
+{"score": 0.62, "category": "insult", "reason": "this calls the person talentless and tells them to leave the platform", "coarse": false, "target": "person"}

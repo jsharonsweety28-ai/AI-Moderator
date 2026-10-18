@@ -1,0 +1,1 @@
+{"score": 0.02, "category": "clean", "reason": "This is a friendly, vulnerable request for feedback with no criticism or targeting.", "coarse": false, "target": "none"}

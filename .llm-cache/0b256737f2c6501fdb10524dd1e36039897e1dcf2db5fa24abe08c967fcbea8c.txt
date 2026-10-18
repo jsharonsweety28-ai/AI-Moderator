@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "This is a lighthearted self-deprecating remark about forgetting keys, not an attack on anyone."}

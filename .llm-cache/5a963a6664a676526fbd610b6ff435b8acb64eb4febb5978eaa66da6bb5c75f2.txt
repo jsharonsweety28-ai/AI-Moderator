@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "Vague expression of unease with no person targeted.", "coarse": false, "target": "none"}

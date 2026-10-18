@@ -1,0 +1,1 @@
+{"score": 0.62, "category": "harassment", "reason": "This insults the person's appearance and pressures them to remove their own content.", "coarse": false}

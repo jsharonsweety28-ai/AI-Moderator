@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "This mocks the person's intelligence and background by implying their education was wasted on them.", "coarse": false}

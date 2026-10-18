@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "Shares a personal adjustment to a recipe and notes the result was good.", "coarse": false, "target": "work"}

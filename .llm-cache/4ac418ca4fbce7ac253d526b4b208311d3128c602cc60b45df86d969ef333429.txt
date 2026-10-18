@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This criticizes the work by pointing out a missed step in the process.", "coarse": false, "target": "work"}

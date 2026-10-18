@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "This dismisses and demeans the person by saying they've declined in quality and that no one likes them.", "coarse": false, "target": "person"}

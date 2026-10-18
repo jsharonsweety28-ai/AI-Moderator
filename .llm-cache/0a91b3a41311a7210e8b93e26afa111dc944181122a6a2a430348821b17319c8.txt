@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "insult", "reason": "This calls someone's writing dumb and tells them to feel ashamed of themselves.", "coarse": false, "target": "person"}

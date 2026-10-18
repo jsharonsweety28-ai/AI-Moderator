@@ -1,0 +1,1 @@
+{"score": 0.58, "category": "insult", "reason": "this insults your appearance and suggests you should remove the photo out of shame", "coarse": false}

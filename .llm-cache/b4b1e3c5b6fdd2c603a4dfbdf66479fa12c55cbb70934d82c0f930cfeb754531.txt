@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "Calls the reader's writing dumb and tells them they should feel bad, which is a dismissive insult aimed at the person.", "coarse": false}

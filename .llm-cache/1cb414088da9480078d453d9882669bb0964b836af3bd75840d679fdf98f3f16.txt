@@ -1,0 +1,1 @@
+{"score": 0.92, "category": "threat", "reason": "This is a direct threat of violence against another person, and the emoji does not establish a benign trigger.", "coarse": true, "target": "person"}

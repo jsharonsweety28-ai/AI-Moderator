@@ -1,0 +1,1 @@
+{"rewrite": "The onboarding design here is weak — it feels like something a beginner would put together."}

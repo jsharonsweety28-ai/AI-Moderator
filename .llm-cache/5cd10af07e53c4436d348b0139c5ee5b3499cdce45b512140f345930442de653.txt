@@ -1,0 +1,1 @@
+{"score": 0.40, "category": "insult", "reason": "Dismisses and belittles the recipient as a person, expressing contempt for their effort or worth.", "coarse": false, "target": "person"}

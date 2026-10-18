@@ -1,0 +1,1 @@
+{"score": 0.00, "category": "clean", "reason": "This is a neutral complaint about a service experience with no personal attacks.", "coarse": false, "target": "work"}

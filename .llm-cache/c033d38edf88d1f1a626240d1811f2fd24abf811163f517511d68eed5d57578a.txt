@@ -1,0 +1,1 @@
+{"score": 0.10, "category": "clean", "reason": "This is a straightforward expression of disagreement and a request for someone to stop posting, with no personal attack.", "coarse": false}

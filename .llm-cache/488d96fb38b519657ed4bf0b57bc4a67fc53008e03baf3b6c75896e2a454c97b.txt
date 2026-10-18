@@ -1,0 +1,1 @@
+{"score": 0.95, "category": "threat", "reason": "This threatens to find the person's address and make them regret something, which is intimidation and a threat of harm.", "coarse": true, "target": "person"}

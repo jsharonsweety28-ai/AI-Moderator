@@ -1,0 +1,1 @@
+{"score": 0.88, "category": "threat", "reason": "This warns another person that posting could lead to harm, implying a threat of consequences.", "coarse": true}

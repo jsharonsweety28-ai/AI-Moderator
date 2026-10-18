@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "Mild snark dismissing someone's pride in a minor achievement, with no personal attack.", "coarse": false, "target": "person"}

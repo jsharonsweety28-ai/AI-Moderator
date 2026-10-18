@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "Critiques the reasoning of a comment rather than attacking the commenter.", "coarse": false}

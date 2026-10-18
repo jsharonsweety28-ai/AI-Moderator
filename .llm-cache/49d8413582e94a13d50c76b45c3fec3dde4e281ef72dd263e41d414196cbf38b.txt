@@ -1,0 +1,1 @@
+{"score": 0.20, "category": "clean", "reason": "This comments criticizes the design of the work itself.", "coarse": false, "target": "work"}

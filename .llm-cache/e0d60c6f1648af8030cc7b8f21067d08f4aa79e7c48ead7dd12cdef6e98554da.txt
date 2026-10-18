@@ -1,0 +1,1 @@
+{"score": 0.65, "category": "threat", "reason": "This expresses a wish to kill the person, even though a joking emoji is attached and a benign trigger (spoiling a finale) is stated.", "coarse": true, "target": "person"}

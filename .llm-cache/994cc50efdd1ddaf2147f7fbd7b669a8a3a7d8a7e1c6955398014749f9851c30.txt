@@ -1,0 +1,1 @@
+{"score": 0.90, "category": "threat", "reason": "This implies potential harm to the recipient based on what they post, functioning as an intimidation threat.", "coarse": true, "target": "person"}

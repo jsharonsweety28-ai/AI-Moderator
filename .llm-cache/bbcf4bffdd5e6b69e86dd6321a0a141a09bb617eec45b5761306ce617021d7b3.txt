@@ -1,0 +1,1 @@
+{"score": 0.95, "category": "threat", "reason": "This threatens physical harm and implies surveillance of another person.", "coarse": true, "target": "person"}

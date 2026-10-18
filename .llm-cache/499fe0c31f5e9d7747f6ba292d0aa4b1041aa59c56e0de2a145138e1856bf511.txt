@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "this is an amused reaction with no target or harmful content", "coarse": false}

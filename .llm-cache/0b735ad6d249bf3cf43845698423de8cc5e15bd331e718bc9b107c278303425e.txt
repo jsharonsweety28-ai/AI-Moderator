@@ -1,0 +1,1 @@
+{"score": 0.35, "category": "clean", "reason": "this expresses anger at someone for spoiling a story ending", "coarse": false, "target": "person"}

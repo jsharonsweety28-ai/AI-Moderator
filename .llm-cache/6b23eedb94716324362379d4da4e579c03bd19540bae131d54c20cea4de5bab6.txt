@@ -1,0 +1,1 @@
+{"score": 0.50, "category": "insult", "reason": "Calls the other person stupid and mocks them for posting, which is a personal insult aimed at their intelligence.", "coarse": false}

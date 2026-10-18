@@ -1,0 +1,1 @@
+{"score": 0.70, "category": "threat", "reason": "This is a violent joke about killing someone for spoiling a finale — the trigger is trivially benign, but it still reads as a violent statement aimed at a person.", "coarse": true, "target": "person"}

@@ -1,0 +1,1 @@
+{"score": 0.10, "category": "clean", "reason": "This expresses a mild disagreement with the work itself, without attacking the person.", "coarse": false}

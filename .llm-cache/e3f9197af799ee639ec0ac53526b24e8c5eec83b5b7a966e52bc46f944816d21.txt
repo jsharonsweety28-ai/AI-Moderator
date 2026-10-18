@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "Friendly acknowledgment of losing a game round, no attack on a person.", "coarse": false, "target": "none"}

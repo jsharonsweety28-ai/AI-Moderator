@@ -1,0 +1,1 @@
+{"score": 0.95, "category": "threat", "reason": "This threatens to find someone's address and make them regret something, which is a threat of real-world harm.", "coarse": true}

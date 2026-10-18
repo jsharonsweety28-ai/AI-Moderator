@@ -1,0 +1,1 @@
+{"score": 0.92, "category": "threat", "reason": "This is a conditional threat promising harm if the person posts again.", "coarse": false, "target": "person"}

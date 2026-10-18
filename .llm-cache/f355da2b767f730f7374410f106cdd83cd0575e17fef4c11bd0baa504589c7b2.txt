@@ -1,0 +1,1 @@
+{"score": 0.95, "category": "threat", "reason": "This is a conditional threat of physical harm directed at another person.", "coarse": true}

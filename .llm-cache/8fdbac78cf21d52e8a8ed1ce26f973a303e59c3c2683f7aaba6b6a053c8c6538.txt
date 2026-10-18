@@ -1,0 +1,1 @@
+{"score": 0.85, "category": "threat", "reason": "This implies violence if the person attends a meetup, with no benign trigger stated — this is intimidation.", "coarse": true, "target": "person"}

@@ -1,0 +1,1 @@
+{"score": 0.18, "category": "clean", "reason": "This expresses frustration or disbelief about a decision, with no person directly attacked.", "coarse": false, "target": "work"}

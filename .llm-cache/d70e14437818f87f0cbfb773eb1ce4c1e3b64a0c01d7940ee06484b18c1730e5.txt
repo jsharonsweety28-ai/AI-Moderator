@@ -1,0 +1,1 @@
+{"score": 0.62, "category": "insult", "reason": "This dismisses the other person as worthless and tells them their feelings don't matter.", "coarse": false, "target": "person"}

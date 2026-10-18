@@ -1,0 +1,1 @@
+{"score": 0.30, "category": "insult", "reason": "dismissive mockery of a person or their effort", "coarse": false, "target": "person"}

@@ -1,0 +1,1 @@
+{"score": 0.20, "category": "clean", "reason": "This expresses a preference and criticism of the design itself, not the person who made it.", "coarse": false, "target": "work"}

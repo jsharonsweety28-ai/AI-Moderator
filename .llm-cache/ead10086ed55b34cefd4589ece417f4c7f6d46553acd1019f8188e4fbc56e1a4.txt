@@ -1,0 +1,1 @@
+{"score": 0.02, "category": "clean", "reason": "This is a short, friendly reaction with no criticism or attack.", "coarse": false, "target": "none"}

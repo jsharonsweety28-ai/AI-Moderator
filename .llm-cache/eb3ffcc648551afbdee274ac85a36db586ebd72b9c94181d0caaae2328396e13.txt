@@ -1,0 +1,1 @@
+{"score": 0.88, "category": "hate", "reason": "This dismisses an entire group of people from a profession based on their gender and uses a demeaning stereotype to belittle them.", "coarse": true}

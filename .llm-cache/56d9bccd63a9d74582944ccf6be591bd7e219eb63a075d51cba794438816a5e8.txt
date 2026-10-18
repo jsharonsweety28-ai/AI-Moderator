@@ -1,0 +1,1 @@
+{"score": 0.92, "category": "threat", "reason": "This message threatens and intimidates the recipient by claiming to know their home address and warning them to be careful.", "coarse": false}

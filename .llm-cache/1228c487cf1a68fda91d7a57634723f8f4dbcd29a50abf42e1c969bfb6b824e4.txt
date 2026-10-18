@@ -1,0 +1,1 @@
+{"score": 0.18, "category": "clean", "reason": "This is competitive trash talk aimed at winning a match, not at the person themselves.", "coarse": false}

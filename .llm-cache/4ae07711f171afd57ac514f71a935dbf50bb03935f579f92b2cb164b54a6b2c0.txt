@@ -1,0 +1,1 @@
+{"score": 0.95, "category": "hate", "reason": "This comment uses a sexist slur-like trope to dehumanize women and excludes them from a field, which is a hateful attack on a group.", "coarse": true}

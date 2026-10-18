@@ -1,0 +1,1 @@
+{"score": 0.25, "category": "insult", "reason": "Competitive trash talk aimed at another person with an aggressive tone.", "coarse": true}

@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "Profanity used as emphasis in positive praise with no person targeted.", "coarse": true, "target": "none"}

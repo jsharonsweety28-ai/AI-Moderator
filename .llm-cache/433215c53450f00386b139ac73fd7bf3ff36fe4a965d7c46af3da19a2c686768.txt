@@ -1,0 +1,1 @@
+{"score": 0.32, "category": "insult", "reason": "This dismisses the person's talent and ability, though it stays focused on competence rather than escalating to personal abuse.", "coarse": false, "target": "person"}

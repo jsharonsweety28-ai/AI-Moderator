@@ -1,0 +1,1 @@
+{"score": 0.78, "category": "harassment", "reason": "This directs harsh insults and a demand to delete their account at another person.", "coarse": true, "target": "person"}

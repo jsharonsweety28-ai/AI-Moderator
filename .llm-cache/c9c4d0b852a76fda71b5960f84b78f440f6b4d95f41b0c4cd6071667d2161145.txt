@@ -1,0 +1,1 @@
+{"score": 0.35, "category": "clean", "reason": "This criticizes what another person did without insulting them as a person.", "coarse": false, "target": "person"}

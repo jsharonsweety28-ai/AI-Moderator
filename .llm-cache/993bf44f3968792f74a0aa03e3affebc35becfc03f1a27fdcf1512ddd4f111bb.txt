@@ -1,0 +1,1 @@
+{"score": 0.50, "category": "insult", "reason": "This calls the other person a \"loser\" and tells them their life is empty, which is a personal dismissal.", "coarse": false}

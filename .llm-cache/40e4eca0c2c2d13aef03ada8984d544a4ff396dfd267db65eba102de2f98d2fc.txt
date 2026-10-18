@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This makes a mild critical observation about repeated attempts sounding like training data.", "coarse": false, "target": "work"}

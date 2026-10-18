@@ -1,0 +1,1 @@
+{"score": 0.92, "category": "harassment", "reason": "This shares (or claims to share) someone else's phone number and calls on others to harass them."}

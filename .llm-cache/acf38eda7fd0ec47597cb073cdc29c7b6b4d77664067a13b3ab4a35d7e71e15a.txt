@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "This is a straightforward comment sharing a cooking tip about adjusting salt in a recipe.", "coarse": false}

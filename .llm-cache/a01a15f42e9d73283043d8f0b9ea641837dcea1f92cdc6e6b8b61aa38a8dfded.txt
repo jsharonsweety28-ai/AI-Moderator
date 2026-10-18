@@ -1,0 +1,1 @@
+{"score": 0.30, "category": "insult", "reason": "Dismissive skepticism about the person or their project's longevity.", "coarse": false, "target": "person"}

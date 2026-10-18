@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "insult", "reason": "This mocks another person's competence and upbringing by attacking their education and parents.", "coarse": false, "target": "person"}

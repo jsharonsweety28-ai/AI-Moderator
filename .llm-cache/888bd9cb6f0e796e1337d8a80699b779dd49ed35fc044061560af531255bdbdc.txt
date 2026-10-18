@@ -1,0 +1,1 @@
+{"score": 0.20, "category": "clean", "reason": "This expresses dislike for a movie, not for any person.", "coarse": false, "target": "work"}

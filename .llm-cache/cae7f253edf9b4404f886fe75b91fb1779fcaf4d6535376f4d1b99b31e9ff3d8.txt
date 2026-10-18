@@ -1,0 +1,1 @@
+{"score": 0.92, "category": "threat", "reason": "this threatens retaliation if the person posts again, which is intimidation rather than harmless hyperbole.", "coarse": true}

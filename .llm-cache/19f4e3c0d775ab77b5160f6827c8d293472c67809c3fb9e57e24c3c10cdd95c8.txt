@@ -1,0 +1,1 @@
+{"score": 0.10, "category": "clean", "reason": "Expresses disagreement with a conclusion, attacking the idea rather than a person.", "coarse": false}

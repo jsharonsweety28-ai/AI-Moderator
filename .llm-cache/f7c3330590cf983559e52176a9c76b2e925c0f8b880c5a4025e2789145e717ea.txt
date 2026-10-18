@@ -1,0 +1,1 @@
+{"score": 0.20, "category": "clean", "reason": "This is a blunt negative remark with no clear target or person criticized.", "coarse": false, "target": "work"}

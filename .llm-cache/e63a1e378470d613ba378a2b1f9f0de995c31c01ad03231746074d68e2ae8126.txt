@@ -1,0 +1,1 @@
+{"score": 0.18, "category": "clean", "reason": "This expresses a preference for the older version in a mildly sarcastic way, with no personal attack.", "coarse": false, "target": "work"}

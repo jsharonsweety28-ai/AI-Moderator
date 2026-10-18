@@ -1,0 +1,1 @@
+{"score": 0.65, "category": "threat", "reason": "this threatens to kill someone over a spoiled finale", "coarse": true, "target": "person"}

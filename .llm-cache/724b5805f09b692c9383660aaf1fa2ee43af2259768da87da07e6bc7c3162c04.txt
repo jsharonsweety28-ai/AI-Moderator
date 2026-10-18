@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "harassment", "reason": "This dismisses and devalues the person by telling them they are disliked and have declined in popularity.", "coarse": false, "target": "person"}

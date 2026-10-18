@@ -1,0 +1,1 @@
+{"score": 0.02, "category": "clean", "reason": "This is a positive comment expressing enjoyment of the ending.", "coarse": false, "target": "none"}

@@ -1,0 +1,1 @@
+{"score": 0.55, "category": "insult", "reason": "this mocks the person's reliability and calls them a quitter", "coarse": false, "target": "person"}

@@ -1,0 +1,1 @@
+{"score": 0.92, "category": "threat", "reason": "This comment threatens to locate someone and make them regret something, which is a threat of harassment and implied harm.", "coarse": true}

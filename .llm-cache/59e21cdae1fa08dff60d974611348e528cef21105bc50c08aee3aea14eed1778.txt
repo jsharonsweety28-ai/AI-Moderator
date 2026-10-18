@@ -1,0 +1,1 @@
+{"score": 0.95, "category": "threat", "reason": "This threatens to burn down someone's house if they speak again.", "coarse": true}

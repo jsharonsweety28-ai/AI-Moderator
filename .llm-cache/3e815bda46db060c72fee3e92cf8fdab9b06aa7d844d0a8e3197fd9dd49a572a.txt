@@ -1,0 +1,1 @@
+{"score": 0.78, "category": "harassment", "reason": "This calls the person pathetic and tells them to leave the platform, attacking their worth and pressuring them to disappear.", "coarse": true, "target": "person"}

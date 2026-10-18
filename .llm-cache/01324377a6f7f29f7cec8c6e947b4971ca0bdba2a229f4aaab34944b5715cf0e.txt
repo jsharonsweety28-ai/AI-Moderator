@@ -1,0 +1,1 @@
+{"score": 0.03, "category": "clean", "reason": "This is a report describing someone else's behavior, not an attack on anyone.", "coarse": false, "target": "none"}

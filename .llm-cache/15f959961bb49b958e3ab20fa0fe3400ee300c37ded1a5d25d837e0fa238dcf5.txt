@@ -1,0 +1,1 @@
+{"score": 0.75, "category": "insult", "reason": "This calls someone a fraud and dismisses everything they do as worthless.", "coarse": false, "target": "person"}

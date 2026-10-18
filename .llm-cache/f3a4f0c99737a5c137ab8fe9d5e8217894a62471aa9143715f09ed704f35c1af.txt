@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This expresses personal disagreement with a piece of work without attacking a person.", "coarse": false}

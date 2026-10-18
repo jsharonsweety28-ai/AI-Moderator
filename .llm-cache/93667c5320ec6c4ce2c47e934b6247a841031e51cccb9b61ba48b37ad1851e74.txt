@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "This calls the creator talentless and tells them to stop creating, which is a personal attack on their abilities and identity as a maker.", "coarse": false, "target": "person"}

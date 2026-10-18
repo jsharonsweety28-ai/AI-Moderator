@@ -1,0 +1,1 @@
+{"score": 0.10, "category": "clean", "reason": "This is a critique of the reasoning in an argument, not an attack on a person."}

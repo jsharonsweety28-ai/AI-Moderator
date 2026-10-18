@@ -1,0 +1,1 @@
+{"score": 0.30, "category": "threat", "reason": "This is competitive trash talk with a menacing tone, not a real threat of harm.", "coarse": false, "target": "person"}

@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "This sneers at the other person with mocking gaming-slang implying they lost and should remove their post.", "coarse": false, "target": "person"}

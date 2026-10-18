@@ -1,0 +1,1 @@
+{"score": 0.62, "category": "insult", "reason": "Insults your appearance and pressures you to delete a photo for others' sake.", "coarse": false}

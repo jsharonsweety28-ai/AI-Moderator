@@ -1,0 +1,1 @@
+{"score": 0.25, "category": "clean", "reason": "This comments on someone's boldness or self-assurance without attacking them as a person.", "coarse": false}

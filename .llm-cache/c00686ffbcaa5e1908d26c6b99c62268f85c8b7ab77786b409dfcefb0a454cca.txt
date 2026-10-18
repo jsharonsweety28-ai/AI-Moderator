@@ -1,0 +1,1 @@
+{"score": 0.72, "category": "harassment", "reason": "This is a sustained personal insult calling someone pathetic and ordering them to delete their account.", "coarse": true}

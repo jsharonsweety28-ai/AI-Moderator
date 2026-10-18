@@ -1,0 +1,1 @@
+{"score": 0.05, "category": "clean", "reason": "Single exclamation expressing a mild reaction, with no target or attack.", "coarse": false, "target": "none"}

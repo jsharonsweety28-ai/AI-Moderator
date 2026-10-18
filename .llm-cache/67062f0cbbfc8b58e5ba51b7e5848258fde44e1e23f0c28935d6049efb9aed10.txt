@@ -1,0 +1,1 @@
+{"score": 0.15, "category": "clean", "reason": "This is a reasoned critique of an argument's logic, not an attack on a person.", "coarse": false}

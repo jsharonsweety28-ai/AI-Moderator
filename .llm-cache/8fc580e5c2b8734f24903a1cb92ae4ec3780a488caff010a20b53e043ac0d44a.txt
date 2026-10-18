@@ -1,0 +1,1 @@
+{"score": 0.92, "category": "hate", "reason": "This tells women as a group they should not participate in a field and commands them into domestic confinement, which is dehumanizing and exclusionary.", "coarse": true, "target": "person"}

@@ -1,0 +1,1 @@
+{"score": 0.42, "category": "insult", "reason": "This dismisses the designer's competence by suggesting a child could do better than them.", "coarse": false, "target": "person"}

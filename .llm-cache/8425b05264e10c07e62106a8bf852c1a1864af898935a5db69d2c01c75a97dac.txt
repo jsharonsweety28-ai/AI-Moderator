@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "insult", "reason": "This calls the other person's comment dumb and tells them to feel bad, which is a personal put-down.", "coarse": false}

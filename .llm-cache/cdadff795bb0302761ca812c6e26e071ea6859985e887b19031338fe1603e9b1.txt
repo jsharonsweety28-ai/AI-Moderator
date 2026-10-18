@@ -1,0 +1,1 @@
+{"score": 0.45, "category": "harassment", "reason": "This declares dislike aimed directly at another person.", "coarse": false, "target": "person"}

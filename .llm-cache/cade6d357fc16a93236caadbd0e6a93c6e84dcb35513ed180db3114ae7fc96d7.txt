@@ -1,0 +1,1 @@
+{"score": 0.45, "reason": "This dismisses another person's professional work by comparing it unfavorably to a child's effort, mocking their competence.", "category": "insult", "coarse": false}
