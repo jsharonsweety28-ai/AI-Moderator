@@ -25,6 +25,10 @@ assert.notEqual(inspectDraft('I will not kill him').hint, 'threat');
 assert.notEqual(inspectDraft('He said "I will kill you" in the trailer').hint, 'threat');
 assert.equal(inspectDraft('The character said nothing, I will kill you').hint, 'threat', 'no "character" loophole');
 assert.equal(inspectDraft('you are a moron').hint, 'check');
+assert.equal(inspectDraft('உன்னை கொன்னுடுவேன்').hint, 'threat', 'Tamil threat');
+assert.equal(inspectDraft('unna kolla poren').hint, 'threat', 'Tanglish threat');
+assert.equal(inspectDraft('tujhe jaan se maar dunga').hint, 'threat', 'Hinglish threat');
+assert.equal(inspectDraft('enakku idhu pudikala').hint, null, 'harmless Tanglish');
 assert.equal(inspectDraft('Lovely weather today').hint, null);
 
 // --- forgiving JSON + privacy masking ---
@@ -70,6 +74,8 @@ assert.equal(r.verdict, 'rude'); assert.equal(r.allowed, false); assert.equal(r.
 // --- suggestion gates: wrong language or changed meaning is never offered ---
 const english = createModerator({ call: stubModel({ scores: { 'तुम बेवकूफ हो': 0.55 }, rewrite: 'I disagree.' }) });
 assert.equal((await english.moderate('तुम बेवकूफ हो')).suggestion, null, 'Hindi in must not get English out');
+const tamil = createModerator({ call: stubModel({ scores: { 'நீ ஒரு முட்டாள்': 0.55 }, rewrite: 'I disagree.' }) });
+assert.equal((await tamil.moderate('நீ ஒரு முட்டாள்')).suggestion, null, 'Tamil in must not get English out');
 const unfaithful = createModerator({ call: stubModel({ scores: { 'you are an idiot': 0.55 }, faithful: false }) });
 assert.equal((await unfaithful.moderate('you are an idiot')).suggestion, null);
 

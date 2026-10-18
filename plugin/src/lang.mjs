@@ -5,6 +5,13 @@ const SCRIPTS = [
   ['cyrillic', /[Ѐ-ӿ]/g],
   ['cjk', /[぀-ヿ㐀-鿿가-힯]/g],
   ['devanagari', /[ऀ-ॿ]/g],
+  ['bengali', /[ঀ-৿]/g],
+  ['gurmukhi', /[਀-੿]/g],
+  ['gujarati', /[઀-૿]/g],
+  ['tamil', /[஀-௿]/g],
+  ['telugu', /[ఀ-౿]/g],
+  ['kannada', /[ಀ-೿]/g],
+  ['malayalam', /[ഀ-ൿ]/g],
   ['arabic', /[؀-ۿ]/g],
 ];
 

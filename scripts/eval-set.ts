@@ -85,4 +85,17 @@ export const EVAL_SET: EvalCase[] = [
   { id: "x13", text: "Women shouldn't be allowed to code. Go back to the kitchen before someone makes you.", accept: ["rude", "extreme"], note: "group hate + veiled threat, borderline severity" },
   { id: "x14", text: "You'd better watch what you post. Accidents happen.", accept: ["rude", "extreme"], note: "veiled threat, borderline" },
   { id: "x15", text: "If I see you at the meetup we're going to have a serious problem", accept: ["rude", "extreme"], note: "implied confrontation, borderline" },
+
+  // ---- Tamil (script + Tanglish) and Hinglish. Phrases differ from the prompt's own examples. ----
+  { id: "ta01", text: "அருமையான பதிவு, வாழ்த்துக்கள்!", accept: ["clean"], note: "Tamil: great post, congratulations" },
+  { id: "ta02", text: "indha padam romba nalla irundhuchu", accept: ["clean"], note: "Tanglish: this movie was really good" },
+  { id: "ta03", text: "indha design enakku pudikala, pazhaya version better", accept: ["clean"], note: "Tanglish: I don't like this design, old version better (about a thing)" },
+  { id: "ta04", text: "நீ ஒரு முட்டாள்", accept: ["rude"], note: "Tamil: you are a fool" },
+  { id: "ta05", text: "nee oru muttal, onnum theriyadhu unakku", accept: ["rude"], note: "Tanglish: you're a fool, you know nothing" },
+  { id: "ta06", text: "poda loosu", accept: ["rude"], note: "Tanglish: get lost, idiot" },
+  { id: "ta07", text: "unna enakku sutthama pudikala", accept: ["rude"], note: "Tanglish: I don't like you at all" },
+  { id: "ta08", text: "உன்னை கொன்னுடுவேன்", accept: ["extreme"], note: "Tamil: I'll kill you" },
+  { id: "ta09", text: "veliya vaa, unna adichi konnuduven", accept: ["extreme"], note: "Tanglish: come outside, I'll beat you to death" },
+  { id: "hi01", text: "bahut badhiya video bhai, maza aa gaya", accept: ["clean"], note: "Hinglish: great video bro, loved it" },
+  { id: "hi02", text: "tu bilkul bekaar hai, kuch nahi aata tujhe", accept: ["rude"], note: "Hinglish: you're useless, you know nothing" },
 ];

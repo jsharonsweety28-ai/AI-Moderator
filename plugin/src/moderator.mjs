@@ -28,7 +28,10 @@ export function inspectDraft(input) {
   const contracted = /\b(?:i'll|we'll|ill)\s+(?:kill|shoot|stab|hurt|murder|end)\s+(?:you|u|him|her|them|someone|everyone)\b/i;
   const quoted = /["“][^"”]*\b(?:kill|shoot|stab|hurt|murder)\b[^"”]*["”]/i;
   const negated = /\b(?:not|never|won't|wouldn't|don't|do not|will not)\b[^.!?;]{0,25}\b(?:kill|shoot|stab|hurt|murder)\b/i;
-  const threat = text.match(direct) || text.match(contracted);
+  // Common "I'll kill you" phrasings in Tamil, Tanglish, Hindi and Hinglish — the model's
+  // reading of these languages is less reliable, so the code backs it up (escalation only).
+  const indic = /(?:கொன்னுடுவேன்|கொன்னுருவேன்|கொல்லுவேன்|கொன்றுவிடுவேன்|கொல்லப்போறேன்|konnuduven|konnuruven|kolluven|kolla\s*poren|kondruven|मार\s*(?:दूंगा|डालूंगा|दूँगा)|जान\s*से\s*मार|maar\s*(?:dunga|daalunga|dalunga)|jaan\s*se\s*maar)/i;
+  const threat = text.match(direct) || text.match(contracted) || text.match(indic);
   if (threat && !quoted.test(text) && !negated.test(text)) {
     return { hint: 'threat', message: 'This reads as a threat to hurt someone.' };
   }
