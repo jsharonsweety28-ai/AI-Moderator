@@ -98,4 +98,10 @@ export const EVAL_SET: EvalCase[] = [
   { id: "ta09", text: "veliya vaa, unna adichi konnuduven", accept: ["extreme"], note: "Tanglish: come outside, I'll beat you to death" },
   { id: "hi01", text: "bahut badhiya video bhai, maza aa gaya", accept: ["clean"], note: "Hinglish: great video bro, loved it" },
   { id: "hi02", text: "tu bilkul bekaar hai, kuch nahi aata tujhe", accept: ["rude"], note: "Hinglish: you're useless, you know nothing" },
+  // ---- Tanglish/Hinglish sarcasm and sneers (different phrases from the prompt's examples) ----
+  { id: "ta10", text: "ivanuku yaaru da chance kuduthaa", accept: ["rude"], note: "Tanglish: who even gave this guy a chance (sneer at a person)" },
+  { id: "ta11", text: "unakku ellam edhuku da indha velai", accept: ["rude"], note: "Tanglish: why do people like you even get this job" },
+  { id: "ta12", text: "romba bore ah irundhuchu, next time better ah pannunga", accept: ["clean"], note: "Tanglish: it was boring, do better next time (polite criticism of work)" },
+  { id: "ta13", text: "semma comedy, nee paadradhu", accept: ["clean", "rude"], note: "Tanglish sarcasm: great comedy, your singing — borderline work/person" },
+  { id: "hi03", text: "wah kya talent hai, ghar baith ja", accept: ["rude"], note: "Hinglish sarcasm: wow what talent, just stay home" },
 ];

@@ -4,7 +4,9 @@
 export const SCORING_PROMPT = `You are the content-safety scorer for a small social platform. You judge ONE comment at a time, by its words alone — you know nothing about who wrote it or who will read it.
 
 Return ONLY a JSON object on a single line, no markdown, no commentary, exactly this shape:
-{"score": <number between 0.00 and 1.00>, "category": "<one of: clean|insult|harassment|threat|hate|sexual|self_harm|spam|other>", "reason": "<one short sentence>", "coarse": <true or false>, "target": "<person|work|none>"}
+{"meaning": "<if the comment is not in English (including Tanglish, Hinglish and other languages typed in English letters): a faithful plain-English translation, keeping its tone, sarcasm and who it is aimed at; if it is already English: an empty string>", "score": <number between 0.00 and 1.00>, "category": "<one of: clean|insult|harassment|threat|hate|sexual|self_harm|spam|other>", "reason": "<one short sentence>", "coarse": <true or false>, "target": "<person|work|none>"}
+
+Write "meaning" FIRST and score what it says — most mistakes on non-English comments come from scoring a guess. Example: "enna karumam ithu nee epdi select aana" -> meaning "Ugh, what is this? How did you even get selected?" — a sneer at the person's ability, 0.45-0.55, not a question about choosing an option.
 
 The score measures how harmful the comment is to the person or group it targets.
 Calibration anchors:

@@ -56,11 +56,11 @@ export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, ...nem
 
   // The model's verdict on the words alone: { score, category, reason }.
   async function score(text) {
-    let out = await json(SCORING_PROMPT, text, 400);
+    let out = await json(SCORING_PROMPT, text, 500);
     // The reason is shown to the writer, so it must be in their language. One retry.
     if (typeof out.reason === 'string' && !sameScript(text, out.reason)) {
       try {
-        const retry = await json(SCORING_PROMPT, `${text}\n\n(Write the "reason" in the exact language and script of the comment above.)`, 400);
+        const retry = await json(SCORING_PROMPT, `${text}\n\n(Write the "reason" in the exact language and script of the comment above.)`, 500);
         if (typeof retry.reason === 'string' && sameScript(text, retry.reason)) out = retry;
       } catch { /* keep the first verdict */ }
     }
