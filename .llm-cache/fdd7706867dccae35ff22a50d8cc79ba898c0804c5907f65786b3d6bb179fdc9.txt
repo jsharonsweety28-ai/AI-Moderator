@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "threat", "reason": "this threatens to physically assault someone by breaking their jaw", "coarse": false}

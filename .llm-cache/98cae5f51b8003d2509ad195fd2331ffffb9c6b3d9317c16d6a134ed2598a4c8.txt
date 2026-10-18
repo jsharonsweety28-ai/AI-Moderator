@@ -1,1 +1,0 @@
-{"score": 0.00, "category": "clean", "reason": "This is a neutral comment about a recipe and personal taste.", "coarse": false}

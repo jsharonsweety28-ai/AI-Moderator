@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "harassment", "reason": "This rallies others to harass and drive a person off the platform by mass-reporting and inbox flooding.", "coarse": true}

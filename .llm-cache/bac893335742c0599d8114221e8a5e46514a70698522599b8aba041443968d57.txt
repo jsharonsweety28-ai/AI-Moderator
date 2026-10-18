@@ -1,1 +1,0 @@
-{"score": 0.35, "category": "insult", "reason": "This is dismissive mocking taunt aimed at a person, implying they lost and their work should be deleted.", "coarse": false, "target": "work"}

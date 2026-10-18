@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "insult", "reason": "This calls another person stupid and mocks them for posting, which is a personal insult about their intelligence.", "coarse": false}

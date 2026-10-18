@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "insult", "reason": "This sneers at the person with dismissive gaming-culture shorthand for a loss plus telling them to remove their account.", "coarse": false, "target": "person"}

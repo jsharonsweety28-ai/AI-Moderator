@@ -1,1 +1,0 @@
-{"score": 0.35, "category": "insult", "reason": "Blunt criticism of the author's testing process before release.", "coarse": false, "target": "person"}

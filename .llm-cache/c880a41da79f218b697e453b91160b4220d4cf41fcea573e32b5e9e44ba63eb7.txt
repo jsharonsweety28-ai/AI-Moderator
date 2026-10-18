@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "insult", "reason": "This calls the person stupid for posting publicly.", "coarse": false}

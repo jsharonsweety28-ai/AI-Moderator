@@ -1,1 +1,0 @@
-{"rewrite": "This didn't work for me at all — I thought it was badly made."}

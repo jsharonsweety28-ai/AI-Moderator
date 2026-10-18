@@ -1,1 +1,0 @@
-{"score": 0.55, "category": "insult", "reason": "This dismisses and silences the other person with contempt.", "coarse": false, "target": "person"}

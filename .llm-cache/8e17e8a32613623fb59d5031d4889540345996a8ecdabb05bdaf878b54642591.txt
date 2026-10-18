@@ -1,1 +1,0 @@
-{"score": 0.75, "category": "insult", "reason": "This calls another person talentless and tells them to delete themselves, which is a degrading personal attack.", "coarse": false, "target": "person"}

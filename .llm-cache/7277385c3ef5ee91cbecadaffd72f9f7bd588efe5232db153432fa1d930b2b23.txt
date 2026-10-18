@@ -1,1 +1,0 @@
-{"score": 0.18, "category": "clean", "reason": "Light mockery of someone's bragging about a minor accomplishment.", "coarse": false, "target": "person"}

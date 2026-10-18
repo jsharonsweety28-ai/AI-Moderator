@@ -1,1 +1,0 @@
-{"score": 0.20, "category": "clean", "reason": "Expresses a preference for the previous logo, critiquing the design choice.", "coarse": false, "target": "work"}

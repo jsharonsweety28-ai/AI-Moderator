@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "harassment", "reason": "This comment tells women they don't belong in programming and reinforces a degrading sexist stereotype, dismissing their place in a professional field.", "coarse": true}

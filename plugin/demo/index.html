@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Moderator widget</title>
+<link rel="stylesheet" href="/moderator-widget.css">
+<style>
+  body{margin:0;background:#f6f7f9;color:#16181d;font:15px/1.6 Inter,'Segoe UI',system-ui,sans-serif}
+  main{max-width:640px;margin:48px auto;padding:0 16px}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:#6b7280;margin:0 0 24px}
+  .post{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:20px}
+  .post .who{font-weight:600}.post .body{margin:6px 0 16px}
+</style>
+</head>
+<body>
+<main>
+  <h1>AI Moderator — drop-in widget</h1>
+  <p class="sub">Type a reply. Rude comments get a better way to say it; harmful ones get an explanation.</p>
+  <div class="post">
+    <div class="who">Maya Iyer</div>
+    <div class="body">letss go i am invited for singing for a big event pray for me guyyysss</div>
+    <div id="moderator"></div>
+  </div>
+</main>
+<script src="/moderator-widget.js"></script>
+<script>
+  AIModerator.mount(document.querySelector('#moderator'), {
+    endpoint: '/api/plugin',
+    replyingTo: document.querySelector('.post .body').textContent,
+  });
+</script>
+</body>
+</html>

@@ -1,1 +1,0 @@
-{"score": 0.55, "category": "insult", "reason": "This dismisses and mocks a person, telling them they have no likability and have declined in quality.", "coarse": false}

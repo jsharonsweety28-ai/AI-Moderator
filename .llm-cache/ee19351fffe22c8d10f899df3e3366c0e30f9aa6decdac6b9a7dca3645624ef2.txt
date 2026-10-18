@@ -1,1 +1,0 @@
-{"score":0.32,"category":"insult","reason":"This bluntly criticizes the quality of someone’s work rather than attacking them directly.","coarse":false}

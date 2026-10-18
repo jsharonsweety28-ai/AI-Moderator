@@ -1,1 +1,0 @@
-{"score": 0.55, "category": "insult", "reason": "Yeh comment doosre insaan ko nikamma (bekaar) bata raha hai aur keh raha hai ki usse kuch nahi aata, jo uske kirdar par seedha hamla hai.", "coarse": false, "target": "person"}

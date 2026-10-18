@@ -1,1 +1,0 @@
-{"score": 0.40, "category": "harassment", "reason": "This implicitly warns someone that they will face negative consequences for their speech, which is a veiled threat.", "coarse": false, "target": "person"}

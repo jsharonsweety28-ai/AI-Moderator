@@ -1,1 +1,0 @@
-{"score": 0.10, "category": "clean", "reason": "Expresses mild embarrassment or secondhand embarrassment, with no personal attack.", "coarse": false}

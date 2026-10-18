@@ -1,1 +1,0 @@
-{"score": 0.65, "category": "harassment", "reason": "This shames a person by attacking their education and family in a degrading way.", "coarse": false, "target": "person"}

@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "threat", "reason": "This threatens to find someone and harm them, which is a serious personal threat.", "coarse": true, "target": "person"}

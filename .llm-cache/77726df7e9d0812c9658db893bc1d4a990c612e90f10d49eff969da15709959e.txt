@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "insult", "reason": "This mocks and expresses contempt for the person, implying their work is embarrassing.", "coarse": false}

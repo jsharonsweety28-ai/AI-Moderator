@@ -1,1 +1,0 @@
-{"score": 0.18, "category": "clean", "reason": "Calls a post misinformation and urges deletion; it criticizes the content of the post rather than the person.", "coarse": false, "target": "work"}

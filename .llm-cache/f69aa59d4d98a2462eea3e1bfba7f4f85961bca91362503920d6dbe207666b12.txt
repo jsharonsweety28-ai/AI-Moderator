@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "harassment", "reason": "This dismisses and targets a person with put-downs like 'nobody likes you' and 'you fell off'.", "coarse": false}

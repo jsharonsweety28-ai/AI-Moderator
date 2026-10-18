@@ -1,1 +1,0 @@
-{"score": 0.42, "category": "insult", "reason": "This dismisses and silences another person by telling them their contribution is unwanted.", "coarse": false}

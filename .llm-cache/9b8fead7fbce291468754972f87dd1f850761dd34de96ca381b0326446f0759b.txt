@@ -1,1 +1,0 @@
-{"score": 0.32, "category": "insult", "reason": "this dismisses and mocks the quality of someone's professional work by comparing it unfavorably to a child", "coarse": false}

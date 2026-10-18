@@ -1,1 +1,0 @@
-{"score": 0.35, "category": "insult", "reason": "This criticizes the quality of someone's post and questions their effort and thought process.", "coarse": false, "target": "person"}

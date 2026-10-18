@@ -1,1 +1,0 @@
-{"score": 0.65, "category": "threat", "reason": "This threatens violence with a stated trivial trigger (spoiling a finale), so it is violent hyperbole rather than a serious threat.", "coarse": true, "target": "person"}

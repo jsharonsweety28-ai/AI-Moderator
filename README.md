@@ -1,131 +1,94 @@
-# Redraft: moderation that tells you what you *could* say
+# Redraft: a comment moderator that tells you what you *could* say
 
 > Every moderation system tells users what they can't say. None tells them what they could say instead.
 
-Redraft is an AI comment moderator. When a comment is rude, it doesn't just block it. It offers the author a version that keeps their point without the attack, and the author decides: **Use this**, **Edit**, or **Request review**.
+Redraft is a drop-in comment moderator. When someone writes a rude comment, it doesn't just block it. It shows a better way to say the same thing, and the writer chooses **Use this**, **Edit** or **Ask a moderator**. When a comment is genuinely harmful (a threat, hate, someone's private phone number), it isn't posted, and the writer is told **what's wrong and why** so they can rewrite it themselves.
 
-Underneath that are the rest of the parts a real platform needs: an audience decision based on relationship history, a human review queue, pile-on detection, a "shield" that summarizes abuse so the target never has to read it, and detectors for harassment that no single message reveals.
+**Every AI decision runs on NVIDIA Nemotron 3 Ultra, served by Nebius Token Factory.**
 
-**Every AI job runs on NVIDIA Nemotron 3 Ultra, served by Nebius Token Factory.**
-
-- **Live demo:** https://redraft-nine.vercel.app (use the user switcher, top right)
-- **Moderator dashboard:** https://redraft-nine.vercel.app/mod
 - **Hackathon:** Nebius x NVIDIA Global AI Hackathon 2026, *Best Apps and Agents* track
+- **Two parts:** [`plugin/`](plugin) is the product (engine + server handler + widget, zero dependencies), and the Next.js app is a small demo site that uses it, with a moderator queue
 
----
+## What the writer sees
 
-## What it does
+| They write | What happens |
+|---|---|
+| "Great news, congrats!" | Posts |
+| "i hate you" (on a post about singing) | Not posted yet. *This tells another person you hate them.* Suggestion: **"I'm not a fan of your singing."** → Use this / Edit / Ask a moderator |
+| "Women shouldn't be allowed to sing on stage. Go back to the kitchen." | Can't be posted. *This says women can't perform because of their gender. Singing ability has nothing to do with gender, and comments like this push women out of music. If you dislike a specific performance, say what you didn't like about it.* → Edit my comment |
+| *(the AI is unreachable)* | Not posted. "We couldn't check this comment right now." It fails closed, never open |
+
+## How it works
 
 ```
-User types a comment
-   │
-   ▼
-AI #1: score the words alone (0..1 + category + plain-language reason)
-   │
-   ├── clean    → posts publicly
-   │
-   ├── extreme  → hard block. No rewrite. Slow "this was wrong" appeal lane.
-   │
-   └── rude     → held, and a rewrite is offered
-                    ├── Use this        → the rewrite posts (it already passed the scorer)
-                    ├── Edit            → rescored from the top
-                    └── Request review  → AI #2 decides the AUDIENCE, never the permission
-                                            ├── long mutual banter → visible to the recipient only
-                                            ├── stranger / one-way → collapsed for everyone
-                                            └── unclear            → human review queue (fails closed on timeout)
+comment → Nemotron scores the words alone (0..1 + category + plain-language reason)
+   ├── clean  (< 0.40)    → posts
+   ├── rude   (0.40–0.85) → reason + a checked rewrite: Use this / Edit / Ask a moderator
+   ├── severe (≥ 0.85)    → explanation of what's wrong and why; writer edits it; moderators notified
+   └── model down         → nothing posted, writer told to try again
 ```
 
-Around that pipeline:
+A suggestion is only shown if it **passes three checks**: it's in the same language and script as the original (Hindi in, Hindi out), a second Nemotron call confirms it keeps the writer's meaning, and it **scores clean itself**. The suggestion can use the post being replied to ("I'm not a fan of *your singing*"), but the verdict never does: every comment is judged on its own words.
 
-- **Pile-on detection** (every minute, pure SQL plus one similarity signal): a burst only counts if it is also mostly negative, mostly strangers or new accounts, cliff-shaped and repetitive. When it fires, the post's tension rises and the shield engages.
-- **The shield:** "18 replies were hidden. [Summarize] [Show them] [Keep hidden]". *Summarize* is the primary action. It describes and counts, and never quotes. This is enforced in code, not just in the prompt. Threats skip the target entirely and go to moderators as evidence.
-- **Comfort dial:** a post's author can choose *no personal criticism* or *no criticism*. Matching comments collapse with a reason, and praise is never collapsed.
-- **Pattern watch:** freeze-out detection (4+ cold, one-directional relationships aimed at one person whose posting is declining) and co-occurrence of accounts that keep appearing together. Counting only, no model, and log-only.
-- **Report / mute / block / remove:** reports open a review in their own lane on `/mod`. Every reviewer decision and target reaction is appended to a `signals` table, which builds labelled training data at no annotation cost.
+Other safeguards: emails and phone numbers are masked before text reaches the model; an instant keyword check flags obvious threats while typing and can only make a verdict stricter; the plugin's endpoints have an optional secret key and a per-IP rate limit, so nobody can spend your model credits.
 
-## Design rules (enforced in code)
+## Using NVIDIA Nemotron on Nebius Token Factory
 
-1. Every comment is scored on its words first. No whitelist, no fast lane.
-2. Context can only make things stricter, never looser.
-3. Friendship decides **who sees** a comment, never **whether it is acceptable**.
-4. Humans handle the unclear, not the worst. The extreme tier is never queued.
-5. Nothing is hidden silently. Every hidden comment shows its author a reason and a way forward.
-6. **Fail closed.** If the model errors, times out or returns junk, the comment stays blocked and the author is told.
-7. The rewrite is offered, never forced.
-8. The target never has to read the abuse. They get a summary first, and the comments only if they ask.
+All model calls go through [`plugin/src/nemotron.mjs`](plugin/src/nemotron.mjs), an OpenAI-compatible client pointed at Token Factory with **`nvidia/Nemotron-3-Ultra-550b-a55b`**, reasoning off, temperature 0, with retries on rate limits. Three prompts in [`plugin/src/prompts.mjs`](plugin/src/prompts.mjs): **scoring** (including the "explain why" text for severe comments, so that costs no extra call), **rewrite**, and the **meaning check**.
 
-## How it uses NVIDIA Nemotron and Nebius Token Factory
+### Evaluation
 
-All model calls go through one client, [`lib/moderation/llm.ts`](lib/moderation/llm.ts), which uses Token Factory's OpenAI-compatible API with **`nvidia/Nemotron-3-Ultra-550b-a55b`**, reasoning turned off and temperature 0. The model does five jobs, each with its own prompt in [`lib/moderation/prompts.ts`](lib/moderation/prompts.ts):
+[`scripts/eval-set.ts`](scripts/eval-set.ts) holds 63 hand-labelled comments: praise, disagreement, profanity used for emphasis, reports *of* abuse, insults, sarcasm, violent hyperbole, prompt-injection attempts, threats, doxxing, self-harm encouragement, and Hindi and Spanish cases. Fresh runs, no cache:
 
-| Job | What Nemotron does | File |
-|---|---|---|
-| AI #1: scoring | Strict JSON `{score, category, reason, coarse, target}`; the reason is shown to the user | `score.ts` |
-| Rewrite | Same point without the attack, **in the same language and script** (Hindi in, Hindi out) | `rewrite.ts` |
-| Rewrite fidelity check | "Does this rewrite still say what the author meant?" | `rewrite.ts` |
-| AI #2: audience | Given relationship history and post tension: recipient-only, collapsed, or human review | `audience.ts` |
-| Similarity | "Are these N comments the same message reworded?" (one pile-on signal) | `similarity.ts` |
-| Shield summary | Describe and count the hidden comments without quoting them | `shield.ts` |
-
-Rewrites check themselves: a suggestion is only shown if it passes the language gate, the fidelity check **and** scores clean when run back through AI #1. The suggestion is stored, so *Use this* posts exactly what the author saw.
-
-Code handles everything about counting, timing and grouping (pile-ons, freeze-outs, coordination). The model only judges what text means.
-
-### Choosing the model: evaluation
-
-[`scripts/eval-set.ts`](scripts/eval-set.ts) is a hand-labelled set of 63 comments: praise, disagreement, profanity used for emphasis, reports *of* abuse, insults, violent hyperbole, prompt injection, threats, self-harm encouragement, and Hindi and Spanish cases. We ran it fresh (no cache) on every Nemotron model available on Token Factory, plus the MiniMax M3 baseline the project was originally built on:
-
-| Model | Accuracy | Severe cases caught | Failed closed |
+| Model on Token Factory | Accuracy | Severe caught | Failed closed |
 |---|---|---|---|
-| **Nemotron 3 Ultra (550B-A55B)** ✅ chosen | **98.4%** (62/63) | 15/15 | 0 |
-| Nemotron 3.5 Super-VL | 98.4% (62/63) | 15/15 | 0 |
-| Nemotron 3 Super (120B-A12B) | 95.2% (60/63) | 15/15 | 0 |
-| Nemotron 3 Nano (30B-A3B) | 88.9% (56/63) | 15/15 | 0 |
-| Nemotron 3.5 Lightning | 87.3% (55/63) | 14/15 | 2 |
-| *MiniMax M3, its own API (old baseline)* | *98.4% (62/63)* | *15/15* | *0* |
-| *MiniMax M3, via Token Factory* | *93.7% (59/63)* | *15/15* | *4* |
+| **Nemotron 3 Ultra (550B-A55B)** ✅ used | **98.4%** (62/63) | 15/15 | 0 |
+| Nemotron 3.5 Super-VL | 98.4% | 15/15 | 0 |
+| Nemotron 3 Super (120B-A12B) | 95.2% | 15/15 | 0 |
+| Nemotron 3 Nano (30B-A3B) | 88.9% | 15/15 | 0 |
+| Nemotron 3.5 Lightning | 87.3% | 14/15 | 2 |
+| *MiniMax M3 (original prototype model)* | *98.4% on its own API, 93.7% via Token Factory* | *15/15* | *0 / 4* |
 
-We also ran every rude comment through the full rewrite pipeline. Ultra produced a verified rewrite for 16 of 26 with no errors. Combining Ultra with MiniMax (taking the stricter or the average score) didn't improve accuracy, because the two models agree on 61 of 63 comments and make the same single mistake. So everything runs on Nemotron. Ultra's one miss is a borderline case scored exactly on the 0.85 extreme line, so it errs toward blocking.
+The one miss ("You're a pathetic excuse for a developer, delete your account") scores exactly on the severe line, so it errs toward explaining rather than suggesting. Turning Nemotron's reasoning off mattered: with it on, the same engine scored 82.5%, because the model sometimes answered the comment instead of judging it.
 
-Thresholds live in [`lib/config.ts`](lib/config.ts) (`CLEAN_MAX = 0.40`, `EXTREME_MIN = 0.85`). `npm run eval` reruns the set and grid-searches both thresholds.
+## Run it
 
-## Tech stack
+You need Node 20+, a [Nebius Token Factory](https://tokenfactory.nebius.com) API key and, for the demo app, a [Supabase](https://supabase.com) project.
 
-- **Next.js 16** (App Router, TypeScript) and **Tailwind 4**
-- **NVIDIA Nemotron 3 Ultra** on **Nebius Token Factory** for all text understanding
-- **Supabase**: Postgres, plus Realtime broadcast for the live moderator dashboard
-- **Vercel** for hosting
+**Just the plugin** (no database):
 
-## Run it locally
+```bash
+cd plugin && npm test
+```
 
-You need Node 20+, a [Supabase](https://supabase.com) project and a [Nebius Token Factory](https://tokenfactory.nebius.com) API key.
+```bash
+cd plugin && NEBIUS_API_KEY=your-key npm run demo
+```
 
-1. **Install:** `npm install`
-2. **Configure:** copy `.env.example` to `.env.local` and fill in the Nebius key and the three Supabase values.
-3. **Create the schema:** in the Supabase SQL editor, run the files in [`supabase/migrations/`](supabase/migrations) in order (`00001` → `00004`).
-4. **Seed demo data:** `npm run seed` creates the cast, backdated relationship history and 20 pile-on accounts.
-5. **Start:** `npm run dev`, then open http://localhost:3000 and http://localhost:3000/mod.
+Open http://localhost:8790 for the drop-in widget on its own. See [`plugin/README.md`](plugin/README.md) to add it to your own site.
 
-Other scripts:
+**The demo app:**
+
+1. `npm install`
+2. Copy `.env.example` to `.env.local` and fill in the Nebius key and the three Supabase values.
+3. In the Supabase SQL editor, run the files in [`supabase/migrations/`](supabase/migrations) in order.
+4. `npm run seed` creates Maya and Alex, three posts and a few replies.
+5. `npm run dev`, then open http://localhost:3000. The moderator queue is at `/mod`.
 
 | Command | What it does |
 |---|---|
-| `npm run eval` | Score the 63-case set, print the confusion matrix, grid-search thresholds |
-| `npm run pileon` | Flood a post with a scripted pile-on to trigger detection and the shield |
-| `npm run warm` | Pre-cache the model responses for every scripted demo line (insurance for bad wifi) |
-| `npm run activity` | Generate reactions to a post through the real pipeline |
-
-The full demo script is in [`docs/DEMO.md`](docs/DEMO.md), and the build log in [`docs/PLAN.md`](docs/PLAN.md).
+| `npm test` | Plugin tests with a stub model (no network, no cost) |
+| `npm run eval` | The 63-case set against the real model |
+| `npm run seed` | Reset the demo data |
 
 ## Project layout
 
 ```
-app/                 pages (feed, /mod) and API routes
-components/          UI: composer + nudge card, comments, shield banner, review cards
-lib/config.ts        every threshold and moderation constant
-lib/moderation/      the pipeline: llm client, scoring, rewrite, audience, shield,
-                     similarity, pile-on sweep, review queue, pattern watch
-scripts/             seed, eval, pile-on demo, cache warmer
+plugin/              the product: engine, Nemotron client, prompts, HTTP handler, widget, tests, demo
+app/                 demo app pages (feed, /mod) and API routes
+components/          composer + redraft card, comments, review cards
+lib/                 config, the app's moderator instance, comments, review queue, feed
+scripts/             seed, eval, eval set
 supabase/migrations/ schema
 ```
 
@@ -135,12 +98,11 @@ supabase/migrations/ schema
 
 The project began on Aug 23, 2026, just before the submission period opened on Aug 26. Built or significantly updated during the submission period:
 
-- Moved every model call to **NVIDIA Nemotron 3 Ultra on Nebius Token Factory**, after evaluating all five Nemotron models on Token Factory against the original MiniMax baseline
-- Reports now go to moderators through their own lane on `/mod`
-- Rewrites are stored, so *Use this* posts exactly what the author was shown
-- A code-enforced guard so shield summaries never quote hidden comments
-- Review timeouts that fail closed without anyone opening the dashboard
-- The tone nudge, violent-hyperbole scoring rules, the per-post comfort dial, freeze-out and co-occurrence pattern watch, and bystander collapse during pile-ons
+- Moved every model call to NVIDIA Nemotron 3 Ultra on Nebius Token Factory, after evaluating all five Nemotron models available there
+- Rebuilt the moderator as a drop-in plugin with zero dependencies (engine, server handler, widget, tests)
+- Severe comments are now explained (what's wrong, why, what to say instead) instead of hard-blocked
+- Suggestions use the post being replied to, and are checked for language, meaning and safety before they're shown
+- Fail-closed behaviour, privacy masking, a rate-limited and optionally secret-protected API, and a moderator queue with timeouts
 
 ## License
 

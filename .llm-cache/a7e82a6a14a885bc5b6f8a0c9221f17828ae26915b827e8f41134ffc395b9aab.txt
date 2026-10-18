@@ -1,1 +1,0 @@
-{"score": 0.72, "category": "insult", "reason": "This dismisses and demeans another person by calling their opinion and themselves worthless.", "coarse": false}

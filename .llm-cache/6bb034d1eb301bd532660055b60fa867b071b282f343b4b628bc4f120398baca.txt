@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "The commenter expresses a polite preference with a soft disclaimer.", "coarse": false}

@@ -2,26 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import type { QueueItem } from "@/lib/reviews";
 import { relTime } from "@/lib/format";
+import { Avatar } from "./Avatar";
 
-export type ReviewCardData = {
-  reviewId: string;
-  /** main: the ambiguous middle. appeal: severe tier. report: flagged after it was up. */
-  lane: "main" | "appeal" | "report";
-  reportCount: number;
-  body: string;
-  authorName: string;
-  authorHandle: string;
-  postAuthor: string | null;
-  postExcerpt: string | null;
-  score: number | null;
-  category: string | null;
-  reason: string | null;
-  createdAt: string;
-  expiresInMs: number | null;
-};
-
-export function ReviewCard({ item }: { item: ReviewCardData }) {
+export function ReviewCard({ item }: { item: QueueItem }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,68 +18,63 @@ export function ReviewCard({ item }: { item: ReviewCardData }) {
       const res = await fetch("/api/reviews/resolve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reviewId: item.reviewId, decision }),
+        body: JSON.stringify({ reviewId: item.review.id, decision }),
       });
-      const out = (await res.json()) as { ok: boolean; error?: string };
-      if (!out.ok) setError(out.error ?? "That didn't work — try again.");
+      const out = await res.json();
+      if (!out.ok) setError(out.error ?? "That didn't work. Please try again.");
       router.refresh();
     } catch {
-      setError("That didn't work — try again.");
+      setError("That didn't work. Please try again.");
     } finally {
       setBusy(false);
     }
   }
 
-  const severe = item.lane === "appeal";
-  const isReport = item.lane === "report";
-  const accent = severe ? "text-danger" : "text-moderator";
-  const expiresMin = item.expiresInMs !== null ? Math.max(1, Math.ceil(item.expiresInMs / 60_000)) : null;
+  const minutesLeft = item.expiresInMs === null ? null : Math.max(1, Math.ceil(item.expiresInMs / 60_000));
 
   return (
-    <div className={`rounded-md border bg-card px-4 py-3 ${severe ? "border-danger/30" : "border-line"}`}>
-      <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] ${accent}`}>
-        {item.score !== null && <span className="font-semibold">score {item.score.toFixed(2)}</span>}
-        {item.category && <span>{item.category}</span>}
-        <span className="text-graphite">waiting {relTime(item.createdAt)}</span>
-        {expiresMin !== null && <span className="text-graphite">times out in {expiresMin}m</span>}
-        {severe && <span className="font-semibold uppercase">severe — appeal</span>}
-        {isReport && (
-          <span className="font-semibold uppercase">
-            reported {item.reportCount === 1 ? "once" : `${item.reportCount}×`} · still up
-          </span>
-        )}
+    <article className={`rounded-2xl border bg-surface p-5 ${item.flagged ? "border-danger-line" : "border-line"}`}>
+      <div className="flex items-start gap-3">
+        <Avatar name={item.comment.author.display_name} handle={item.comment.author.handle} size={32} />
+        <div className="min-w-0 flex-1">
+          <p className="text-sm">
+            <span className="font-semibold">{item.comment.author.display_name}</span>
+            <span className="ml-2 text-muted">
+              {item.flagged ? "sent automatically" : `asked for review ${relTime(item.review.created_at)} ago`}
+            </span>
+          </p>
+          {item.post && (
+            <p className="mt-0.5 truncate text-[13px] text-muted">
+              Replying to {item.post.author.display_name}: {item.post.body}
+            </p>
+          )}
+          <p className="mt-2 text-[15px] leading-relaxed break-words">{item.comment.body}</p>
+          {item.comment.reason && (
+            <p className={`mt-2 text-sm leading-relaxed ${item.flagged ? "text-danger" : "text-warn"}`}>{item.comment.reason}</p>
+          )}
+        </div>
       </div>
 
-      <p className="mt-2 text-[15px] leading-relaxed">{item.body}</p>
-      <p className="mt-1 font-mono text-[11px] text-graphite">
-        @{item.authorHandle}
-        {item.postAuthor && item.postExcerpt ? (
-          <>
-            {" "}
-            on {item.postAuthor}&apos;s post: &ldquo;{item.postExcerpt}&rdquo;
-          </>
-        ) : null}
-      </p>
-      {item.reason && <p className={`mt-2 font-mono text-xs leading-relaxed ${accent}`}>{item.reason}</p>}
-
-      <div className="mt-3 flex flex-wrap items-center gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-2 pl-11">
         <button
-          onClick={() => void resolve("approve")}
+          type="button"
           disabled={busy}
-          className="rounded-md bg-moderator px-3 py-1.5 font-mono text-xs font-medium text-white hover:opacity-90 disabled:opacity-50"
-        >
-          {isReport ? "Keep it up" : "Approve — post it"}
-        </button>
-        <button
           onClick={() => void resolve("uphold")}
-          disabled={busy}
-          className="rounded-md border border-line bg-card px-3 py-1.5 font-mono text-xs text-ink hover:border-graphite disabled:opacity-50"
+          className="rounded-lg bg-ink px-3.5 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
         >
-          {isReport ? "Hide it" : "Uphold — keep hidden"}
+          Keep unposted
         </button>
-        {busy && <span className="font-mono text-xs text-graphite">…</span>}
-        {error && <span className="font-mono text-xs text-danger">{error}</span>}
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => void resolve("approve")}
+          className="rounded-lg border border-line px-3.5 py-2 text-sm font-medium hover:border-muted disabled:opacity-50"
+        >
+          Post it
+        </button>
+        {minutesLeft !== null && <span className="text-[13px] text-muted">{minutesLeft} min left, then it stays unposted</span>}
+        {error && <span className="text-[13px] text-danger">{error}</span>}
       </div>
-    </div>
+    </article>
   );
 }

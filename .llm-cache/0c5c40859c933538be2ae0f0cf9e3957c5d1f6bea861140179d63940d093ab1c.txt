@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "Encouraging or questioning remark with no harmful content.", "coarse": false, "target": "none"}

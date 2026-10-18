@@ -1,1 +1,0 @@
-{"score": 0.65, "category": "threat", "reason": "This states a violent intent triggered by eating fries, which fits the hyperbole downgrade to non-severe but still exceeds publishable.", "coarse": true, "target": "person"}

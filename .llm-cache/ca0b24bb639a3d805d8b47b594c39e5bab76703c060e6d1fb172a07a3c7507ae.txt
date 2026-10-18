@@ -1,1 +1,0 @@
-{"score": 0.35, "category": "insult", "reason": "批评发布者没有在发布前进行测试，针对的是个人的工作方式。", "coarse": false, "target": "person"}

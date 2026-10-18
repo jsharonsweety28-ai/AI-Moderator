@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "Shares a personal cooking adjustment and preference about a recipe.", "coarse": false}

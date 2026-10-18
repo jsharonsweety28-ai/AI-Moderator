@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This comment reports someone else's abusive behavior without attacking anyone itself.", "coarse": false, "target": "none"}

@@ -1,1 +1,0 @@
-{"score": 0.02, "category": "clean", "reason": "Friendly congratulations and a neutral question about the project.", "coarse": false, "target": "none"}

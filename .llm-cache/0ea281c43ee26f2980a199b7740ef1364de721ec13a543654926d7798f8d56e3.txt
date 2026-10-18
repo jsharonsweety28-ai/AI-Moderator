@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "insult", "reason": "this calls another person 'braindead' and dismisses their contribution as worthless", "coarse": true}

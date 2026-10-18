@@ -1,1 +1,0 @@
-{"score": 0.25, "category": "insult", "reason": "This calls something or someone mediocre in a dismissive way, but targets no specific person.", "coarse": true, "target": "none"}

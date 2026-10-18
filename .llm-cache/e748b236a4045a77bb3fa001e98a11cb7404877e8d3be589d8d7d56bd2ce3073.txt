@@ -1,1 +1,0 @@
-{"score": 0.55, "category": "harassment", "reason": "This mocks and demeans a person by dismissing their relevance and claiming nobody likes them.", "coarse": false, "target": "person"}

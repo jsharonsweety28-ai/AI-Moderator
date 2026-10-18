@@ -1,1 +1,0 @@
-{"score": 0.02, "category": "clean", "reason": "This is a neutral request for feedback on a work in progress.", "coarse": false, "target": "none"}

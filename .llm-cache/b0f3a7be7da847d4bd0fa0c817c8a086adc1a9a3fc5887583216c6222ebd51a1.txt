@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This is a brief, neutral observation about something taking two weeks to make worse, with no target or attack.", "coarse": false}

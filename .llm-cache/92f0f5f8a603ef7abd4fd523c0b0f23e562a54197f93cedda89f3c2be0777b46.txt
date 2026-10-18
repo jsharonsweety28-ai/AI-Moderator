@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "insult", "reason": "यह टिप्पणी दूसरे व्यक्ति को सीधे तौर पर बेवकूफ कहकर उसकी बुद्धि पर हमला करती है।", "coarse": false, "target": "person"}

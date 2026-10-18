@@ -1,0 +1,135 @@
+// The moderator engine. One call — moderate(text) — and one rule for the host app:
+// post the comment only when `allowed` is true.
+//
+//   clean       → allowed. Post it.
+//   rude        → not allowed. Plain reason + a suggested rewrite (already checked).
+//   severe      → not allowed. An explanation of what is wrong and why; the writer
+//                 rewrites it themselves (no AI rewrite of threats or hate).
+//   unavailable → not allowed. The check could not run, so nothing is posted (fail closed).
+import { createNemotron, parseJson } from './nemotron.mjs';
+import { sameScript } from './lang.mjs';
+import { MEANING_CHECK_PROMPT, REWRITE_PROMPT, SCORING_PROMPT } from './prompts.mjs';
+
+const UNAVAILABLE = "We couldn't check this comment right now, so it hasn't been posted. Please try again in a moment.";
+
+// Masks emails, 12-digit IDs and phone numbers before text leaves the server.
+export function redact(text) {
+  return String(text || '').replace(/[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/g, '[EMAIL]')
+    .replace(/\b\d{4}[ -]?\d{4}[ -]?\d{4}\b/g, '[ID]')
+    .replace(/(?<!\w)\+?\d[\d ()-]{8,}\d(?!\w)/g, '[PHONE]');
+}
+
+// Instant typing hint (no network). It never allows anything — only the AI check
+// decides — but it can make a verdict stricter: a direct threat it recognises is
+// never let through by an optimistic model answer.
+export function inspectDraft(input) {
+  const text = String(input).normalize('NFKC').replace(/[’‘]/g, "'").replace(/[​-‍﻿]/g, '');
+  const direct = /\b(?:i|we)\s+(?:will|shall|would|might|want to|plan to|am going to|are going to|am gonna|are gonna|gonna)\s+(?:(?:fucking|really|just)\s+)?(?:kill|murder|shoot|stab|hurt|attack|beat up)\s+(?:you|u|him|her|them|someone|people|everyone)\b/i;
+  const contracted = /\b(?:i'll|we'll|ill)\s+(?:kill|shoot|stab|hurt|murder|end)\s+(?:you|u|him|her|them|someone|everyone)\b/i;
+  const quoted = /["“][^"”]*\b(?:kill|shoot|stab|hurt|murder)\b[^"”]*["”]/i;
+  const negated = /\b(?:not|never|won't|wouldn't|don't|do not|will not)\b[^.!?;]{0,25}\b(?:kill|shoot|stab|hurt|murder)\b/i;
+  const threat = text.match(direct) || text.match(contracted);
+  if (threat && !quoted.test(text) && !negated.test(text)) {
+    return { hint: 'threat', message: 'This reads as a threat to hurt someone.' };
+  }
+  if (/\b(?:kill|murder|shoot|stab|rape|bomb|kys)\b/i.test(text) || /\b(?:idiot|stupid|moron|loser|shut up|hate you)\b/i.test(text)) {
+    return { hint: 'check', message: 'This might come across as hostile. It will be checked when you post.' };
+  }
+  return { hint: null, message: null };
+}
+
+/**
+ * options.call       async (messages, maxTokens) => string. Defaults to Nemotron on Token Factory.
+ * options.apiKey / baseUrl / model / timeoutMs   passed to the default Nemotron client.
+ * options.cleanMax   scores below this post (default 0.40).
+ * options.severeMin  scores at or above this are severe (default 0.85).
+ */
+export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, ...nemotron } = {}) {
+  const ask = call || createNemotron(nemotron);
+
+  async function json(system, user, maxTokens) {
+    return parseJson(await ask([{ role: 'system', content: system }, { role: 'user', content: user }], maxTokens));
+  }
+
+  // The model's verdict on the words alone: { score, category, reason }.
+  async function score(text) {
+    let out = await json(SCORING_PROMPT, text, 400);
+    // The reason is shown to the writer, so it must be in their language. One retry.
+    if (typeof out.reason === 'string' && !sameScript(text, out.reason)) {
+      try {
+        const retry = await json(SCORING_PROMPT, `${text}\n\n(Write the "reason" in the exact language and script of the comment above.)`, 400);
+        if (typeof retry.reason === 'string' && sameScript(text, retry.reason)) out = retry;
+      } catch { /* keep the first verdict */ }
+    }
+    if (!Number.isFinite(out.score)) throw new Error('The model returned no usable score.');
+    return {
+      score: Math.min(1, Math.max(0, out.score)),
+      category: typeof out.category === 'string' ? out.category : 'other',
+      reason: typeof out.reason === 'string' && out.reason.trim() ? out.reason.trim() : 'This comment was flagged by the safety check.',
+    };
+  }
+
+  // Does the rewrite still say what the writer meant? A quality gate, so it fails open.
+  async function keepsMeaning(text, rewrite, context) {
+    try {
+      const out = await json(MEANING_CHECK_PROMPT, `${context}Original comment: ${text}\nProposed rewrite: ${rewrite}`, 60);
+      return out.faithful !== false;
+    } catch { return true; }
+  }
+
+  // A suggestion is offered only if it is in the writer's script, keeps their
+  // meaning, and itself scores clean. Two attempts; otherwise null (the writer
+  // still gets the reason, and can edit).
+  async function suggest(text, reason, replyingTo) {
+    const context = replyingTo ? `Post being replied to: ${String(replyingTo).trim().slice(0, 300)}\n` : '';
+    let feedback = '';
+    for (let attempt = 0; attempt < 2; attempt++) {
+      let rewrite;
+      try {
+        const out = await json(REWRITE_PROMPT, `${context}Comment: ${text}\nIt was flagged for: ${reason}${feedback}`, 300);
+        rewrite = typeof out.rewrite === 'string' ? out.rewrite.trim() : '';
+      } catch { continue; }
+      if (!rewrite || rewrite === text) continue;
+      let why = null;
+      if (!sameScript(text, rewrite)) why = 'it was in a different language than the original comment';
+      else if (!(await keepsMeaning(text, rewrite, context))) why = 'it changed what the author was saying';
+      else {
+        const check = await score(rewrite).catch(() => null);
+        if (!check) continue;
+        if (check.score < cleanMax) return rewrite;
+        why = check.reason;
+      }
+      feedback = `\nYour previous rewrite was: ${rewrite}\nIt was rejected because: ${why}\nTry again — the author's point, minus the abuse, in the exact language and script of the original.`;
+    }
+    return null;
+  }
+
+  /**
+   * moderate(text, { replyingTo, suggest }) → { allowed, verdict, score, category, reason, suggestion }
+   * replyingTo: the post being replied to. It only shapes the suggestion — the verdict
+   * is always judged on the comment's own words.
+   * suggest: false skips the rewrite (verdict only — used by the eval).
+   */
+  async function moderate(text, { replyingTo, suggest: wantSuggestion = true } = {}) {
+    const original = redact(String(text || '').trim());
+    if (!original) return { allowed: false, verdict: 'unavailable', score: null, category: null, reason: 'Write something first.', suggestion: null };
+
+    let scored;
+    try { scored = await score(original); }
+    catch { return { allowed: false, verdict: 'unavailable', score: null, category: null, reason: UNAVAILABLE, suggestion: null }; }
+
+    // The typing hint can only make things stricter, never looser.
+    if (inspectDraft(original).hint === 'threat' && scored.score < severeMin) {
+      scored = { score: severeMin, category: 'threat', reason: 'This reads as a threat to hurt someone, whatever you meant by it. It can\'t be posted. If you\'re angry, say what upset you instead.' };
+    }
+
+    const base = { score: scored.score, category: scored.category, reason: scored.reason };
+    if (scored.score < cleanMax) return { allowed: true, verdict: 'clean', ...base, suggestion: null };
+    if (scored.score >= severeMin) return { allowed: false, verdict: 'severe', ...base, suggestion: null };
+    // Rude: a failed suggestion never discards the verdict.
+    const suggestion = wantSuggestion ? await suggest(original, scored.reason, replyingTo).catch(() => null) : null;
+    return { allowed: false, verdict: 'rude', ...base, suggestion };
+  }
+
+  return { moderate, score, inspectDraft };
+}

@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "threat", "reason": "This implies knowledge of the person's location and warns them to be careful, which reads as a veiled threat.", "coarse": false}

@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "threat", "reason": "This is a direct threat implying physical harm and invasion of privacy.", "coarse": true}

@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "hate", "reason": "This demeans women as a group and tells them to leave a field based on their gender.", "coarse": true, "target": "person"}

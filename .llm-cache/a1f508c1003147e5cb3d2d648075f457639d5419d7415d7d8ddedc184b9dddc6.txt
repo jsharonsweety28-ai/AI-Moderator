@@ -1,1 +1,0 @@
-{"score":0.00,"category":"clean","reason":"This asks for the source of the information without attacking anyone.","coarse":false,"target":"none"}

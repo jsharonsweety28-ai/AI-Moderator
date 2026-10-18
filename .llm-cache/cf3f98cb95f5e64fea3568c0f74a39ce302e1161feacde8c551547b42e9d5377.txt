@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "self_harm", "reason": "This tells someone to drink bleach, which is a harmful substance.", "coarse": false}

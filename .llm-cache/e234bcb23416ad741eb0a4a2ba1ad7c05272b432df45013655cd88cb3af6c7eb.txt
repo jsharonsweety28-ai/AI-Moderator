@@ -1,1 +1,0 @@
-{"score": 0.12, "category": "clean", "reason": "This expresses disagreement with a conclusion without targeting a person.", "coarse": false, "target": "none"}

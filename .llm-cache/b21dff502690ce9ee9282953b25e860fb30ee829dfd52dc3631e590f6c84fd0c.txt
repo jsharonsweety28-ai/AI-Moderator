@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "threat", "reason": "this warns another person of serious trouble at an upcoming in-person meeting, which reads as an intimidation threat", "coarse": true, "target": "person"}

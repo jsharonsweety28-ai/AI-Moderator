@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "hate", "reason": "This tells women to leave a field and return to the home under threat, dehumanizing them as a group.", "coarse": true, "target": "person"}

@@ -1,1 +1,0 @@
-{"score": 0.18, "category": "clean", "reason": "Expresses a mild opinion about a design choice, with no personal attack.", "coarse": false, "target": "work"}

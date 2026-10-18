@@ -1,1 +1,0 @@
-{"score": 0.47, "category": "insult", "reason": "dismisses the person's words as dumb and tells them to feel bad about themselves", "coarse": false}

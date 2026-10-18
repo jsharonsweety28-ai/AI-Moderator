@@ -1,1 +1,0 @@
-{"score": 0.02, "category": "clean", "reason": "This reports being insulted by someone else, which is not itself an attack.", "coarse": false}

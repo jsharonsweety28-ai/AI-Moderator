@@ -1,1 +1,0 @@
-{"score": 0.20, "category": "clean", "reason": "Mild pushback suggesting the comment was unnecessary.", "coarse": false, "target": "person"}

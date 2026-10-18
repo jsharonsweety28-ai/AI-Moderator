@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "threat", "reason": "This threatens violence and implies imminent physical danger to a specific person.", "coarse": true, "target": "person"}

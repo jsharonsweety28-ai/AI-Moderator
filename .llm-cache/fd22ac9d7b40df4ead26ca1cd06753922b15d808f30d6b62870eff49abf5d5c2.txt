@@ -1,1 +1,0 @@
-{"rewrite": "This onboarding is poorly designed — basic usability issues are obvious even to someone with no design training."}

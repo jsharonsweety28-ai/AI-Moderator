@@ -1,1 +1,0 @@
-{"score": 0.72, "category": "insult", "reason": "This calls another person a pathetic excuse for a developer and tells them to delete their account, which is a degrading personal attack combined with urging them to leave the platform.", "coarse": true}

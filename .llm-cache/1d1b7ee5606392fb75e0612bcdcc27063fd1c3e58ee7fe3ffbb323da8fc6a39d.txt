@@ -1,1 +1,0 @@
-{"score": 0.55, "category": "insult", "reason": "this mocks and shames the person by calling them embarrassing", "coarse": false, "target": "person"}

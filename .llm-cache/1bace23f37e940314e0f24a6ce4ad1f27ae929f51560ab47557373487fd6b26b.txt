@@ -1,1 +1,0 @@
-{"rewrite": "we don't like you"}

@@ -1,5 +1,3 @@
-import type { Category, Visibility } from "@/lib/config";
-
 export type UserRow = {
   id: string;
   handle: string;
@@ -13,9 +11,6 @@ export type PostRow = {
   author_id: string;
   body: string;
   created_at: string;
-  tension: number;
-  /** Optional until migration 00003 has run; absent reads as "open". */
-  crit_pref?: "open" | "no_personal" | "no_criticism";
 };
 
 export type CommentRow = {
@@ -25,25 +20,14 @@ export type CommentRow = {
   body: string;
   created_at: string;
   score: number | null;
-  category: Category | null;
-  visibility: Visibility;
+  category: string | null;
+  /** public = posted. blocked = not posted (the reason says why). */
+  visibility: "public" | "blocked";
   reason: string | null;
   rewrite_offered: boolean;
   rewrite_accepted: boolean;
-  /** The vetted rewrite the author was shown. Optional until migration 00004 has run. */
+  /** The checked suggestion the writer was shown (migration 00004). */
   rewrite_text?: string | null;
-  rewrite_score?: number | null;
-  rewrite_category?: Category | null;
-};
-
-export type RelationshipRow = {
-  a_id: string;
-  b_id: string;
-  first_seen: string;
-  msg_count: number;
-  reciprocity: number;
-  rough_baseline: number;
-  negative_reactions: number;
 };
 
 export type ReviewRow = {

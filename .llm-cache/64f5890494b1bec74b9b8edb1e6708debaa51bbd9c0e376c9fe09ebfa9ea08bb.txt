@@ -1,1 +1,0 @@
-{"score": 0.30, "category": "insult", "reason": "This mocks the other person and expresses contempt for their effort, but it's not a direct personal attack.", "coarse": false}

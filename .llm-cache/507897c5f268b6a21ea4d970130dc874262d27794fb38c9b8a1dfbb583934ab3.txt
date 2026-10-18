@@ -1,1 +1,0 @@
-{"score": 0.30, "category": "insult", "reason": "This dismisses the quality of the work as mediocre.", "coarse": false, "target": "work"}

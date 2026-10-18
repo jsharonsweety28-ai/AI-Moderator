@@ -1,1 +1,0 @@
-{"score": 0.30, "category": "insult", "reason": "This is a dismissive taunt aimed at mocking someone's post or failure, with no specific person or detail targeted.", "coarse": false, "target": "none"}

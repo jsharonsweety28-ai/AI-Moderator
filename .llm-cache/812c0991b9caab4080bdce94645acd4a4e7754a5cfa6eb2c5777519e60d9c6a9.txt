@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "States a personal complaint about service and food quality with no personal attack.", "coarse": false, "target": "work"}

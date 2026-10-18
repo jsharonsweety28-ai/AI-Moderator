@@ -1,102 +1,41 @@
-# Demo runbook — Redraft
+# Demo script (about 3 minutes)
 
-~7 minutes, five acts. Every scripted line below is already in the response cache, so the
-demo path works even on dead venue wifi. Local dev server and the deployed site share one
-database — mix freely.
+Before: `npm run seed`, open the feed (localhost:3000 or the deployed URL) as **Alex**, and open `/mod` in a second window.
 
-## Before judges arrive
+## 1. The pitch (rude → a better way to say it)
 
-1. `npm run seed` — clean slate (wipes test comments; cache stays warm).
-2. Open the feed on the laptop (localhost:3000 or redraft-nine.vercel.app) as **@maya**.
-3. Open `/mod` on a second screen or phone — leave it visible.
-4. Terminal ready for `npm run pileon`.
-5. Optional second device signed in as **@dev** for the live cross-device moment.
+On Maya's post *"Got invited to sing at a big event next month!! Pray for me"*, as Alex, type:
 
-## Act 1 — The nudge (the pitch in one interaction)
+> i hate you
 
-Switch to **@alex_new**, comment on Maya's post:
+It isn't posted. Point at the card: the original is struck through, and underneath is **"I'm not a fan of your singing."** The opinion survives; the attack doesn't. It knew the post was about singing. Tap **Use this** and it posts.
 
-> this looks awful and so do you, stick to something you're actually good at
+Say the pitch: *"Every moderation system tells you what you can't say. This one tells you what you could say instead."*
 
-Held, with a plain reason. Point at the suggestion: **"This looks awful."** — the opinion
-survived, the attack didn't. Tap **Use this** → it posts. Say the pitch: *"every moderation
-system tells you what you can't say; ours tells you what you could say instead."*
+## 2. Harmful → explained, not just blocked
 
-Quick tone beat while here: comment `what the fuck is this` — it passes every rule, still
-posts either way, but gets a one-tap de-edged offer first. Nothing blocked, register nudged.
+Same post:
 
-## Act 2 — Friendship decides audience, never acceptability
+> Women shouldn't be allowed to sing on stage. Go back to the kitchen.
 
-As **@dev** on Maya's post:
+**This can't be posted**, followed by an explanation of what's wrong and why, and what to say instead. No AI rewrite of hate or threats: the writer has to rewrite it themselves. Switch to the `/mod` window: it's already there under "Sent automatically".
 
-> lmao maya you absolute disaster, took you two whole weeks for THIS?
+## 3. Disagree with the AI → ask a person
 
-Held → **Request review** → *visible in full only to Dev and Maya* (120 days of mutual banter).
+On Maya's onboarding post:
 
-As **@rohan** on Priya's post:
+> two weeks for this? you clearly have no idea what you're doing
 
-> growing what exactly? another project you'll abandon halfway like always?
-
-Held → **Request review** → *collapsed for everyone* (one-directional, reciprocity 0.07).
-
-Same class of words — different audiences. Switch to **@priya**, then **@maya**, to show both renderings.
-
-## Act 3 — The pile-on and the shield
-
-Run `npm run pileon`. While it floods (~30s), narrate: 21 comments, most individually mild —
-each one passes on its own; the harm is the aggregate.
-
-- The `/mod` screen updates live: the threat arrives in the severe lane as evidence.
-- As **@dev**: the whole mob is one folded line — *"replies collapsed — thread cooling down."*
-- As **@maya**: *"replies were hidden."* Tap **Summarize** — counts and categories, never quotes,
-  and the threats note says moderators already have them. Show that **Show them** exists and
-  is deliberately undersold.
-
-## Act 4 — The comfort dial
-
-As **@maya**, publish with **No criticism** selected:
-
-> Trying a new logo direction for redraft. First rough attempt — be gentle, it's early.
-
-(Every published post now draws automatic cast reactions over the next ~20s, generated from the
-post's content and run through the real pipeline. On this dial setting, any critical reaction
-collapses itself live — a free bonus beat. Reactions are LLM-generated: cached only if you
-rehearse with this exact post text, so keep the wording identical on demo day.)
-
-As **@dev**, comment (cached, instant):
-
-> honestly the old logo was better than this direction
-
-Show three seats: Dev sees his comment collapsed with the honest reason; Priya sees a one-line
-stub she can open; Maya gets a summary instead of the comment. Then Dev's
-`love the ambition here, excited to see where it goes` posts untouched — the dial never eats praise.
-
-## Act 5 — Pattern watch (the closer)
-
-Scroll `/mod` down: **Priya's freeze-out card** — four one-directional, mildly negative
-relationships, posting rate 4 → 1. *"No single message crossed a line — the pattern did."*
-This is the answer to "what about harassment that never trips a filter?"
+Tap **Ask a moderator**. Alex sees "Only you can see this. A moderator will look at this shortly." In `/mod` it appears live with a 10-minute timer. Tap **Post it**, and it's posted.
 
 ## If something goes wrong
 
-- LLM hangs or wifi dies mid-comment → the fail-closed message appears. Say it proudly:
-  *"if we can't check it, it doesn't post — the system never fails open."* Retry; scripted
-  lines are cached and instant.
-- Feed looks messy → `npm run seed` resets everything in ~10 seconds.
-- Tension expired before Act 3 payoff → re-run `npm run pileon` (idempotent).
+- Wifi dies mid-comment → "We couldn't check this comment right now, so it hasn't been posted." Say it proudly: *if we can't check it, it doesn't post.*
+- Feed looks messy → `npm run seed` resets everything in seconds.
 
-## Judge Q&A crib
+## Judge Q&A
 
-- **"Why did my mild insult pass?"** → the three-score table: "thats very bad" 0.20 · "what the
-  fuck is this" 0.25 (thing) · "what the fuck is wrong with you" 0.55 (person). We score harm
-  to people, not negativity or profanity.
-- **"What about 'I'll kill you' between friends?"** → the gradient: bare threat 0.95 extreme ·
-  "…for eating my fries" 0.65 held-but-reviewable · "say that again and…" always extreme.
-  Jokes must carry their frame in the words; friendship never lowers a score (or "follow them
-  first" becomes the harassment playbook).
-- **"Where's your training data?"** → No trained model: NVIDIA Nemotron on Nebius Token Factory + a written rubric, validated
-  on a 63-case hand-built eval (98.4% on Nemotron 3 Ultra, every severe case caught, `npm run eval`). Real ground
-  truth accrues in the append-only `signals` table — every reviewer decision and target
-  reaction, zero annotation cost.
-- **"Bot detection?"** → We never claim it. We detect coordination (co-occurrence), and only a
-  human ever bans.
+- **"Where's your training data?"** → No fine-tuning: NVIDIA Nemotron 3 Ultra on Nebius Token Factory with a written rubric, validated on a 63-case labelled set (98.4%, every severe case caught, `npm run eval`). We compared all five Nemotron models on Token Factory.
+- **"Is it a plugin?"** → Yes: `plugin/` has zero dependencies, mounts on Express or plain Node, and ships a drop-in widget. The demo site uses the same engine.
+- **"What if the model is down?"** → It fails closed. Nothing posts unchecked.
+- **"Hindi?"** → Suggestions and explanations come back in the writer's own language and script, checked in code.

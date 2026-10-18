@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This is a friendly compliment about someone's skill in a game."}

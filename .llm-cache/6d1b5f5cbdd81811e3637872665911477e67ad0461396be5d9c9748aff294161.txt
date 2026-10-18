@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "threat", "reason": "This is a direct threat implying knowledge of the target's location and warning of potential harm."}

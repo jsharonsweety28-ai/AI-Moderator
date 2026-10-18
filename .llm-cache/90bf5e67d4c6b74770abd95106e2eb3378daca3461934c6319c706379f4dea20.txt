@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "insult", "reason": "Insulta a otra persona llamándola payaso y diciendo que no sabe de lo que habla.", "coarse": false}

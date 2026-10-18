@@ -1,1 +1,0 @@
-{"score": 0.30, "category": "insult", "reason": "This dismisses the person's work as poor despite their effort.", "coarse": false, "target": "work"}

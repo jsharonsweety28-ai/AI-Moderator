@@ -1,1 +1,0 @@
-{"score": 0.10, "category": "clean", "reason": "This is a short exclamation with profanity but no target or attack.", "coarse": true}

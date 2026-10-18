@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "Asks for a source, which is a normal request for information.", "coarse": false}

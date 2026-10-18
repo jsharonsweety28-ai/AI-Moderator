@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "harassment", "reason": "This threatens to share someone's private photos if they don't comply, which is extortion and a threat to expose private images.", "coarse": true, "target": "person"}

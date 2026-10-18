@@ -1,1 +1,0 @@
-{"score": 0.15, "category": "clean", "reason": "Brief dismissive remark aimed at the work, not a person.", "coarse": false, "target": "work"}

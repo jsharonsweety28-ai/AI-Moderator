@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This is a neutral request for information.", "coarse": false, "target": "none"}

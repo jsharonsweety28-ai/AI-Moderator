@@ -2,254 +2,98 @@
 
 ## What this is
 
-A social media app where the AI does not just block rude comments — it offers the user a better way to say the same thing.
+A comment moderator, packaged as a drop-in plugin, that does not just block rude comments — it offers the writer a better way to say the same thing, and when a comment is genuinely harmful it explains why instead of silently refusing it.
 
 The one-line pitch: **every moderation system tells users what they can't say; none tells them what they could say instead.**
 
-This is a hackathon project. Ship the moderation pipeline, not a social network.
+Built for the Nebius x NVIDIA Global AI Hackathon (deadline 2026-10-30). Two parts:
+
+- **`plugin/`** — the product. Zero-dependency Node package: the moderator engine, an HTTP handler (Express or plain Node), and a drop-in widget. This is what another site installs.
+- **The Next.js app** — a small demo host for the plugin: a feed with two people and a moderator queue.
+
+Keep it simple. The previous, larger design (audience decisions, friend banter, pile-on detection, a shield, freeze-out detection) was deliberately removed on 2026-10-18 as unnecessary complexity. Do not bring those back unless asked.
 
 ---
 
 ## Stack
 
-- **Next.js** (App Router, TypeScript) — one repo, API routes alongside the frontend
-- **Supabase** — Postgres + Realtime. Realtime is load-bearing: the moderator dashboard must update live without polling.
-- **NVIDIA Nemotron** via **Nebius Token Factory** (OpenAI-compatible API) — used for all text understanding (scoring, rewriting, context judgement). Required by the Nebius x NVIDIA hackathon; switched from MiniMax M3 on 2026-10-18
-- **Tailwind** for styling
+- **NVIDIA Nemotron 3 Ultra** (`nvidia/Nemotron-3-Ultra-550b-a55b`) on **Nebius Token Factory** — every AI call. Required by the hackathon. Reasoning off, temperature 0.
+- **Next.js** (App Router, TypeScript) + **Tailwind 4** for the demo app
+- **Supabase** (Postgres + Realtime broadcast) for the demo app's data and the live moderator queue
 - Deploy on Vercel
 
 ---
 
 ## Non-negotiable rules
 
-These are design invariants. Do not violate them for convenience, and flag it if a requested change would break one.
+Design invariants. Do not break them for convenience; flag it if a requested change would.
 
-1. **Every comment is scored on its words first. Always.** No whitelist, no fast lane, no skipping the check for trusted users or friends. If knowing someone lets you bypass scoring, the whole system is defeated by "follow them first."
-
-2. **Context can only make things stricter, never looser.** Relationship history, account age, and reputation may raise a score or tighten visibility. They may never lower a score below what the text itself earned.
-
-3. **Friendship decides who sees a comment, never whether it is acceptable.** Two people can consent to rough talk between themselves. They cannot consent on behalf of everyone else reading a public thread.
-
-4. **Humans handle the unclear, not the worst.** The extreme tier is auto-blocked and never queued — there is nothing to review. Human reviewers exist for the ambiguous middle.
-
-5. **Nothing is ever hidden silently.** Any blocked, collapsed, or limited comment shows the author a plain-language reason and a path to challenge it.
-
-6. **Fail closed.** If review times out, if the LLM errors, if a score can't be computed — the comment stays blocked and the user is told. Never default to publishing.
-
-7. **The rewrite is offered, never forced.** `[Use this]`, `[Edit]`, and `[Request review]` must all be present. If the rewrite fails to generate, fall back to a plain warning — do not crash and do not auto-publish.
-
-8. **Never make the target read the abuse.** When comments are hidden from someone, the default action is a summary, not the comments themselves. Reading them is possible but always secondary and never pre-selected.
+1. **Every comment is checked on its own words. Always.** No whitelist, no fast lane, no trusted users.
+2. **Context can only make things stricter or the suggestion better, never the verdict looser.** The post being replied to may shape the *suggestion*; it never lowers a score. The local keyword hint can escalate a verdict, never allow one.
+3. **Post only when `allowed` is true.** That is the plugin's whole contract with the host.
+4. **Severe comments are not posted, and are explained, not just blocked.** The writer is told what the comment does, why it is harmful or wrong, and what they could say instead — then they edit it themselves. **No AI rewrite of threats, hate, doxxing or self-harm encouragement.** Severe comments also go to the moderator queue automatically.
+5. **Nothing is refused silently.** Every unposted comment has a plain-language reason the writer can read.
+6. **Fail closed.** If the model errors, times out or returns junk, nothing is posted and the writer is told. Never default to posting.
+7. **The suggestion is offered, never forced.** `[Use this]`, `[Edit]` and `[Ask a moderator]` are always present for a rude comment. If no good suggestion passes the checks, show the reason without one.
+8. **Humans handle the unclear.** A writer who thinks the check is wrong can ask a moderator; an unanswered request times out and the comment stays unposted.
 
 ---
 
-## The comment pipeline
+## The pipeline
 
 ```
-User types
-   |
-   v
-AI #1 — score the text alone (0..1 + category + reason)
-   |
-   +-- clean   -> post publicly
-   |
-   +-- extreme -> hard block. No rewrite, no fast appeal.
-   |              Slow "this was wrong" link into a separate low-priority queue.
-   |
-   +-- rude    -> block + offer rewrite
-                    |
-                    +-- accepts rewrite -> post publicly
-                    +-- edits it        -> rescore from the top
-                    +-- rejects it      -> AI #2
-                                             |
-                                             v
-                              AI #2 — decides AUDIENCE, not permission
-                                 - established mutual pair, mild -> recipient sees it,
-                                                                    collapsed for everyone else
-                                 - stranger or one-directional    -> collapsed for all
-                                 - post tension is high           -> collapsed
-                                 - unclear                        -> human review queue
+Writer posts a comment
+   │
+   ▼
+Nemotron scores the words alone → { score, category, reason }
+   │
+   ├── clean  (score < 0.40)  → allowed: posts
+   │
+   ├── rude   (0.40 – 0.85)   → not posted. Reason + a suggested rewrite
+   │                              [Use this] → posts the exact suggestion shown
+   │                              [Edit]     → writer edits, checked again from the top
+   │                              [Ask a moderator] → review queue (10-minute timeout, fails closed)
+   │
+   ├── severe (≥ 0.85)        → not posted. Explanation of what's wrong and why;
+   │                              writer edits it themselves. Sent to moderators automatically.
+   │
+   └── model unavailable      → not posted. "Couldn't check right now, try again."
 ```
 
-Human review resolves in minutes. On timeout, the comment stays blocked and the author is notified.
+**Suggestion checks** (all must pass before a rewrite is shown): same script as the original (Hindi in, Hindi out), keeps the writer's meaning (a model check), and itself scores clean. Two attempts, then no suggestion.
 
-**Thresholds** live in one config file, not scattered in code. Starting values (tune against the test set, do not ship guesses):
-
-```ts
-CLEAN_MAX = 0.40
-EXTREME_MIN = 0.85
-```
+**Thresholds** live in `lib/config.ts` (app) and default in the plugin (`cleanMax`, `severeMin`). Tune against `npm run eval`; do not ship guesses.
 
 ---
 
-## What is an LLM job vs a code job
-
-This split matters. Do not blur it.
+## LLM job vs code job
 
 | Question | Handled by |
 |---|---|
-| What does this text mean? | Nemotron (Token Factory) |
-| How many, how fast, who with? | Postgres query |
+| What does this text mean? Is it harmful? A better way to say it? Same meaning? | Nemotron |
+| Same script? Thresholds, timeouts, masking emails/phones, queue state | Code |
 
-**Nemotron handles every AI task in this project. There is no second model.** Specifically:
+Prompts live in `plugin/src/prompts.mjs` (scoring, rewrite, meaning check). Every scoring call returns strict JSON `{ score, category, reason }`; the `reason` is shown to the writer, so it must be plain language, in the writer's language. Every rewrite prompt keeps **"Reply in the same language and script as the input."**
 
-1. **AI #1** — scoring a comment for harmfulness
-2. **The rewrite** — generating a non-abusive version of the same point
-3. **AI #2** — judging audience given relationship context
-4. **Similarity check** — are these N comments the same message reworded (one signal feeding the code-based pile-on detector)
-5. **Shield summary** — describing hidden comments without quoting them
-
-All five are prompts against the same model. Different prompts, one API.
-
-**Code handles:** everything about counting, timing, grouping, and co-occurrence. Pile-on detection, bot coordination, and the freeze-out detector are all SQL. Do not ask an LLM to do arithmetic on timestamps.
-
-### Prompt requirements
-
-- Every scoring call returns strict JSON: `{ score, category, reason }`. The `reason` is shown to the user, so it must be plain language, not model-speak.
-- Every rewrite prompt must include: **"Reply in the same language and script as the input."** Hindi in, English out kills the demo.
-- Never send a comment to the LLM per keystroke. Score on typing pause (~500ms) or on send press.
-- Cache demo-path responses. Venue wifi has ended more demos than bad code.
+Never send a comment to the model per keystroke — check on send (the widget waits for a typing pause).
 
 ---
 
-## Schema
+## Schema (demo app)
 
-```sql
-users (
-  id, handle, display_name, avatar_url,
-  created_at            -- backdate these for seeded users
-)
-
-posts (
-  id, author_id, body, created_at,
-  tension               -- float, 0..1, decays over time
-)
-
-comments (
-  id, post_id, author_id, body, created_at,
-  score, category,      -- from AI #1
-  visibility,           -- 'public' | 'recipient_only' | 'collapsed' | 'ghosted' | 'blocked'
-  reason,               -- shown to the author
-  rewrite_offered, rewrite_accepted
-)
-
-relationships (
-  a_id, b_id,           -- directional: a -> b
-  first_seen, msg_count,
-  reciprocity,          -- min(a->b, b->a) / max(...)
-  rough_baseline,       -- mean toxicity of a's messages to b
-  negative_reactions    -- times b deleted/muted/blocked a
-)
-
-reviews (
-  id, comment_id, reviewer_id,
-  decision,             -- 'approve' | 'uphold'
-  created_at, resolved_at
-)
-
-reports (
-  id, comment_id, reporter_id, reason, created_at
-)
-
-blocks (
-  blocker_id, blocked_id, kind, created_at   -- kind: 'block' | 'mute'
-)
-
-signals (                -- the feedback loop; append-only
-  id, comment_id, kind, created_at
-)                        -- kind: 'reviewer_approve' | 'reviewer_uphold'
-                         --     | 'target_deleted' | 'target_muted'
-                         --     | 'target_blocked' | 'reported'
-```
-
-**`relationships` is directional.** A→B and B→A are separate rows. One-directional traffic is the core bullying signal.
-
-**`signals` is the training data.** Every reviewer decision and every target reaction gets appended. Never delete from it. This is what makes the system improve with zero annotation cost.
-
----
-
-## Background jobs
-
-**Fast — every minute.** Per-post pile-on check. A burst alone means nothing (popular posts spike too). Fire only when a burst *also* shows: mostly negative, mostly strangers or new accounts, high text similarity, and a cliff-shaped arrival curve. Raise `posts.tension`; decay it ~10% per minute.
-
-**Slow — nightly.** Co-occurrence queries. Which accounts keep appearing together across posts (bot coordination). Which users have four or more one-directional, mildly-negative relationships pointing at them while their posting rate declines (freeze-out detection). Both are `GROUP BY` queries — no model involved.
-
----
-
-## The shield (target-side)
-
-When comments are hidden from a user — either because a pile-on was detected or because individual comments were collapsed — they see a single line:
-
-```
-18 replies were hidden.
-[ Summarize ]   [ Show them ]   [ Keep hidden ]
-```
-
-**`Summarize` is the primary action.** It is the visually dominant button and the one a distracted person taps. It calls the model with the hidden comments and returns a short factual account — categories and counts, never the text itself:
-
-> Mostly insults about your appearance. 3 contained threats. All from accounts you have not interacted with before.
-
-**`Show them` is secondary.** Present, never default, never styled as the obvious choice. It exists because the user may legitimately need the content — for a report to their school, workplace, or the police — and because deciding on someone's behalf that they cannot see messages sent to them is not ours to make. But nothing should nudge them toward reading forty insults; the information value is exhausted after the first one and the rest is pure harm.
-
-**Threats bypass the target entirely.** Any hidden comment scored `extreme` is forwarded to the moderator queue and preserved as evidence automatically, whether or not the target ever opens the shield. They should never have to read a threat in order for it to be acted on.
-
-**The target controls the shield.** A per-user toggle decides whether it engages automatically during a detected pile-on. Default on, but theirs to turn off — the system protects by default and yields to the person's own judgement.
-
-Summaries must never quote the hidden comments verbatim. Describe, count, categorise. Quoting defeats the entire purpose.
-
----
-
-## Bots
-
-**Do not claim bot detection.** A well-built single bot is indistinguishable from a human. Detect *coordination* instead — which accounts keep showing up together.
-
-Three tiers:
-- **Suspicious** — log only, nothing visible
-- **Likely** — rate limit AND reduce reach (limit alone is a visible wall the operator tunes around; reduced reach leaks nothing)
-- **Confirmed** — flag for human. **Only a human issues a permanent ban.**
-
-Never treat "verified" as trustworthy — verification is purchasable. Account age alone is never a flag; every real user is new once.
-
----
-
-## Build order
-
-1. Rough classifier (a single model prompt is fine on day one) — everything depends on this existing
-2. Feed + compose box
-3. Visibility dial (collapse UI)
-4. Nudge + rewrite
-5. Moderator dashboard with Supabase Realtime
-6. Report / block / mute
-7. Pile-on detector + tension
-8. Freeze-out detector (cut this first if time runs short)
-
-**Time budget: 50% classifier and evaluation, 30% dashboard and review loop, 20% feed.** The classic failure is inverting this — a beautiful feed wired to a hardcoded threshold.
-
----
-
-## Do NOT build
-
-Profiles. Follows. DMs. Real auth (use a dev user-switcher). Image uploads. Notifications. Search. Infinite scroll.
-
-Five seeded users on one feed is enough. Anything else is time stolen from the moderation pipeline.
-
----
-
-## Seed data
-
-Seed users with **backdated relationship history** — this is what makes the demo work. Without it, AI #2 has nothing to reason about.
-
-Required seeded pairs:
-- Two users with a long, mutual, mildly-rough history (banter that should stay visible to each other)
-- One user who has been quietly cold toward another for weeks, one-directional (freeze-out case)
-- Two fresh accounts with no history
-- ~20 scripted accounts for the pile-on demo, created within the same window
+Only these tables are used: `users`, `posts`, `comments` (`visibility` is `public` or `blocked`, `reason`, `score`, `category`, `rewrite_text` = the suggestion shown), and `reviews` (one row per moderator review; `decision` approve/uphold, `resolved_at`). Older tables from the previous design (`relationships`, `signals`, `reports`, `blocks`) still exist in the migrations but are unused.
 
 ---
 
 ## Conventions
 
-- All moderation constants in `lib/config.ts`. No magic numbers in components.
-- All model calls go through `lib/moderation/` (the client is `lib/moderation/llm.ts`) — never call the API directly from a component.
-- Every function that changes a comment's visibility must also write the `reason`. Make it impossible to hide something without explaining it.
-- Server-side scoring only. A client-side check is a client-side bypass.
-- Log every LLM call's input and output during development — you will need these when tuning thresholds.
+- All moderation constants in `lib/config.ts` (app) — no magic numbers in components.
+- All model calls go through the plugin (`plugin/src/`); the app gets its instance from `lib/moderator.ts`. Never call the model API from a component.
+- Every function that leaves a comment unposted writes the `reason`.
+- Server-side checking only. A client-side check is a client-side bypass (the keyword hint in the composer is display-only).
+- In development every model call is logged to `logs/llm-calls.jsonl` — you will need these when tuning.
+- `npm test` runs the plugin's tests (stub model, no network). `npm run eval` runs the 63-case set against the real model.
+
+## Demo data
+
+Two people only: **Maya** (posts) and **Alex** (replies). `npm run seed` resets everything.

@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "hate", "reason": "This tells women they should not work in a profession and should be confined to a stereotyped domestic role, using hostile and dehumanizing language.", "coarse": true}

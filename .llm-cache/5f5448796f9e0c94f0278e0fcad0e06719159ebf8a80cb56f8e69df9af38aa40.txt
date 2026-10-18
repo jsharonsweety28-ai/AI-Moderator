@@ -1,1 +1,0 @@
-{"score": 0.18, "category": "clean", "reason": "This expresses a mild personal preference about the new design compared to the old one.", "coarse": false, "target": "work"}

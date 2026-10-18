@@ -1,1 +1,0 @@
-{"score":0.47,"category":"insult","reason":"This directs a personal insult at another person.","coarse":true,"target":"person"}

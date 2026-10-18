@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "insult", "reason": "Calls Maya a 'disaster' and mocks her effort, aimed at her as a person.", "coarse": false, "target": "person"}

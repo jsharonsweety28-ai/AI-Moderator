@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "threat", "reason": "यह किसी को उसके घर को जलाने की धमकी देता है, जो हिंसा की गंभीर धमकी है।", "coarse": true, "target": "person"}

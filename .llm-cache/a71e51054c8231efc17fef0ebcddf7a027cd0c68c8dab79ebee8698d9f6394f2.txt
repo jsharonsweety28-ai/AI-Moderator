@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "threat", "reason": "This threatens physical safety by claiming to know someone's location and warning them to be careful.", "coarse": true}

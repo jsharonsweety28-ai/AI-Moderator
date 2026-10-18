@@ -1,1 +1,0 @@
-{"score": 0.65, "category": "threat", "reason": "This implies a physical confrontation, which is a veiled threat of violence directed at another person.", "coarse": false}

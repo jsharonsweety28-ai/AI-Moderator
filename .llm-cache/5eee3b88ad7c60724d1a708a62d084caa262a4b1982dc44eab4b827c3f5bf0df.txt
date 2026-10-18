@@ -1,1 +1,0 @@
-{"score": 0.30, "category": "insult", "reason": "This dismisses and blames the people behind the app, implying they are responsible for its decline.", "coarse": false}

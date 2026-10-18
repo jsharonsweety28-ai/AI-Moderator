@@ -1,1 +1,0 @@
-{"score": 1.00, "category": "self_harm", "reason": "Este mensaje le dice a otra persona que se quite la vida.", "coarse": true}

@@ -1,1 +1,0 @@
-{"score": 0.15, "category": "clean", "reason": "The comment criticizes the app itself, not a person."}

@@ -1,1 +1,0 @@
-{"score": 0.10, "category": "clean", "reason": "Polite disagreement with an option, no personal attack.", "coarse": false}

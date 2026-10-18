@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "threat", "reason": "This threatens to find someone's personal address and make them regret something, which is a credible intimidation threat.", "coarse": true}

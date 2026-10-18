@@ -1,1 +1,0 @@
-{"score": 0.02, "category": "clean", "reason": "Este comentario simplemente describe una situación en la que alguien fue insultado en una reunión, sin atacar a ninguna persona.", "coarse": false}

@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "insult", "reason": "This dismissively tells another person their opinion is unwanted and instructs them to be silent, which is a personal put-down.", "coarse": false}

@@ -1,1 +1,0 @@
-{"score": 0.75, "category": "threat", "reason": "This implies potential physical confrontation and threatens harm toward another person if they meet in person.", "coarse": false}

@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "harassment", "reason": "This is a direct personal threat to beat you in a competition, aimed at you as a person with aggressive tone.", "coarse": false, "target": "person"}

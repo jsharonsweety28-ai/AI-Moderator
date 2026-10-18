@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "insult", "reason": "this calls another person a clown and tells them to be quiet", "coarse": false, "target": "person"}

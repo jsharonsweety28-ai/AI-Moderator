@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "insult", "reason": "Insults the reader by claiming they have declined in quality and that no one likes them.", "coarse": false}

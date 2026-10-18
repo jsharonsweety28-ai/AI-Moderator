@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "harassment", "reason": "This implies that private personal information will be shared as a threat.", "coarse": false, "target": "person"}

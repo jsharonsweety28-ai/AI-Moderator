@@ -1,1 +1,0 @@
-{"score": 0.55, "category": "insult", "reason": "Insulting dismissal directed at a person, saying nobody likes them."}

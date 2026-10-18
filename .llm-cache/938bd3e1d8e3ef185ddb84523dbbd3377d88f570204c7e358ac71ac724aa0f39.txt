@@ -1,1 +1,0 @@
-{"score": 0.15, "category": "clean", "reason": "Short dismissive remark aimed at something (likely a person or thing) but too vague to be a personal attack.", "coarse": false}

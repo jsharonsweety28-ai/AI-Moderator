@@ -1,1 +1,0 @@
-{"score": 0.00, "category": "clean", "reason": "This is straightforward feedback about a recipe's saltiness.", "coarse": false}

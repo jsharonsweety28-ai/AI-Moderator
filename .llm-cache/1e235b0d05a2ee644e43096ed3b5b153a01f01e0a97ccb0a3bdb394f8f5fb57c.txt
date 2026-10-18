@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "threat", "reason": "this threatens to kill another person", "coarse": false, "target": "person"}

@@ -1,1 +1,0 @@
-{"score": 0.93, "category": "threat", "reason": "this is a direct threat promising to find and harm someone for what they did or said", "coarse": true, "target": "person"}

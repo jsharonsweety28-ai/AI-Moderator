@@ -1,1 +1,0 @@
-{"score": 0.97, "category": "self_harm", "reason": "Telling someone to kill themselves and saying nobody would miss them.", "coarse": true}

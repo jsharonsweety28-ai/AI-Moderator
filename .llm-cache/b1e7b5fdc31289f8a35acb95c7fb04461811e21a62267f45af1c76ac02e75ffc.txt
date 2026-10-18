@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "hate", "reason": "This demeans and excludes women as a group by claiming they should be banned from a profession and confined to domestic roles.", "coarse": true}

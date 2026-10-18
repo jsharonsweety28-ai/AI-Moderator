@@ -1,1 +1,0 @@
-{"score": 0.78, "category": "insult", "reason": "Calls you a fraud and says everything you do is garbage, attacking your character and competence.", "coarse": true, "target": "person"}

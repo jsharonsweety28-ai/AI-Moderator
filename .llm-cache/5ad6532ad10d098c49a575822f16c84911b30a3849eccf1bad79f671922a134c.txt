@@ -1,1 +1,0 @@
-{"score": 0.18, "category": "clean", "reason": "This is a mild suggestion about posting behavior, not an attack on the person.", "coarse": false, "target": "person"}

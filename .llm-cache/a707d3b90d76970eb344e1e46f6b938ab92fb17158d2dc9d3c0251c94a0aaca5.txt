@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "这是一个友好的赞美。", "coarse": false}

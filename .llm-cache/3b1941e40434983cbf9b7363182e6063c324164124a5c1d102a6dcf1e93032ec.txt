@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "insult", "reason": "This directly insults your basketball ability.", "coarse": false, "target": "person"}

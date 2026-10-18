@@ -1,1 +1,0 @@
-{"score": 0.10, "category": "clean", "reason": "This expresses personal frustration about a restaurant experience without targeting or attacking any person.", "coarse": false}

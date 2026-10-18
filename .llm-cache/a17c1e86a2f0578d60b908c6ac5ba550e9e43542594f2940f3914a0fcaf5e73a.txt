@@ -1,1 +1,0 @@
-{"score": 0.72, "category": "harassment", "reason": "This insults your appearance and dismisses your abilities as a person in a hostile, personal way.", "coarse": false, "target": "person"}

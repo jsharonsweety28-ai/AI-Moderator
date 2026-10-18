@@ -1,1 +1,0 @@
-{"score": 0.30, "category": "insult", "reason": "This dismisses the app and its creator with contempt.", "coarse": false, "target": "work"}

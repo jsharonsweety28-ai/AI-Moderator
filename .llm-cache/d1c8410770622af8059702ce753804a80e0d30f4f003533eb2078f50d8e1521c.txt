@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "harassment", "reason": "This shares or invites sharing of another person's contact information with the intent to flood them with calls or messages.", "coarse": false, "target": "person"}

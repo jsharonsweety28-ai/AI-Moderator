@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This is a brief expression of disappointment or impatience aimed at no one in particular.", "coarse": false}

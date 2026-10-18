@@ -1,1 +1,0 @@
-{"score": 0.72, "category": "threat", "reason": "This contains a violent statement aimed at another person over spoiling a finale.", "coarse": true}

@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "insult", "reason": "This calls someone a clown and dismisses their knowledge as ignorant, which is personal mockery.", "coarse": false, "target": "person"}

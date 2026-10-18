@@ -1,17 +1,21 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-paper: #f4f6f5;
-  --color-card: #fdfefd;
-  --color-ink: #1c2321;
-  --color-graphite: #5a6662;
-  --color-line: #d9dfdc;
-  --color-moderator: #0e6b5c;
-  --color-moderator-wash: #e5efec;
-  --color-danger: #9c3b2e;
-  --color-danger-wash: #f6e9e6;
-  --font-serif: var(--font-source-serif), georgia, "Times New Roman", serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, "Cascadia Mono", monospace;
+  --color-canvas: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-ink: #15171c;
+  --color-muted: #6a7180;
+  --color-line: #e3e6eb;
+  --color-accent: #2b4acb;
+  --color-accent-soft: #eef1fd;
+  --color-mark: #fff3b0;
+  --color-warn: #8a4b08;
+  --color-warn-soft: #fff8eb;
+  --color-warn-line: #f6dfb4;
+  --color-danger: #b42318;
+  --color-danger-soft: #fef3f2;
+  --color-danger-line: #f9d0cc;
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, "Segoe UI", sans-serif;
 }
 
 :root {
@@ -19,35 +23,39 @@
 }
 
 body {
-  background: var(--color-paper);
+  background: var(--color-canvas);
   color: var(--color-ink);
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: var(--color-moderator-wash);
+  background: var(--color-accent-soft);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* The suggestion, marked like an editor's correction. */
+.redraft-mark {
+  background: linear-gradient(transparent 12%, var(--color-mark) 12%, var(--color-mark) 88%, transparent 88%);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0 2px;
+}
+
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Only the moderator's answer animates — it shows what just changed. */
+.reveal {
+  animation: reveal 180ms ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-
-@keyframes slipIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.slip-in {
-  animation: slipIn 160ms ease-out;
+  .reveal { animation: none; }
 }

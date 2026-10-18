@@ -1,0 +1,21 @@
+{
+  "name": "ai-moderator-plugin",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Comment moderator: checks each comment with NVIDIA Nemotron, offers a better way to say rude ones, and explains why harmful ones can't be posted.",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.mjs",
+  "types": "src/index.d.mts",
+  "exports": {
+    ".": { "types": "./src/index.d.mts", "default": "./src/index.mjs" },
+    "./widget/*": "./widget/*"
+  },
+  "scripts": {
+    "demo": "node demo/server.mjs",
+    "test": "node test/test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

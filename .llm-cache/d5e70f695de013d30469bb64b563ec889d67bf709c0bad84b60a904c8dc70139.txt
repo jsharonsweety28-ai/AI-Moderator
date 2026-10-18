@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "threat", "reason": "यह किसी को उनके घर को जलाने की धमकी दे रहा है।", "coarse": true}

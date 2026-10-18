@@ -1,1 +1,0 @@
-{"score": 0.55, "category": "harassment", "reason": "This tells another person they should feel ashamed of themselves and mocks their upbringing and education.", "coarse": false, "target": "person"}

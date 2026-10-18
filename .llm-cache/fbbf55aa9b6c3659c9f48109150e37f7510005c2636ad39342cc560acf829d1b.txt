@@ -1,1 +1,0 @@
-{"score": 0.42, "category": "insult", "reason": "This dismisses and mocks the person's athletic credibility or identity.", "coarse": false, "target": "person"}

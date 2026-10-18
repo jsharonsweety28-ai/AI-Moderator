@@ -1,1 +1,0 @@
-{"score": 0.65, "category": "harassment", "reason": "This sneers at another person and tells them to continue doing something for the writer's amusement, which is mocking and demeaning.", "coarse": false, "target": "person"}

@@ -1,1 +1,0 @@
-{"score": 0.15, "category": "clean", "reason": "Expresses surprise or disapproval at whoever approved something, without targeting or insulting a specific person.", "coarse": false, "target": "none"}

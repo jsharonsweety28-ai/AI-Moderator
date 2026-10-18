@@ -1,1 +1,0 @@
-{"score": 0.15, "category": "clean", "reason": "This expresses disappointment at a result or outcome without targeting a person.", "coarse": false}

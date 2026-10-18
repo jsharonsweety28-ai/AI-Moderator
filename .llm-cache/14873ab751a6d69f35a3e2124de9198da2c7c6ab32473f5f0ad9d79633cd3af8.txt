@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "threat", "reason": "This comment threatens physical harm and surveillance against another person.", "coarse": true, "target": "person"}

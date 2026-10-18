@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { resolveReview } from "@/lib/moderation/queue";
+import { resolveReview } from "@/lib/reviews";
 import { getViewer } from "@/lib/viewer";
 
 export const runtime = "nodejs";

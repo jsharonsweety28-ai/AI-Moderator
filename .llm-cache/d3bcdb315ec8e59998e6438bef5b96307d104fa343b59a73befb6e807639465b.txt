@@ -1,1 +1,0 @@
-{"score": 0.15, "category": "clean", "reason": "This points out a flaw in the reasoning of another person's argument.", "coarse": false, "target": "person"}

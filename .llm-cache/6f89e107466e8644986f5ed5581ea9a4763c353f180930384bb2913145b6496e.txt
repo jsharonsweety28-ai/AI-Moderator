@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "hate", "reason": "This dehumanizes a group by calling them vermin and says they do not deserve to live, which is severe hateful language.", "coarse": true}

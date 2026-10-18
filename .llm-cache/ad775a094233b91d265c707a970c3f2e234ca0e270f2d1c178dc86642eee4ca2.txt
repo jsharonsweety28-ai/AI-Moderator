@@ -1,1 +1,0 @@
-{"score":0.48,"category":"insult","reason":"This dismisses and belittles another person by telling them to sit down and saying their opinion is unwanted.","coarse":false}

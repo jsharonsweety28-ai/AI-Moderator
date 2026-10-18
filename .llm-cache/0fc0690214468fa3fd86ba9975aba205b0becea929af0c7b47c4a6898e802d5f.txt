@@ -1,1 +1,0 @@
-{"score": 0.70, "category": "threat", "reason": "This is a joke about violence over a trivially small offense (eating fries), but the threat language is direct.", "coarse": false, "target": "person"}

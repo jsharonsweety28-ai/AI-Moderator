@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "insult", "reason": "This dismisses and silences the other person with curt, contemptuous commands.", "coarse": true, "target": "person"}

@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "threat", "reason": "This is a direct threat of physical harm, claiming to know the person's location and warning them to be afraid."}

@@ -1,1 +1,0 @@
-{"score": 0.65, "category": "threat", "reason": "This threatens violence over a trivially small reason (eating fries), with a stated benign trigger but still an explicit threat.", "coarse": false}

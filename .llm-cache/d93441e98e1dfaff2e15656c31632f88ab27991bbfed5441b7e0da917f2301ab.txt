@@ -1,1 +1,0 @@
-{"score": 0.10, "category": "clean", "reason": "Mild opinion expressed politely with a softener.", "coarse": false, "target": "none"}

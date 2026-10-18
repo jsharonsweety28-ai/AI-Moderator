@@ -1,1 +1,0 @@
-{"score": 0.15, "category": "clean", "reason": "This is a personal complaint about a dining experience, not an attack on any individual.", "coarse": false}

@@ -1,1 +1,0 @@
-{"score": 0.82, "category": "harassment", "reason": "This dismisses and demeans an entire group of people based on their gender, telling them they don't belong in a field and should be confined to a domestic role.", "coarse": true}

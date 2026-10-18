@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "hate", "reason": "This dehumanizes a group of people by calling them vermin and declares they don't deserve to live, which is dehumanizing hate speech.", "coarse": true, "target": "person"}

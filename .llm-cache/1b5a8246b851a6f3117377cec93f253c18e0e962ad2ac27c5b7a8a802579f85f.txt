@@ -1,1 +1,0 @@
-{"score": 0.35, "category": "insult", "reason": "dismissive sneer aimed at a person, mocking them for feeling pride in their work", "coarse": false, "target": "person"}

@@ -1,1 +1,0 @@
-{"score": 0.00, "category": "harassment", "reason": "This reports another person's abusive behavior without itself being abusive.", "coarse": false, "target": "none"}

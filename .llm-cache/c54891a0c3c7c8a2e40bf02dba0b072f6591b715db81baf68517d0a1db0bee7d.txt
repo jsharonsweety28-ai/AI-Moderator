@@ -1,1 +1,0 @@
-{"score": 0.15, "category": "clean", "reason": "This is a brief, vague expression of reaction with no target or harmful content.", "coarse": false}

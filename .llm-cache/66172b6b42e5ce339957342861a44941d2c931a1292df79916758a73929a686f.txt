@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This is a kind, encouraging remark offering reassurance.", "coarse": false, "target": "none"}

@@ -1,7 +1,8 @@
 // The labeled test set the thresholds are tuned against. (CLAUDE.md: "tune against the
 // test set, do not ship guesses.") `accept` lists every tier we'd consider correct —
 // most items have exactly one; genuinely borderline items accept two adjacent tiers.
-import type { Tier } from "@/lib/config";
+/** The three verdict levels the eval labels use (severe is "extreme" here). */
+type Tier = "clean" | "rude" | "extreme";
 
 export type EvalCase = {
   id: string;

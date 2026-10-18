@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "threat", "reason": "this tells someone to drink a toxic substance that would seriously harm or kill them", "coarse": false}

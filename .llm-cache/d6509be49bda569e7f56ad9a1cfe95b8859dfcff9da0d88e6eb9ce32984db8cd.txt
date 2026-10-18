@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "threat", "reason": "This is a conditional threat of violence — burning down someone's home if they speak again.", "coarse": true, "target": "person"}

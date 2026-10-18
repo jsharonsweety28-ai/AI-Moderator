@@ -1,1 +1,0 @@
-{"score": 0.20, "category": "clean", "reason": "This criticizes the appearance of the work without attacking the person.", "coarse": false, "target": "work"}

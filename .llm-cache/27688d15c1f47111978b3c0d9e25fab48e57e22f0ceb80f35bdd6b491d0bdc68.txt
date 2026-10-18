@@ -1,1 +1,0 @@
-{"score": 0.20, "category": "clean", "reason": "this criticizes the work as a disaster", "coarse": false, "target": "work"}

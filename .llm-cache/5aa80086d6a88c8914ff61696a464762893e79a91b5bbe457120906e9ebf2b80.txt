@@ -1,1 +1,0 @@
-{"score": 0.20, "category": "insult", "reason": "Mildly dismissive of someone's reasoning ability, but framed as confusion rather than a direct attack.", "coarse": false, "target": "person"}

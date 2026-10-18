@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "harassment", "reason": "this shares what looks like a private phone number and tells others to flood or harass that person", "coarse": true, "target": "person"}

@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "Casual sharing of something funny for friends, no attack or harm.", "coarse": false, "target": "none"}

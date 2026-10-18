@@ -1,1 +1,0 @@
-{"score": 0.60, "category": "insult", "reason": "This calls someone a fraud and dismisses their work as garbage, which is a degrading personal insult.", "coarse": true}

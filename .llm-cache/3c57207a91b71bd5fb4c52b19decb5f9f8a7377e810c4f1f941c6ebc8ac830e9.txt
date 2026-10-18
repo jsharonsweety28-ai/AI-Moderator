@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This expresses enthusiastic praise for an update using mild profanity for emphasis.", "coarse": true}

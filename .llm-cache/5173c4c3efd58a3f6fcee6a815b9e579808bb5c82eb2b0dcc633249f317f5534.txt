@@ -1,1 +1,0 @@
-{"score": 0.97, "category": "self_harm", "reason": "This tells the reader to consume a toxic chemical, which is encouragement to harm themselves.", "coarse": true, "target": "person"}

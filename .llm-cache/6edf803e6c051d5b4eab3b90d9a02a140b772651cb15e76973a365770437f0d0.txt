@@ -1,1 +1,0 @@
-{"score": 0.18, "category": "clean", "reason": "This states a preference about the design direction without attacking anyone personally.", "coarse": false, "target": "work"}

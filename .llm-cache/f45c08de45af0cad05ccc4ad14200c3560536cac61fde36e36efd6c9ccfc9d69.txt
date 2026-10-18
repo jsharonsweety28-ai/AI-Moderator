@@ -1,1 +1,0 @@
-{"score": 0.15, "category": "clean", "reason": "This is a brief dismissive remark with no clear target or attack.", "coarse": false}

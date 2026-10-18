@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "insult", "reason": "This calls the reader a personal name (idiot) targeting their intelligence.", "coarse": false}

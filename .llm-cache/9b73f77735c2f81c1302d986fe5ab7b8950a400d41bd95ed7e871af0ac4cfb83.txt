@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "You're describing someone else's behavior toward you, not attacking anyone yourself.", "coarse": false}

@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "self_harm", "reason": "this tells someone to drink a toxic substance, which could seriously harm or kill them", "coarse": true}

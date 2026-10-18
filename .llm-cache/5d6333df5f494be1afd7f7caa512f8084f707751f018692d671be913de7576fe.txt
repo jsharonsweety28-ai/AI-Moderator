@@ -1,1 +1,0 @@
-{"score": 0.02, "category": "clean", "reason": "This is a friendly congratulatory message praising someone's launch.", "coarse": false}

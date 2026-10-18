@@ -1,1 +1,0 @@
-{"score": 0.82, "category": "threat", "reason": "This implies a threat of real-world harm if the person posts certain content.", "coarse": false}

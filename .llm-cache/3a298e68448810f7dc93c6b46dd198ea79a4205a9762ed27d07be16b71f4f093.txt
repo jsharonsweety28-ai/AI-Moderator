@@ -1,1 +1,0 @@
-{"score": 0.75, "category": "harassment", "reason": "This attacks the person's appearance and tells them to delete a photo of themselves, which is hostile and demeaning.", "coarse": true, "target": "person"}

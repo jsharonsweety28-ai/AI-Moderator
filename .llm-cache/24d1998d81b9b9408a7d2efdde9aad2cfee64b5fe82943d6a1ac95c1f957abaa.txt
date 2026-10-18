@@ -1,1 +1,0 @@
-{"score": 0.10, "category": "clean", "reason": "This is a blunt negative opinion about something unspecified, with no personal attack.", "coarse": false}

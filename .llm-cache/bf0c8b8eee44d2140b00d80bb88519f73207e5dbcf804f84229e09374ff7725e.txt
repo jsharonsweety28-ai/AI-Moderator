@@ -1,1 +1,0 @@
-{"score": 0.35, "category": "insult", "reason": "This dismisses someone's effort as a waste of time, sharply criticizing their work.", "coarse": false, "target": "work"}

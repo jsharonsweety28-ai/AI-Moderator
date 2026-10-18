@@ -1,1 +1,0 @@
-{"score": 0.08, "category": "clean", "reason": "This is a mild self-critical remark with no target.", "coarse": false, "target": "none"}

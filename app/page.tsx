@@ -1,71 +1,51 @@
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { LiveRefresh } from "@/components/LiveRefresh";
 import { PostCard } from "@/components/PostCard";
-import { PostComposer } from "@/components/PostComposer";
 import { UserSwitcher } from "@/components/UserSwitcher";
 import { getFeed, getUsers } from "@/lib/feed";
-import { expireStaleReviews } from "@/lib/moderation/queue";
+import { expireStaleReviews } from "@/lib/reviews";
 import { getViewer } from "@/lib/viewer";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const viewer = await getViewer().catch(() => null);
+  // No background job: review deadlines are enforced whenever someone looks.
+  if (viewer) await expireStaleReviews().catch(() => {});
   const users = viewer ? ((await getUsers()) ?? []) : [];
-  const store = await cookies();
-  const shieldOff = viewer ? store.get(`shield_off_${viewer.id}`)?.value === "1" : false;
-  // On Vercel there is no per-minute sweep, so the feed itself enforces review
-  // deadlines — an author is told about a timeout the next time they look.
-  if (viewer) await expireStaleReviews().catch(() => 0);
-  const feed = viewer ? await getFeed(viewer.id, { shieldOff }) : null;
+  const feed = viewer ? await getFeed(viewer.id) : null;
 
   return (
-    <div className="mx-auto max-w-[680px] px-4 pb-24">
+    <div className="mx-auto max-w-[620px] px-4 pb-24">
       <LiveRefresh />
-      <header className="flex items-center justify-between py-5">
+      <header className="flex flex-wrap items-center justify-between gap-4 py-8">
         <div>
-          <h1 className="font-mono text-lg font-semibold tracking-tight text-moderator">redraft ¶</h1>
-          <p className="text-[13px] text-graphite italic">says what you could say instead</p>
+          <h1 className="text-2xl font-semibold tracking-tight">Redraft</h1>
+          <p className="text-sm text-muted">Rude replies get a better way to say it, not just a block.</p>
         </div>
-        <div className="flex items-center gap-4">
-          <Link href="/mod" className="font-mono text-xs text-graphite underline underline-offset-2 hover:text-ink">
-            moderator
-          </Link>
-          {viewer && users.length > 0 && <UserSwitcher users={users} currentId={viewer.id} />}
-        </div>
+        {viewer && users.length > 0 && <UserSwitcher users={users} currentId={viewer.id} />}
       </header>
 
-      {!viewer || feed === null ? (
-        <div className="rounded-lg border border-line bg-card px-5 py-6">
-          <p className="font-mono text-xs font-semibold tracking-wide text-moderator uppercase">Database not ready</p>
-          <p className="mt-2 text-[15px] leading-relaxed">
-            The Supabase schema hasn&apos;t been created yet (or there are no users).
-          </p>
-          <ol className="mt-3 list-decimal space-y-1.5 pl-5 font-mono text-xs leading-relaxed text-graphite">
-            <li>Open the Supabase dashboard → SQL Editor</li>
-            <li>
-              Paste and run <span className="text-ink">supabase/migrations/00001_init.sql</span>
-            </li>
-            <li>
-              Then run <span className="text-ink">npm run seed</span> and reload this page
-            </li>
-          </ol>
-        </div>
-      ) : feed.length === 0 ? (
-        <div className="rounded-lg border border-line bg-card px-5 py-6">
-          <p className="text-[15px] leading-relaxed">
-            No posts yet. Run <span className="font-mono text-[13px]">npm run seed</span> to bring in the cast.
+      {!viewer || !feed ? (
+        <div className="rounded-2xl border border-line bg-surface p-6">
+          <p className="font-semibold">The database isn&apos;t set up yet.</p>
+          <p className="mt-1 text-sm text-muted">
+            Run the files in <code>supabase/migrations</code> in the Supabase SQL editor, then <code>npm run seed</code>, and reload.
           </p>
         </div>
       ) : (
-        <main className="space-y-4">
-          <PostComposer />
+        <main className="space-y-5">
           {feed.map((post) => (
-            <PostCard key={post.id} post={post} viewerId={viewer.id} />
+            <PostCard key={post.id} post={post} />
           ))}
         </main>
       )}
+
+      <footer className="mt-10 text-center text-sm text-muted">
+        <Link href="/mod" className="underline-offset-4 hover:text-ink hover:underline">
+          Open the moderator queue
+        </Link>
+      </footer>
     </div>
   );
 }

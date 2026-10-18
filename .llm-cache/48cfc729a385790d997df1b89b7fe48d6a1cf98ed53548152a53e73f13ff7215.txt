@@ -1,1 +1,0 @@
-{"score":0.12,"category":"clean","reason":"this expresses mild disbelief and criticism of the work","coarse":false}

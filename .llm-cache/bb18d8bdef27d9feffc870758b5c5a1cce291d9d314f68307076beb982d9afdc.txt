@@ -1,1 +1,0 @@
-{"score": 0.15, "category": "clean", "reason": "This is straightforward feedback about the product's design.", "coarse": false, "target": "work"}

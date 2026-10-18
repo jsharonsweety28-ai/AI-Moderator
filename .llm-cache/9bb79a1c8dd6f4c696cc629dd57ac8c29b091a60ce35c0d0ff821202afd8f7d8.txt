@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "threat", "reason": "This threatens another person with physical harm and suggests knowledge of their private location, which is intimidation.", "coarse": true}

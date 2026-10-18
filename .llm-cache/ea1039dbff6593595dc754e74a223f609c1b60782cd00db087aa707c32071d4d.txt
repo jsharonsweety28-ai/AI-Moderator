@@ -1,1 +1,0 @@
-{"score": 0.97, "category": "harassment", "reason": "This threatens to share private images of someone who did not consent, which is sexual extortion.", "coarse": false, "target": "person"}

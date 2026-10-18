@@ -1,1 +1,0 @@
-{"score": 0.55, "category": "insult", "reason": "This mocks and expresses contempt toward a person for being proud of their work, which feels dismissive of them as an individual.", "coarse": false, "target": "person"}

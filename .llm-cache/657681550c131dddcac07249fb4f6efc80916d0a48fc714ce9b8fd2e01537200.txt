@@ -1,1 +1,0 @@
-{"score": 0.85, "category": "harassment", "reason": "This calls another person pathetic and tells them to delete their account, which is a degrading personal attack and a push to drive them off the platform.", "coarse": true, "target": "person"}

@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "Disagrees with a conclusion based on data, no personal attack."}

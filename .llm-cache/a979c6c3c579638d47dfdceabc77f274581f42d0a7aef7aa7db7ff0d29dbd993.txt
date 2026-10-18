@@ -1,1 +1,0 @@
-{"score": 0.55, "category": "insult", "reason": "This calls the recipient pathetic and says everyone is tired of them, which is dismissive contempt aimed at a person.", "coarse": false, "target": "person"}

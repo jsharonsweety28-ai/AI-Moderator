@@ -1,1 +1,0 @@
-{"score": 0.10, "category": "clean", "reason": "Playful frustration about a spoiled finale, with no insult or harm directed at a person.", "coarse": false, "target": "none"}

@@ -1,1 +1,0 @@
-{"score": 0.97, "category": "self_harm", "reason": "This tells another person to kill themselves and says no one would care.", "coarse": true, "target": "person"}

@@ -1,1 +1,0 @@
-{"score": 0.15, "category": "clean", "reason": "This is a mild, vague expression of secondhand embarrassment with no target.", "coarse": false}

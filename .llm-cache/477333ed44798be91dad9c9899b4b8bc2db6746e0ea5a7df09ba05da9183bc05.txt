@@ -1,1 +1,0 @@
-{"score": 0.20, "category": "insult", "reason": "This is dismissive shorthand mocking another player as a loser, but it doesn't target a specific person or use slurs.", "coarse": false}

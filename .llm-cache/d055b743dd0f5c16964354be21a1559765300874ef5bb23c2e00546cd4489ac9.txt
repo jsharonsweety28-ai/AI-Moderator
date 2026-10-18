@@ -1,1 +1,0 @@
-{"score": 0.22, "category": "clean", "reason": "This criticizes the design of an onboarding flow without attacking a person.", "coarse": false}

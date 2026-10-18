@@ -1,1 +1,0 @@
-{"score": 0.72, "category": "harassment", "reason": "This insults the person as worthless and tells them to leave the platform.", "coarse": true, "target": "person"}

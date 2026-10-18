@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "insult", "reason": "This calls someone 'braindead' in a dismissive, mocking way.", "coarse": false}

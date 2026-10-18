@@ -1,1 +1,0 @@
-{"score": 0.30, "category": "clean", "reason": "Expresses skepticism about a project's likelihood of success without targeting the person directly.", "coarse": false, "target": "work"}

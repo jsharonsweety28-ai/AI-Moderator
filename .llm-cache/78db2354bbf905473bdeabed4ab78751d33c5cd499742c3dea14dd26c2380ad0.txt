@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "self_harm", "reason": "This tells someone to poison themselves with bleach, which is a life-threatening act.", "coarse": false}

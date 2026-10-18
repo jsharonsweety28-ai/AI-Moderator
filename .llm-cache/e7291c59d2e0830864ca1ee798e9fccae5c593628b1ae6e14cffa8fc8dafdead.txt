@@ -1,1 +1,0 @@
-{"score": 0.90, "category": "harassment", "reason": "This threatens to share private photos of someone unless they comply with a demand, which is sexual coercion and blackmail.", "coarse": false, "target": "person"}

@@ -1,1 +1,0 @@
-{"score": 0.72, "category": "insult", "reason": "Personal insult calling someone a fraud and saying everything they produce is worthless.", "coarse": false}

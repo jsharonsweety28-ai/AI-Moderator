@@ -1,1 +1,0 @@
-{"score": 0.90, "category": "threat", "reason": "This is a threatening statement warning of physical confrontation if the person is seen at a meetup.", "coarse": false, "target": "person"}

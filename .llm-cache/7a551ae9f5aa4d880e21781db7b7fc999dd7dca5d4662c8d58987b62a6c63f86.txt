@@ -1,1 +1,0 @@
-{"score": 0.18, "category": "clean", "reason": "Expresses personal frustration about a service experience without attacking anyone.", "coarse": false, "target": "work"}

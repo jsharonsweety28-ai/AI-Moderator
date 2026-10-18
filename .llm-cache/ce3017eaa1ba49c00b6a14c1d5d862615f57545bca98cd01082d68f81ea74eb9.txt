@@ -1,1 +1,0 @@
-{"score": 0.30, "reason": "Uses internet slang typically deployed to mock or dismiss someone, expressing contempt without a clear personal target.", "category": "insult", "coarse": false}

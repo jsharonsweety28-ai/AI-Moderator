@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This is a self-deprecating remark about the speaker's own forgetfulness with no harm toward anyone.", "coarse": false, "target": "none"}

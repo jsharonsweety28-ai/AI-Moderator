@@ -1,1 +1,0 @@
-{"score": 0.10, "category": "clean", "reason": "Positive compliment directed at another person.", "coarse": false}

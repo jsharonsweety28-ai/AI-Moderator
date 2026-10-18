@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "insult", "reason": "This calls the other person a clown as a dismissal, which is a personal insult.", "coarse": true, "target": "person"}

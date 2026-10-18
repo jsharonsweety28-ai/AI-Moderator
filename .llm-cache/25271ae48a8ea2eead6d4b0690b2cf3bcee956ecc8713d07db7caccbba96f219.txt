@@ -1,1 +1,0 @@
-{"score": 0.72, "category": "harassment", "reason": "This calls someone pathetic and worthless and tells them to leave the platform, which is a degrading personal attack.", "coarse": true}

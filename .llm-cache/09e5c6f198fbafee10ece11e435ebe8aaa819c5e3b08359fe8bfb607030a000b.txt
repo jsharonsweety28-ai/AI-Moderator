@@ -1,1 +1,0 @@
-{"score":0.54,"category":"insult","reason":"te llama payaso y afirma que no tienes idea de lo que hablas","coarse":false,"target":"person"}

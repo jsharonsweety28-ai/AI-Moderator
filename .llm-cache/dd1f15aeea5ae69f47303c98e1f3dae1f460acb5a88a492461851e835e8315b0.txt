@@ -1,1 +1,0 @@
-{"score": 0.20, "category": "insult", "reason": "Dismisses the person as mediocre, a mild personal jab with no profanity.", "coarse": false, "target": "person"}

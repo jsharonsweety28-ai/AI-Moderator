@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "threat", "reason": "This threatens a specific person with implied violence by claiming to know where she lives and warning her to watch herself.", "coarse": false, "target": "person"}

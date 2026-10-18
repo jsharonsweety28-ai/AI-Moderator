@@ -1,1 +1,0 @@
-{"score": 0.75, "category": "threat", "reason": "This is an intimidation threat aimed at another user, warning of consequences if they continue posting.", "coarse": false}

@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This is a straightforward critique of a recipe with a helpful suggestion for adjustment.", "coarse": false, "target": "work"}

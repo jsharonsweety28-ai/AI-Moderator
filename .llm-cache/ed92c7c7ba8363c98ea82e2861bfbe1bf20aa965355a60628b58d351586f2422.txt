@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "threat", "reason": "This is a conditional threat promising arson against another person if they speak again.", "coarse": false, "target": "person"}

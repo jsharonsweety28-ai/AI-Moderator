@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "insult", "reason": "This mocks the other person's intelligence and maturity by comparing them to a young child.", "coarse": false}

@@ -1,1 +1,0 @@
-{"score": 0.85, "category": "threat", "reason": "This threatens unspecified physical confrontation if the person attends an event.", "coarse": true, "target": "person"}

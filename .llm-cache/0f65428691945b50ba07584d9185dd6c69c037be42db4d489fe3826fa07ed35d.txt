@@ -1,1 +1,0 @@
-{"score": 0.10, "category": "clean", "reason": "Disagrees with a conclusion based on data, which is a normal critical remark.", "coarse": false}

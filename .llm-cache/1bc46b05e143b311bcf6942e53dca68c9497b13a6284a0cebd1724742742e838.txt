@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This is a simple question to another person.", "coarse": false, "target": "none"}

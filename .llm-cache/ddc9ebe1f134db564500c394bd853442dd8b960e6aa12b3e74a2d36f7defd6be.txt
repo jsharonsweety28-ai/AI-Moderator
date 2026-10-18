@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This is a blunt expression of dissatisfaction with the app itself, not an attack on a person.", "coarse": false}

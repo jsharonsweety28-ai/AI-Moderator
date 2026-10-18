@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "Casual agreement and amusement with no target or harmful content.", "coarse": false}

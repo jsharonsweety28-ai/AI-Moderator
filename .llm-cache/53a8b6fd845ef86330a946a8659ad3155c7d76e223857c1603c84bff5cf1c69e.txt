@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "threat", "reason": "This is a direct threat of physical harm toward a specific person.", "coarse": true}

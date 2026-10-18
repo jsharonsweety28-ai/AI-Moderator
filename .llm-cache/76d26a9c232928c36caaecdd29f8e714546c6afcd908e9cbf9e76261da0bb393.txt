@@ -1,1 +1,0 @@
-{"score": 0.55, "category": "insult", "reason": "This calls the other person talentless and tells them to quit, which is a personal attack on their abilities and worth.", "coarse": true, "target": "person"}

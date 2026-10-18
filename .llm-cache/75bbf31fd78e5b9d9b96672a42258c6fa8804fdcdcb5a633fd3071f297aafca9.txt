@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This is a positive comment praising the update, with profanity used only as emphasis.", "coarse": true, "target": "none"}

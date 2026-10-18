@@ -1,1 +1,0 @@
-{"score": 0.65, "category": "threat", "reason": "This threatens violence against another person over a trivial grievance; the playful emoji doesn't remove the threat itself.", "coarse": false}

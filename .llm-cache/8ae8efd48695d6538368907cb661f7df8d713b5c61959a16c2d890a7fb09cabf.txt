@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "threat", "reason": "This is a veiled threat of physical harm directed at another person over their posting activity.", "coarse": true, "target": "person"}

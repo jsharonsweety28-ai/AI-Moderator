@@ -1,165 +1,52 @@
 import Link from "next/link";
 import { LiveRefresh } from "@/components/LiveRefresh";
-import { ReviewCard, type ReviewCardData } from "@/components/ReviewCard";
-import { getNightlyInsights } from "@/lib/moderation/insights";
-import { getModQueue, type QueueItem } from "@/lib/moderation/queue";
+import { ReviewCard } from "@/components/ReviewCard";
+import { getQueue } from "@/lib/reviews";
 import { getViewer } from "@/lib/viewer";
 
 export const dynamic = "force-dynamic";
 
-function toCard(item: QueueItem, lane: ReviewCardData["lane"]): ReviewCardData {
-  return {
-    reviewId: item.review.id,
-    lane,
-    reportCount: item.reportCount,
-    body: item.comment.body,
-    authorName: item.comment.author.display_name,
-    authorHandle: item.comment.author.handle,
-    postAuthor: item.post?.author.display_name ?? null,
-    postExcerpt: item.post ? item.post.body.slice(0, 60) + (item.post.body.length > 60 ? "…" : "") : null,
-    score: item.comment.score,
-    category: item.comment.category,
-    reason: item.comment.reason,
-    createdAt: item.review.created_at,
-    expiresInMs: item.expiresInMs,
-  };
-}
-
 export default async function ModPage() {
   const viewer = await getViewer().catch(() => null);
-  const queue = viewer ? await getModQueue() : null;
-  const insights = viewer ? await getNightlyInsights() : null;
+  const queue = viewer ? await getQueue() : null;
+  const asked = queue?.filter((i) => !i.flagged) ?? [];
+  const flagged = queue?.filter((i) => i.flagged) ?? [];
 
   return (
-    <div className="mx-auto max-w-[680px] px-4 pb-24">
+    <div className="mx-auto max-w-[620px] px-4 pb-24">
       <LiveRefresh />
-      <header className="flex items-baseline justify-between py-5">
-        <div>
-          <h1 className="font-mono text-lg font-semibold tracking-tight text-moderator">
-            <Link href="/">redraft ¶</Link> <span className="text-ink">/ moderator</span>
-          </h1>
-          <p className="text-[13px] text-graphite italic">humans handle the unclear, not the worst</p>
-        </div>
-        {viewer && <span className="font-mono text-xs text-graphite">reviewing as @{viewer.handle}</span>}
+      <header className="py-8">
+        <Link href="/" className="text-sm text-muted underline-offset-4 hover:text-ink hover:underline">
+          Back to the feed
+        </Link>
+        <h1 className="mt-3 text-2xl font-semibold tracking-tight">Moderator queue</h1>
+        <p className="text-sm text-muted">Comments waiting for a person to decide. Nothing here is posted until you say so.</p>
       </header>
 
-      {!viewer || queue === null ? (
-        <div className="rounded-lg border border-line bg-card px-5 py-6">
-          <p className="text-[15px] leading-relaxed">
-            Database not ready — run the migration and <span className="font-mono text-[13px]">npm run seed</span> first.
-          </p>
-        </div>
+      {queue === null ? (
+        <p className="rounded-2xl border border-line bg-surface p-6 text-sm text-muted">The queue couldn&apos;t load. Check the database connection and reload.</p>
       ) : (
         <main className="space-y-8">
           <section>
-            <h2 className="font-mono text-xs font-semibold tracking-wide text-ink uppercase">
-              Review queue · {queue.main.length}
-            </h2>
-            <p className="mt-1 font-mono text-[11px] text-graphite">
-              The ambiguous middle. Each times out in minutes — on timeout the comment stays hidden and the author is told.
-            </p>
+            <h2 className="text-base font-semibold">Asked for a review ({asked.length})</h2>
+            <p className="text-sm text-muted">The writer thinks the check got it wrong. Each one stays unposted if nobody answers in 10 minutes.</p>
             <div className="mt-3 space-y-3">
-              {queue.main.length === 0 ? (
-                <p className="rounded-md border border-line bg-card px-4 py-4 font-mono text-xs text-graphite">
-                  Nothing waiting. The middle is quiet.
-                </p>
+              {asked.length === 0 ? (
+                <p className="rounded-2xl border border-dashed border-line p-5 text-sm text-muted">No one is waiting.</p>
               ) : (
-                queue.main.map((item) => <ReviewCard key={item.review.id} item={toCard(item, "main")} />)
+                asked.map((item) => <ReviewCard key={item.review.id} item={item} />)
               )}
             </div>
           </section>
 
           <section>
-            <h2 className="font-mono text-xs font-semibold tracking-wide text-ink uppercase">
-              Reported · {queue.reports.length}
-            </h2>
-            <p className="mt-1 font-mono text-[11px] text-graphite">
-              Comments people flagged after they were up. They stay up while they wait — a report alone never
-              hides anything. Hide takes it down with a reason the commenter can read.
-            </p>
+            <h2 className="text-base font-semibold">Sent automatically ({flagged.length})</h2>
+            <p className="text-sm text-muted">Threats, hate and other severe comments. The writer was told why; these are kept as evidence.</p>
             <div className="mt-3 space-y-3">
-              {queue.reports.length === 0 ? (
-                <p className="rounded-md border border-line bg-card px-4 py-4 font-mono text-xs text-graphite">
-                  No open reports.
-                </p>
+              {flagged.length === 0 ? (
+                <p className="rounded-2xl border border-dashed border-line p-5 text-sm text-muted">Nothing severe right now.</p>
               ) : (
-                queue.reports.map((item) => <ReviewCard key={item.review.id} item={toCard(item, "report")} />)
-              )}
-            </div>
-          </section>
-
-          <section>
-            <h2 className="font-mono text-xs font-semibold tracking-wide text-danger uppercase">
-              Severe tier — threats &amp; appeals · {queue.appeals.length}
-            </h2>
-            <p className="mt-1 font-mono text-[11px] text-graphite">
-              Auto-blocked, never fast-tracked. Threats caught during a pile-on are forwarded here as evidence;
-              author appeals crawl in the slow lane. No deadline.
-            </p>
-            <div className="mt-3 space-y-3">
-              {queue.appeals.length === 0 ? (
-                <p className="rounded-md border border-line bg-card px-4 py-4 font-mono text-xs text-graphite">
-                  No appeals.
-                </p>
-              ) : (
-                queue.appeals.map((item) => <ReviewCard key={item.review.id} item={toCard(item, "appeal")} />)
-              )}
-            </div>
-          </section>
-
-          <section>
-            <h2 className="font-mono text-xs font-semibold tracking-wide text-ink uppercase">Pattern watch</h2>
-            <p className="mt-1 font-mono text-[11px] text-graphite">
-              The nightly queries — counting and grouping, no model. Freeze-out: many cold one-directional ties
-              converging on one person as their posting declines. Co-occurrence: accounts that keep appearing
-              together. Log-only — nothing is enforced from here.
-            </p>
-            <div className="mt-3 space-y-3">
-              {!insights ? (
-                <p className="rounded-md border border-line bg-card px-4 py-4 font-mono text-xs text-graphite">
-                  Couldn&apos;t compute patterns right now.
-                </p>
-              ) : (
-                <>
-                  {insights.freezeouts.length === 0 ? (
-                    <p className="rounded-md border border-line bg-card px-4 py-4 font-mono text-xs text-graphite">
-                      No freeze-out patterns.
-                    </p>
-                  ) : (
-                    insights.freezeouts.map((f) => (
-                      <div key={f.handle} className="rounded-md border border-moderator/25 bg-moderator-wash px-4 py-3">
-                        <p className="font-mono text-[11px] font-semibold tracking-wide text-moderator uppercase">
-                          Freeze-out pattern
-                        </p>
-                        <p className="mt-1.5 text-[15px] leading-relaxed">
-                          <span className="font-semibold">{f.displayName}</span>
-                          <span className="ml-1.5 font-mono text-[11px] text-graphite">@{f.handle}</span>
-                        </p>
-                        <p className="mt-1 font-mono text-xs leading-relaxed text-moderator">
-                          {f.coldCount} one-directional, mildly negative relationships point at them (
-                          {f.coldFrom.map((h) => `@${h}`).join(", ")}). Posting rate: {f.priorPosts} posts two
-                          weeks ago, {f.recentPosts} since. No single message crossed a line — the pattern did.
-                        </p>
-                      </div>
-                    ))
-                  )}
-                  {insights.cooccurrence.length === 0 ? (
-                    <p className="rounded-md border border-line bg-card px-4 py-4 font-mono text-xs text-graphite">
-                      No coordinated commenting patterns.
-                    </p>
-                  ) : (
-                    <div className="rounded-md border border-line bg-card px-4 py-3">
-                      <p className="font-mono text-[11px] font-semibold tracking-wide text-ink uppercase">
-                        Accounts that keep appearing together
-                      </p>
-                      {insights.cooccurrence.map((p) => (
-                        <p key={`${p.a}|${p.b}`} className="mt-1.5 font-mono text-xs text-graphite">
-                          @{p.a} + @{p.b} — together on {p.sharedPosts} posts
-                        </p>
-                      ))}
-                    </div>
-                  )}
-                </>
+                flagged.map((item) => <ReviewCard key={item.review.id} item={item} />)
               )}
             </div>
           </section>

@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "insult", "reason": "This compares the designer's competence unfavorably to a child, mocking their professional ability.", "coarse": false, "target": "person"}

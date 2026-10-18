@@ -1,1 +1,0 @@
-{"score": 0.10, "category": "clean", "reason": "This is a blunt but ordinary expression of dissatisfaction with the app.", "coarse": false, "target": "work"}

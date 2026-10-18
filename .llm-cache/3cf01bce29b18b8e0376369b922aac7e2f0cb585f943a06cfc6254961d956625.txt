@@ -1,1 +1,0 @@
-{"rewrite": "Your writing is hard to follow."}

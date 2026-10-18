@@ -1,1 +1,0 @@
-{"score": 0.10, "category": "clean", "reason": "This expresses frustration or disappointment about something that took two weeks, without targeting or attacking any person.", "coarse": false}

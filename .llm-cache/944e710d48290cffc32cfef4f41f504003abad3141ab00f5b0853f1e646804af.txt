@@ -1,1 +1,0 @@
-{"score": 0.55, "category": "insult", "reason": "Calls the person a bitch, a degrading personal insult.", "coarse": true, "target": "person"}

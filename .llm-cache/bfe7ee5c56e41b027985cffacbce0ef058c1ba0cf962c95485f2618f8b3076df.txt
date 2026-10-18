@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "insult", "reason": "This dismisses and mocks the recipient, telling them their contribution is unwanted.", "coarse": false, "target": "person"}

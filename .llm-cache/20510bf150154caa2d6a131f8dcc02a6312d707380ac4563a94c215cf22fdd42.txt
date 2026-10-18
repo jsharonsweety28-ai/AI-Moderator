@@ -1,1 +1,0 @@
-{"score": 0.92, "category": "threat", "reason": "This is a veiled threat warning someone that posting again could lead to harm.", "coarse": true, "target": "person"}

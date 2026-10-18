@@ -1,1 +1,0 @@
-{"score": 0.15, "category": "clean", "reason": "Criticizes the logic of an argument, not the person making it.", "coarse": false}

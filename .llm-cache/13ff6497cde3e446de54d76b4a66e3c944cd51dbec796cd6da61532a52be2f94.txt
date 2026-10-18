@@ -1,1 +1,0 @@
-{"score": 0.88, "category": "threat", "reason": "this hints that the person could be harmed for what they post, which reads as intimidation", "coarse": false, "target": "person"}

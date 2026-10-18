@@ -1,1 +1,0 @@
-{"score": 0.52, "category": "insult", "reason": "This mocks the person publicly by dismissing their relevance and claiming nobody likes them.", "coarse": false, "target": "person"}

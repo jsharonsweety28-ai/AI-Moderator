@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "insult", "reason": "This calls a person embarrassing about their education and implies they wasted their parents' money, which is a personal attack on their worth and competence.", "coarse": false}

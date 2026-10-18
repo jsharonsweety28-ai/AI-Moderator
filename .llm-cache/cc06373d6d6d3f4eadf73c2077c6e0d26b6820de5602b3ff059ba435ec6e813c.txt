@@ -1,1 +1,0 @@
-{"score": 0.62, "category": "insult", "reason": "This calls another person talentless and tells them to quit, which is a personal and dismissive attack.", "coarse": true}

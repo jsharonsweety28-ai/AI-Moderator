@@ -1,1 +1,0 @@
-{"decision": "collapsed", "reason": "This thread isn't reciprocal and we don't have enough history to soften how this lands."}

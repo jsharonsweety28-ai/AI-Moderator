@@ -1,1 +1,0 @@
-{"score": 0.62, "category": "threat", "reason": "This promises to 'destroy' someone in a competitive context, which reads as violent hyperbole tied to a stated benign trigger (a competition), but remains an aggressive threat aimed at a person.", "coarse": true, "target": "person"}

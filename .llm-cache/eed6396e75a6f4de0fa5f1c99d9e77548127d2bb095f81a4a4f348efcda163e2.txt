@@ -1,1 +1,0 @@
-{"score": 0.65, "category": "harassment", "reason": "This insults the person's appearance and tells them to delete a photo of themselves, which is a degrading personal attack.", "coarse": false, "target": "person"}

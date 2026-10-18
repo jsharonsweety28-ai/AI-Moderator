@@ -1,1 +1,0 @@
-{"score":0.90,"category":"threat","reason":"This threatens Maya's safety by implying knowledge of where she lives and warning her to be careful.","coarse":true}

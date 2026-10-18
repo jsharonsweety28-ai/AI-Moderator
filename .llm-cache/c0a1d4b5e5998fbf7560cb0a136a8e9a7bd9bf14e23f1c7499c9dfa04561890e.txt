@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "Simple expression of personal dislike with no target.", "coarse": false, "target": "none"}

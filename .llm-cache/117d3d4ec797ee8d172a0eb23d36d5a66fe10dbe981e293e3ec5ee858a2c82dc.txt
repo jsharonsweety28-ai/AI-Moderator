@@ -1,1 +1,0 @@
-{"score": 0.30, "category": "insult", "reason": "This is competitive trash-talking aimed at a person, expressing a threat to defeat them.", "coarse": false}

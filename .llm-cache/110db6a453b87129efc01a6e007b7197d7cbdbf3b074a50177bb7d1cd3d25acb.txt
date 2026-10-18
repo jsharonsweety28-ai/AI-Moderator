@@ -1,1 +1,0 @@
-{"score": 0.15, "category": "clean", "reason": "This dismisses someone showing off a minor achievement without insulting them personally.", "coarse": false, "target": "person"}

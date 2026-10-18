@@ -1,1 +1,0 @@
-{"score": 0.35, "category": "clean", "reason": "This expresses blunt personal dislike of someone's work, not an attack on the person themselves.", "coarse": false, "target": "work"}

@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "insult", "reason": "This mocks another person's intelligence with a sneering remark.", "coarse": false, "target": "person"}

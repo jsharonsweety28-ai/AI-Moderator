@@ -1,1 +1,0 @@
-{"score": 0.30, "category": "insult", "reason": "Tells the creator to delete the app, expressing dismissive disapproval of their work.", "coarse": false, "target": "work"}

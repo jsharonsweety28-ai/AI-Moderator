@@ -1,1 +1,0 @@
-{"score": 0.10, "category": "clean", "reason": "This expresses disagreement about a conclusion based on data, which is ordinary critical discussion.", "coarse": false}

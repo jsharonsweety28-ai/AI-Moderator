@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This is a positive comment expressing enthusiasm about the work.", "coarse": false, "target": "none"}

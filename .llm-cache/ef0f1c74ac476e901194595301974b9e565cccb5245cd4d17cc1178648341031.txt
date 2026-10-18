@@ -1,1 +1,0 @@
-{"score": 0.00, "category": "clean", "reason": "This is a straightforward, positive message congratulating someone on a launch.", "coarse": false}

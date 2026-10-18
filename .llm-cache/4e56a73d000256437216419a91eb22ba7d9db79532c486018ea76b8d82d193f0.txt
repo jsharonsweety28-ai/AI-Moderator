@@ -1,1 +1,0 @@
-{"score": 0.90, "category": "threat", "reason": "This is a conditional threat of retaliation aimed at another person, promising consequences if they post again.", "coarse": false, "target": "person"}

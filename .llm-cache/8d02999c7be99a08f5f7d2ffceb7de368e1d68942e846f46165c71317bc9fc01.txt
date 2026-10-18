@@ -1,1 +1,0 @@
-{"score": 0.02, "category": "clean", "reason": "Amused agreement with no target or harm.", "coarse": false, "target": "none"}

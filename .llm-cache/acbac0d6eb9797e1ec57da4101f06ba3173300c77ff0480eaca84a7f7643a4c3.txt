@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "insult", "reason": "This expresses personal dislike toward another person.", "coarse": false, "target": "person"}

@@ -1,1 +1,0 @@
-{"score": 0.10, "category": "clean", "reason": "This is a straightforward disagreement with a claim, not an attack on a person.", "coarse": false, "target": "work"}

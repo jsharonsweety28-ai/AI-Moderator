@@ -1,1 +1,0 @@
-{"score": 0.30, "category": "clean", "reason": "Expresses a negative opinion comparing two versions of something, no personal attack.", "coarse": false}

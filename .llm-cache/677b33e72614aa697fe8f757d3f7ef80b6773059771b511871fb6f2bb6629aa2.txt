@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "Polite disagreement with a softened opener, no attack or target.", "coarse": false, "target": "none"}

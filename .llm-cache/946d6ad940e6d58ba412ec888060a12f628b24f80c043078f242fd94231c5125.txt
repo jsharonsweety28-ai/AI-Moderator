@@ -1,1 +1,0 @@
-{"score": 0.48, "category": "insult", "reason": "This mocks the person's intelligence with repeated name-calling ('braindead take') aimed at a specific person.", "coarse": false}

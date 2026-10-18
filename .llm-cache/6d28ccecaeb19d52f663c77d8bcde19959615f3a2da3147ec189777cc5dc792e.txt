@@ -1,1 +1,0 @@
-{"score":0.18,"category":"clean","reason":"The comment criticizes the design and compares it with the older version without attacking a person.","coarse":false}

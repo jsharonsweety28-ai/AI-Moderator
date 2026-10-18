@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "harassment", "reason": "This dismisses and demeans the recipient, telling them their contribution is unwanted and they should be quiet.", "coarse": false}

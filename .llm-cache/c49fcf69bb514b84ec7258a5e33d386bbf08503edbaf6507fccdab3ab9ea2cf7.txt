@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This is a blunt suggestion to remove an app, not an attack on a person.", "coarse": false}

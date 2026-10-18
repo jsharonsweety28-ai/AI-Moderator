@@ -1,1 +1,0 @@
-{"score": 0.35, "category": "insult", "reason": "This compares the author's design ability unfavorably to a child, which is a personal jab at their competence.", "coarse": false, "target": "work"}

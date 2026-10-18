@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "insult", "reason": "This calls the other person a clown as a dismissive insult directed at them personally.", "coarse": false}

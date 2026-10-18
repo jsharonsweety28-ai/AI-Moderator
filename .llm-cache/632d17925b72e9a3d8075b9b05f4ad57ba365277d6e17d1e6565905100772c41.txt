@@ -1,1 +1,0 @@
-{"score": 0.78, "category": "threat", "reason": "This implies the recipient could be harmed for what they post, which reads as a veiled threat of violence.", "coarse": false}

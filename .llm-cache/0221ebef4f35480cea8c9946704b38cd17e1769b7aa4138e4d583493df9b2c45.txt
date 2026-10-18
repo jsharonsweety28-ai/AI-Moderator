@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "insult", "reason": "This mocks someone by implying they are embarrassing themselves, dismissing their contribution as a spectacle.", "coarse": false}

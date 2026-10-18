@@ -1,1 +1,0 @@
-{"score": 0.25, "category": "insult", "reason": "This is brief dismissive trash-talk aimed at another person, mocking them as a loser and telling them their post should be deleted.", "coarse": false}

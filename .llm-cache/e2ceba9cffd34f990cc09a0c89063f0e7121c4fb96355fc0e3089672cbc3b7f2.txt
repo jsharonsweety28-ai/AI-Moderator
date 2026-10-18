@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "threat", "reason": "This threatens physical violence against another person if they speak again.", "coarse": true, "target": "person"}

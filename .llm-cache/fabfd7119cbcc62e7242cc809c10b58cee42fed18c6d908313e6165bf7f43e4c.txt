@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "Expresion de entusiasmo y agrado hacia un contenido.", "coarse": false}

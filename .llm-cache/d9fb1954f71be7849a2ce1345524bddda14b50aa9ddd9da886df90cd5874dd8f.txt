@@ -1,1 +1,0 @@
-{"score": 0.62, "category": "insult", "reason": "Insults the person's appearance and intelligence.", "coarse": true, "target": "person"}

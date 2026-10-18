@@ -1,1 +1,0 @@
-{"score": 0.65, "category": "insult", "reason": "Calls another person both ugly and stupid, degrading insults about appearance and intelligence.", "coarse": false, "target": "person"}

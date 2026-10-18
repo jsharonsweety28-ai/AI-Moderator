@@ -1,1 +1,0 @@
-{"score": 0.90, "category": "threat", "reason": "This is a threat of violence with no stated benign trigger to soften it.", "coarse": true}

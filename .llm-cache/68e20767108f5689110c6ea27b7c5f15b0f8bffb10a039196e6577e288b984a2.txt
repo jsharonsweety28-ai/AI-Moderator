@@ -1,1 +1,0 @@
-{"score": 0.78, "category": "threat", "reason": "This implicitly threatens consequences for what the recipient posts, suggesting something bad will happen to them.", "coarse": false}

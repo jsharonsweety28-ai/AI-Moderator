@@ -1,1 +1,0 @@
-{"score": 0.50, "category": "harassment", "reason": "this expresses personal disgust toward another person", "coarse": false}

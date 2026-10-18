@@ -1,1 +1,0 @@
-{"score": 0.20, "category": "clean", "reason": "Expresses a negative opinion about a redesign, not about a person.", "coarse": false, "target": "work"}

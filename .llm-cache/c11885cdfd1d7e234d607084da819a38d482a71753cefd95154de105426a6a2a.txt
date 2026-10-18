@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "harassment", "reason": "This organizes others to flood and harass a specific person until they leave the platform.", "coarse": false}

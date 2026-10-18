@@ -1,1 +1,0 @@
-{"score": 0.55, "category": "insult", "reason": "This tells the person who built the thing to feel ashamed of themselves.", "coarse": false, "target": "person"}

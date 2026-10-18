@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This is an expression of confusion or frustration without targeting anyone.", "coarse": true}

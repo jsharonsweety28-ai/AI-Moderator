@@ -1,1 +1,0 @@
-{"score": 0.05, "category": "clean", "reason": "This expresses a personal opinion politely with a softened phrasing.", "coarse": false}

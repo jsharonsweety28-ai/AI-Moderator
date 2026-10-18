@@ -1,1 +1,0 @@
-{"score": 0.95, "category": "threat", "reason": "This is a direct threat of violence — arson against someone — with a conditional trigger demanding they stay silent.", "coarse": true, "target": "person"}

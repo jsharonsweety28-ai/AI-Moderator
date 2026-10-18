@@ -1,1 +1,0 @@
-{"score": 0.45, "category": "insult", "reason": "calls someone a loser and tells them to get a life, which is dismissive and insulting toward them as a person.", "coarse": false}
