@@ -1,18 +1,14 @@
 "use client";
 
-// Browser Supabase client, publishable key only. Used solely for Realtime
-// broadcast subscriptions — all data flows through our server routes.
+// Browser Supabase client with the public (anon) key, used only for Realtime
+// broadcast subscriptions — all data flows through our server routes. The URL and
+// key are handed over by the server at render time, so nothing has to be baked in
+// at build time.
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 let cached: SupabaseClient | null = null;
 
-export function browserDb(): SupabaseClient {
-  if (!cached) {
-    cached = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      { auth: { persistSession: false, autoRefreshToken: false } }
-    );
-  }
+export function browserDb(url: string, anonKey: string): SupabaseClient {
+  cached ??= createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false } });
   return cached;
 }

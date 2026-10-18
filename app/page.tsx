@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { realtimeConfig } from "@/lib/db/server";
 import { LiveRefresh } from "@/components/LiveRefresh";
 import { PostCard } from "@/components/PostCard";
 import { UserSwitcher } from "@/components/UserSwitcher";
@@ -17,7 +18,7 @@ export default async function Home() {
 
   return (
     <div className="mx-auto max-w-[620px] px-4 pb-24">
-      <LiveRefresh />
+      <LiveRefresh config={realtimeConfig()} />
       <header className="flex flex-wrap items-center justify-between gap-4 py-8">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Redraft</h1>

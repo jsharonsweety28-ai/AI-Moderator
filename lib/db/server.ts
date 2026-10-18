@@ -16,3 +16,11 @@ export function adminDb(): SupabaseClient {
   }
   return cached;
 }
+
+/** The public Realtime settings the browser needs, read at request time (not build time).
+ *  The anon key is the publishable key; null when unset, and live refresh just stays off. */
+export function realtimeConfig(): { url: string; anonKey: string } | null {
+  const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  return url && anonKey ? { url, anonKey } : null;
+}

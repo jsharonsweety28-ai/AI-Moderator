@@ -6,11 +6,15 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { browserDb } from "@/lib/db/client";
 
-export function LiveRefresh() {
+export function LiveRefresh({ config }: { config: { url: string; anonKey: string } | null }) {
   const router = useRouter();
 
+  const url = config?.url;
+  const anonKey = config?.anonKey;
+
   useEffect(() => {
-    const sb = browserDb();
+    if (!url || !anonKey) return; // no Realtime settings: the page still works, it just doesn't auto-refresh
+    const sb = browserDb(url, anonKey);
     const channel = sb
       .channel("mod")
       .on("broadcast", { event: "queue" }, () => router.refresh())
@@ -18,7 +22,7 @@ export function LiveRefresh() {
     return () => {
       void sb.removeChannel(channel);
     };
-  }, [router]);
+  }, [url, anonKey, router]);
 
   return null;
 }

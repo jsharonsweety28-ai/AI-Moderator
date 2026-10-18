@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { realtimeConfig } from "@/lib/db/server";
 import { LiveRefresh } from "@/components/LiveRefresh";
 import { ReviewCard } from "@/components/ReviewCard";
 import { getQueue } from "@/lib/reviews";
@@ -14,7 +15,7 @@ export default async function ModPage() {
 
   return (
     <div className="mx-auto max-w-[620px] px-4 pb-24">
-      <LiveRefresh />
+      <LiveRefresh config={realtimeConfig()} />
       <header className="py-8">
         <Link href="/" className="text-sm text-muted underline-offset-4 hover:text-ink hover:underline">
           Back to the feed
