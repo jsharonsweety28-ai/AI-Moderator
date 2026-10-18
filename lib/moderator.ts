@@ -34,6 +34,7 @@ export function moderator(): Moderator {
     call: withLogging(createNemotron()),
     cleanMax: THRESHOLDS.CLEAN_MAX,
     severeMin: THRESHOLDS.EXTREME_MIN,
+    unsureMin: THRESHOLDS.UNSURE_MIN,
   });
   return instance;
 }

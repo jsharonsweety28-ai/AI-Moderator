@@ -40,7 +40,11 @@ export function ReviewCard({ item }: { item: QueueItem }) {
           <p className="text-sm">
             <span className="font-semibold">{item.comment.author.display_name}</span>
             <span className="ml-2 text-muted">
-              {item.flagged ? "sent automatically" : `asked for review ${relTime(item.review.created_at)} ago`}
+              {item.flagged
+                ? "sent automatically"
+                : item.comment.category === "unsure"
+                  ? `sent ${relTime(item.review.created_at)} ago because the AI wasn't sure what it means`
+                  : `asked for review ${relTime(item.review.created_at)} ago`}
             </span>
           </p>
           {item.post && (

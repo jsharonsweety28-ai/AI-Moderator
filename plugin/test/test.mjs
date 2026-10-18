@@ -4,13 +4,14 @@ import http from 'node:http';
 import { inspectDraft, createModerator, createModeratorService, moderatorHandler, parseJson, redact } from '../src/index.mjs';
 
 // A stub model: scores come from a lookup table; rewrites/meaning checks from simple rules.
-function stubModel({ scores, rewrite = 'I strongly disagree with this.', faithful = true, chatty = false }) {
+function stubModel({ scores, rewrite = 'I strongly disagree with this.', faithful = true, chatty = false, unsure = [] }) {
   return async (messages) => {
     const system = messages[0].content, user = messages[1].content;
     if (system.includes('content-safety scorer')) {
       const text = user.split('\n\n(')[0];
       const s = scores[text] ?? 0.05;
-      const json = JSON.stringify({ score: s, category: s >= 0.85 ? 'threat' : s >= 0.4 ? 'insult' : 'clean', reason: s >= 0.85 ? 'This threatens someone. Threats make people afraid. Say what upset you instead.' : 'Plain reason.' });
+      const unsureText = (unsure || []).includes(text);
+      const json = JSON.stringify({ meaning: unsureText ? 'not sure' : '', sure: !unsureText, score: s, category: s >= 0.85 ? 'threat' : s >= 0.4 ? 'insult' : 'clean', reason: s >= 0.85 ? 'This threatens someone. Threats make people afraid. Say what upset you instead.' : 'Plain reason.' });
       return chatty ? `Sure! Here is my verdict: ${json} Hope that helps.` : json;
     }
     if (system.includes('proposed civil rewrite')) return JSON.stringify({ faithful });
@@ -56,6 +57,18 @@ assert.equal((await optimistic.moderate('I will kill him')).verdict, 'severe');
 // --- chatty model replies still parse ---
 const chatty = createModerator({ call: stubModel({ scores: { 'you are an idiot': 0.55 }, chatty: true }) });
 assert.equal((await chatty.moderate('you are an idiot')).verdict, 'rude');
+
+// --- unsure about a non-English comment → a person decides (not posted, no guess) ---
+const unsureModel = createModerator({ call: stubModel({ scores: { 'enna idhu da': 0.1, 'poda dei': 0.95 }, unsure: ['enna idhu da', 'poda dei'] }) });
+r = await unsureModel.moderate('enna idhu da');
+assert.equal(r.verdict, 'unsure'); assert.equal(r.allowed, false); assert.equal(r.suggestion, null);
+assert.equal((await unsureModel.moderate('poda dei')).verdict, 'severe', 'severe still wins over unsure');
+const englishUnsure = createModerator({ call: async (m) => m[0].content.includes('content-safety') ? '{"meaning":"","sure":false,"score":0.1,"category":"clean","reason":"ok"}' : '{}' });
+assert.equal((await englishUnsure.moderate('nice post')).verdict, 'clean', 'English is never unsure');
+const borderline = createModerator({ call: async (m) => m[0].content.includes('content-safety') ? '{"meaning":"why do you even get this job","sure":true,"score":0.35,"category":"clean","reason":"ok"}' : '{}' });
+assert.equal((await borderline.moderate('unakku ellam edhuku da indha velai')).verdict, 'unsure', 'non-English near the line goes to a person');
+const englishBorderline = createModerator({ call: async (m) => m[0].content.includes('content-safety') ? '{"meaning":"","sure":true,"score":0.35,"category":"clean","reason":"ok"}' : '{}' });
+assert.equal((await englishBorderline.moderate('you clearly did not test this')).verdict, 'clean', 'English near the line still posts');
 
 // --- fail closed: model down → not allowed ---
 const offline = createModerator({ call: async () => { throw new Error('down'); } });

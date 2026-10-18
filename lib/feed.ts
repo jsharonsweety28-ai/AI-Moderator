@@ -61,7 +61,8 @@ export async function getFeed(viewerId: string): Promise<PostView[] | null> {
     if (!reviewed.has(c.id) || (c.score ?? 0) >= THRESHOLDS.EXTREME_MIN) return null;
     const open = reviewed.get(c.id) === null;
     // While waiting, the writer sees the status; the original reason stays on the row for the moderator.
-    return { ...base, state: open ? "waiting" : "not_posted", reason: open ? REVIEW_REASONS.WAITING : (c.reason ?? REVIEW_REASONS.REJECTED) };
+    const waitingReason = c.category === "unsure" ? (c.reason ?? REVIEW_REASONS.WAITING) : REVIEW_REASONS.WAITING;
+    return { ...base, state: open ? "waiting" : "not_posted", reason: open ? waitingReason : (c.reason ?? REVIEW_REASONS.REJECTED) };
   };
 
   return (posts as Array<PostRow & { author: UserRow }>).map((p) => ({

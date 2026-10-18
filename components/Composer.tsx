@@ -38,6 +38,11 @@ export function Composer({ postId }: { postId: string }) {
         router.refresh();
       } else if (out.status === "rude") {
         setAnswer({ kind: "rude", commentId: out.commentId, original: body, reason: out.reason, suggestion: out.suggestion });
+      } else if (out.status === "unsure") {
+        // It now waits for a person; the thread shows it with that status.
+        setText("");
+        setAnswer({ kind: "none" });
+        router.refresh();
       } else if (out.status === "severe") {
         setAnswer({ kind: "severe", commentId: out.commentId, reason: out.reason });
       } else {

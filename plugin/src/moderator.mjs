@@ -5,12 +5,15 @@
 //   rude        → not allowed. Plain reason + a suggested rewrite (already checked).
 //   severe      → not allowed. An explanation of what is wrong and why; the writer
 //                 rewrites it themselves (no AI rewrite of threats or hate).
+//   unsure      → not allowed yet. A non-English comment the model can't read with
+//                 confidence goes to a person instead of being guessed at.
 //   unavailable → not allowed. The check could not run, so nothing is posted (fail closed).
 import { createNemotron, parseJson } from './nemotron.mjs';
 import { sameScript } from './lang.mjs';
 import { MEANING_CHECK_PROMPT, REWRITE_PROMPT, SCORING_PROMPT } from './prompts.mjs';
 
 const UNAVAILABLE = "We couldn't check this comment right now, so it hasn't been posted. Please try again in a moment.";
+const UNSURE = "We couldn't be sure what this means, so a person will check it. It will be posted if they approve it.";
 
 // Masks emails, 12-digit IDs and phone numbers before text leaves the server.
 export function redact(text) {
@@ -46,15 +49,17 @@ export function inspectDraft(input) {
  * options.apiKey / baseUrl / model / timeoutMs   passed to the default Nemotron client.
  * options.cleanMax   scores below this post (default 0.40).
  * options.severeMin  scores at or above this are severe (default 0.85).
+ * options.unsureMin  a NON-English comment scoring from here up to cleanMax is too close to
+ *                    call, so a person decides instead of the model's guess (default 0.25).
  */
-export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, ...nemotron } = {}) {
+export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, unsureMin = 0.25, ...nemotron } = {}) {
   const ask = call || createNemotron(nemotron);
 
   async function json(system, user, maxTokens) {
     return parseJson(await ask([{ role: 'system', content: system }, { role: 'user', content: user }], maxTokens));
   }
 
-  // The model's verdict on the words alone: { score, category, reason }.
+  // The model's verdict on the words alone: { score, category, reason, meaning, unsure }.
   async function score(text) {
     let out = await json(SCORING_PROMPT, text, 500);
     // The reason is shown to the writer, so it must be in their language. One retry.
@@ -69,6 +74,10 @@ export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, ...nem
       score: Math.min(1, Math.max(0, out.score)),
       category: typeof out.category === 'string' ? out.category : 'other',
       reason: typeof out.reason === 'string' && out.reason.trim() ? out.reason.trim() : 'This comment was flagged by the safety check.',
+      // The model's English reading of a non-English comment ('' for English).
+      meaning: typeof out.meaning === 'string' ? out.meaning.trim() : '',
+      // Only non-English comments can be unsure; an English one is always read as written.
+      unsure: out.sure === false && typeof out.meaning === 'string' && out.meaning.trim() !== '',
     };
   }
 
@@ -126,9 +135,13 @@ export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, ...nem
       scored = { score: severeMin, category: 'threat', reason: 'This reads as a threat to hurt someone, whatever you meant by it. It can\'t be posted. If you\'re angry, say what upset you instead.' };
     }
 
-    const base = { score: scored.score, category: scored.category, reason: scored.reason };
-    if (scored.score < cleanMax) return { allowed: true, verdict: 'clean', ...base, suggestion: null };
+    const base = { score: scored.score, category: scored.category, reason: scored.reason, meaning: scored.meaning ?? '' };
     if (scored.score >= severeMin) return { allowed: false, verdict: 'severe', ...base, suggestion: null };
+    // Can't read it with confidence: don't guess either way — a person decides. Models rarely
+    // admit doubt, so a non-English comment just under the line counts as unsure too.
+    const borderline = scored.meaning !== '' && scored.score >= unsureMin && scored.score < cleanMax;
+    if (scored.unsure || borderline) return { allowed: false, verdict: 'unsure', ...base, reason: UNSURE, suggestion: null };
+    if (scored.score < cleanMax) return { allowed: true, verdict: 'clean', ...base, suggestion: null };
     // Rude: a failed suggestion never discards the verdict.
     const suggestion = wantSuggestion ? await suggest(original, scored.reason, replyingTo).catch(() => null) : null;
     return { allowed: false, verdict: 'rude', ...base, suggestion };

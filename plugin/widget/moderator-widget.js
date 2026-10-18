@@ -8,6 +8,7 @@
     clean: 'Looks good — ready to post',
     rude: "Not posted yet — here's another way to say it",
     severe: "Can't be posted",
+    unsure: 'A person will check this',
     unavailable: "Couldn't check right now",
   };
 

@@ -1,4 +1,4 @@
-export type Verdict = "clean" | "rude" | "severe" | "unavailable";
+export type Verdict = "clean" | "rude" | "severe" | "unsure" | "unavailable";
 
 export type ModerationResult = {
   /** Post the comment only when this is true. */
@@ -8,6 +8,8 @@ export type ModerationResult = {
   category: string | null;
   /** Plain-language reason shown to the writer. For severe: what is wrong, why, and what to say instead. */
   reason: string;
+  /** The model's plain-English reading of a non-English comment ("" for English). */
+  meaning?: string;
   /** A checked, safe rewrite for rude comments; null otherwise. */
   suggestion: string | null;
 };
@@ -23,11 +25,12 @@ export type ModeratorOptions = {
   timeoutMs?: number;
   cleanMax?: number;
   severeMin?: number;
+  unsureMin?: number;
 };
 
 export type Moderator = {
   moderate(text: string, options?: { replyingTo?: string; suggest?: boolean }): Promise<ModerationResult>;
-  score(text: string): Promise<{ score: number; category: string; reason: string }>;
+  score(text: string): Promise<{ score: number; category: string; reason: string; meaning: string; unsure: boolean }>;
   inspectDraft(text: string): { hint: "threat" | "check" | null; message: string | null };
 };
 

@@ -10,6 +10,7 @@ export type SubmitOutcome =
   | { status: "posted"; commentId: string }
   | { status: "rude"; commentId: string; reason: string; suggestion: string | null }
   | { status: "severe"; commentId: string; reason: string }
+  | { status: "unsure"; commentId: string; reason: string }
   | { status: "unavailable"; reason: string };
 
 export async function submitComment(authorId: string, postId: string, text: string): Promise<SubmitOutcome> {
@@ -27,7 +28,8 @@ export async function submitComment(authorId: string, postId: string, text: stri
       author_id: authorId,
       body: text.trim(),
       score: result.score,
-      category: result.category,
+      // "unsure" marks a comment the model couldn't read with confidence (shown to moderators).
+      category: result.verdict === "unsure" ? "unsure" : result.category,
       visibility: result.allowed ? "public" : "blocked",
       reason: result.allowed ? null : result.reason,
       rewrite_offered: result.suggestion !== null,
@@ -42,11 +44,13 @@ export async function submitComment(authorId: string, postId: string, text: stri
 
   // Severe comments go to the moderators automatically, so a real threat never
   // depends on the writer — or the target — doing anything.
-  if (result.verdict === "severe") await db.from("reviews").insert({ comment_id: commentId });
+  // Comments the model couldn't read with confidence go to a person too, instead of a guess.
+  if (result.verdict === "severe" || result.verdict === "unsure") await db.from("reviews").insert({ comment_id: commentId });
   await broadcastMod();
 
   if (result.verdict === "clean") return { status: "posted", commentId };
   if (result.verdict === "severe") return { status: "severe", commentId, reason: result.reason };
+  if (result.verdict === "unsure") return { status: "unsure", commentId, reason: result.reason };
   return { status: "rude", commentId, reason: result.reason, suggestion: result.suggestion };
 }
 

@@ -35,7 +35,7 @@ Design invariants. Do not break them for convenience; flag it if a requested cha
 5. **Nothing is refused silently.** Every unposted comment has a plain-language reason the writer can read.
 6. **Fail closed.** If the model errors, times out or returns junk, nothing is posted and the writer is told. Never default to posting.
 7. **The suggestion is offered, never forced.** `[Use this]`, `[Edit]` and `[Ask a moderator]` are always present for a rude comment. If no good suggestion passes the checks, show the reason without one.
-8. **Humans handle the unclear.** A writer who thinks the check is wrong can ask a moderator; an unanswered request times out and the comment stays unposted.
+8. **Humans handle the unclear.** A writer who thinks the check is wrong can ask a moderator; an unanswered request times out and the comment stays unposted. If the model can't read a non-English comment with confidence, it does not guess — the comment goes to a moderator.
 
 ---
 
@@ -56,6 +56,10 @@ Nemotron scores the words alone → { score, category, reason }
    │
    ├── severe (≥ 0.85)        → not posted. Explanation of what's wrong and why;
    │                              writer edits it themselves. Sent to moderators automatically.
+   │
+   ├── unsure (non-English)   → not posted yet; a moderator decides. When the model can't read a
+   │                              non-English comment with confidence, or it scores just under the
+   │                              line (0.25–0.40), we don't guess. (Indian languages, Tanglish etc.)
    │
    └── model unavailable      → not posted. "Couldn't check right now, try again."
 ```

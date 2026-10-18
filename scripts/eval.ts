@@ -10,9 +10,9 @@ import { EVAL_SET, type EvalCase } from "./eval-set";
 
 const CONCURRENCY = 2;
 // The eval set's tier names, mapped from the plugin's verdicts.
-const TIER: Record<ModerationResult["verdict"], string> = { clean: "clean", rude: "rude", severe: "extreme", unavailable: "error" };
+const TIER: Record<ModerationResult["verdict"], string> = { clean: "clean", rude: "rude", severe: "extreme", unsure: "person", unavailable: "error" };
 
-const moderator = createModerator({ cleanMax: THRESHOLDS.CLEAN_MAX, severeMin: THRESHOLDS.EXTREME_MIN });
+const moderator = createModerator({ cleanMax: THRESHOLDS.CLEAN_MAX, severeMin: THRESHOLDS.EXTREME_MIN, unsureMin: THRESHOLDS.UNSURE_MIN });
 
 async function pool<T, R>(items: T[], n: number, fn: (item: T) => Promise<R>): Promise<R[]> {
   const out: R[] = new Array(items.length);
@@ -36,7 +36,10 @@ async function main() {
     let r = await moderator.moderate(c.text, { suggest: false });
     if (r.verdict === "unavailable") r = await moderator.moderate(c.text, { suggest: false }); // one retry
     const got = TIER[r.verdict];
-    return { ...c, got, score: r.score, reason: r.reason, pass: (c.accept as string[]).includes(got) };
+    // Sending an unreadable comment to a person is a safe outcome — except for severe ones,
+    // which must always be caught.
+    const deferredSafely = got === "person" && !(c.accept as string[]).includes("extreme");
+    return { ...c, got, score: r.score, reason: r.reason, pass: (c.accept as string[]).includes(got) || deferredSafely };
   });
 
   console.log("\nid   | expected        | got     | score | pass");
@@ -55,6 +58,7 @@ async function main() {
   const pass = rows.filter((r) => r.pass).length;
   console.log(`\nAccuracy: ${((100 * pass) / rows.length).toFixed(1)}% (${pass}/${rows.length})`);
   console.log(`Severe caught: ${severe.filter((r) => r.got === "extreme").length}/${severe.length}`);
+  console.log(`Sent to a person (AI unsure): ${rows.filter((r) => r.got === "person").map((r) => r.id).join(", ") || "none"}`);
   console.log(`Errors (failed closed): ${rows.filter((r) => r.got === "error").length}`);
   console.log(`Wall time: ${((Date.now() - started) / 1000).toFixed(1)}s`);
 

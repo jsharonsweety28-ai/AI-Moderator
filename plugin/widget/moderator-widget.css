@@ -9,7 +9,7 @@
 .aim-actions{display:flex;justify-content:flex-end;margin-top:4px}
 .aim-result:not(:empty){margin-top:12px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.6;border:1px solid var(--aim-line)}
 .aim-result[data-verdict=clean]{background:var(--aim-ok-bg);color:var(--aim-ok);border-color:transparent}
-.aim-result[data-verdict=rude],.aim-result[data-verdict=unavailable]{background:var(--aim-warn-bg);color:var(--aim-warn);border-color:transparent}
+.aim-result[data-verdict=rude],.aim-result[data-verdict=unsure],.aim-result[data-verdict=unavailable]{background:var(--aim-warn-bg);color:var(--aim-warn);border-color:transparent}
 .aim-result[data-verdict=severe]{background:var(--aim-danger-bg);color:var(--aim-danger);border-color:transparent}
 .aim-result p{margin:6px 0 0}
 .aim-result blockquote{margin:10px 0 0;padding:8px 12px;border-left:3px solid currentColor;background:#ffffffaa;color:var(--aim-text);border-radius:6px}

@@ -6,6 +6,8 @@ export const THRESHOLDS = {
   CLEAN_MAX: 0.4,
   /** score >= EXTREME_MIN -> severe: not posted, explained, writer rewrites it themselves */
   EXTREME_MIN: 0.85,
+  /** non-English comments scoring UNSURE_MIN..CLEAN_MAX go to a person instead of a guess */
+  UNSURE_MIN: 0.25,
 } as const;
 
 export const REVIEW = {

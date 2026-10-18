@@ -29,8 +29,8 @@ export default async function ModPage() {
       ) : (
         <main className="space-y-8">
           <section>
-            <h2 className="text-base font-semibold">Asked for a review ({asked.length})</h2>
-            <p className="text-sm text-muted">The writer thinks the check got it wrong. Each one stays unposted if nobody answers in 10 minutes.</p>
+            <h2 className="text-base font-semibold">Needs a decision ({asked.length})</h2>
+            <p className="text-sm text-muted">The writer asked for a review, or the AI couldn&apos;t read the language with confidence. Each one stays unposted if nobody answers in 10 minutes.</p>
             <div className="mt-3 space-y-3">
               {asked.length === 0 ? (
                 <p className="rounded-2xl border border-dashed border-line p-5 text-sm text-muted">No one is waiting.</p>
