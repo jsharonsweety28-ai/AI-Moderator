@@ -25,3 +25,8 @@ export const REVIEW_REASONS = {
 } as const;
 
 export const MAX_COMMENT_CHARS = 2_000;
+
+/** The browser extension's API. Checks per client IP per minute — protects the model credits. */
+export const EXTENSION = {
+  CHECKS_PER_MINUTE: 20,
+} as const;

@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { realtimeConfig } from "@/lib/db/server";
 import { LiveRefresh } from "@/components/LiveRefresh";
+import { ExtReviewCard } from "@/components/ExtReviewCard";
 import { ReviewCard } from "@/components/ReviewCard";
+import { getExtQueue } from "@/lib/extension";
 import { getQueue } from "@/lib/reviews";
 import { getViewer } from "@/lib/viewer";
 
@@ -12,6 +14,8 @@ export default async function ModPage() {
   const queue = viewer ? await getQueue() : null;
   const asked = queue?.filter((i) => !i.flagged) ?? [];
   const flagged = queue?.filter((i) => i.flagged) ?? [];
+  // Older databases may not have the extension table yet (migration 00005); the page still works.
+  const extQueue = viewer ? ((await getExtQueue().catch(() => null)) ?? []) : [];
 
   return (
     <div className="mx-auto max-w-[620px] px-4 pb-24">
@@ -48,6 +52,20 @@ export default async function ModPage() {
                 <p className="rounded-2xl border border-dashed border-line p-5 text-sm text-muted">Nothing severe right now.</p>
               ) : (
                 flagged.map((item) => <ReviewCard key={item.review.id} item={item} />)
+              )}
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-base font-semibold">From the browser extension ({extQueue.length})</h2>
+            <p className="text-sm text-muted">
+              Comments people tried to post on YouTube or Reddit. The extension keeps the Post button blocked until you decide.
+            </p>
+            <div className="mt-3 space-y-3">
+              {extQueue.length === 0 ? (
+                <p className="rounded-2xl border border-dashed border-line p-5 text-sm text-muted">Nothing from the extension.</p>
+              ) : (
+                extQueue.map((item) => <ExtReviewCard key={item.id} item={item} />)
               )}
             </div>
           </section>

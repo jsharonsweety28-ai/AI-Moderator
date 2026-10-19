@@ -10,6 +10,7 @@ Built for the Nebius x NVIDIA Global AI Hackathon (deadline 2026-10-30). Two par
 
 - **`plugin/`** — the product. Zero-dependency Node package: the moderator engine, an HTTP handler (Express or plain Node), and a drop-in widget. This is what another site installs.
 - **The Next.js app** — a small demo host for the plugin: a feed with two people and a moderator queue.
+- **`extension/`** — a browser extension (Chrome MV3) for YouTube and Reddit. It catches the site's Post click, asks our server (`/api/ext/check`), and only lets the post through when it's allowed. Rude/severe/unsure/unavailable all stay blocked; unsure comments wait for a moderator on `/mod`. It never holds the model key, and if it can't read a known comment box it blocks rather than letting it through.
 
 Keep it simple. The previous, larger design (audience decisions, friend banter, pile-on detection, a shield, freeze-out detection) was deliberately removed on 2026-10-18 as unnecessary complexity. Do not bring those back unless asked.
 

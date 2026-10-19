@@ -39,7 +39,7 @@ export function ReviewCard({ item }: { item: QueueItem }) {
         <div className="min-w-0 flex-1">
           <p className="text-sm">
             <span className="font-semibold">{item.comment.author.display_name}</span>
-            <span className="ml-2 text-muted">
+            <span className="ml-2 text-muted" suppressHydrationWarning>
               {item.flagged
                 ? "sent automatically"
                 : item.comment.category === "unsure"

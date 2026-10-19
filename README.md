@@ -7,7 +7,7 @@ Redraft is a drop-in comment moderator. When someone writes a rude comment, it d
 **Every AI decision runs on NVIDIA Nemotron 3 Ultra, served by Nebius Token Factory.**
 
 - **Hackathon:** Nebius x NVIDIA Global AI Hackathon 2026, *Best Apps and Agents* track
-- **Two parts:** [`plugin/`](plugin) is the product (engine + server handler + widget, zero dependencies), and the Next.js app is a small demo site that uses it, with a moderator queue
+- **Three parts, one engine:** [`plugin/`](plugin) is the drop-in moderator for websites (engine + server handler + widget, zero dependencies); [`extension/`](extension) is a browser extension that blocks the Post button on **YouTube and Reddit** until a comment is allowed; and the Next.js app is a demo site plus the moderator queue
 
 ## What the writer sees
 

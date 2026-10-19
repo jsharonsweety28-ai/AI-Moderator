@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "extension-bench",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["extension/test/serve.mjs"],
+      "port": 8792
     }
   ]
 }

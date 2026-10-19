@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Redraft — think before you post",
+  "version": "0.1.0",
+  "description": "Checks your YouTube and Reddit comments before they post. Rude ones get a better way to say it; harmful ones are explained and blocked.",
+  "permissions": ["storage"],
+  "host_permissions": ["http://localhost:3000/*", "https://*.vercel.app/*"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*",
+        "https://www.reddit.com/*",
+        "https://old.reddit.com/*",
+        "https://sh.reddit.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "options.html",
+  "action": { "default_title": "Redraft settings", "default_popup": "options.html" }
+}
