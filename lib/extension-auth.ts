@@ -6,9 +6,10 @@ import { EXTENSION } from "@/lib/config";
 
 const hits = new Map<string, number[]>();
 
-export function guardExtension(req: Request, { count = true } = {}): NextResponse | null {
+// requireKey: false for the demo site's own routes (same origin, signed-in user).
+export function guardExtension(req: Request, { count = true, requireKey = true } = {}): NextResponse | null {
   const key = process.env.EXTENSION_KEY;
-  if (key && req.headers.get("x-extension-key") !== key) {
+  if (requireKey && key && req.headers.get("x-extension-key") !== key) {
     return NextResponse.json({ error: "This extension isn't set up for this server." }, { status: 401 });
   }
   if (!count) return null;

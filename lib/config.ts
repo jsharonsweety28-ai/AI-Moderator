@@ -26,6 +26,16 @@ export const REVIEW_REASONS = {
 
 export const MAX_COMMENT_CHARS = 2_000;
 
+/** The live typing check (demo site composer; the extension has the same numbers). */
+export const LIVE = {
+  /** check only after the writer pauses this long */
+  PAUSE_MS: 1500,
+  /** skip drafts shorter than this */
+  MIN_CHARS: 4,
+  /** at most this many live checks a minute per page; after that, only the Post check runs */
+  PER_MINUTE: 6,
+} as const;
+
 /** The browser extension's API. Checks per client IP per minute — protects the model credits. */
 export const EXTENSION = {
   CHECKS_PER_MINUTE: 20,
