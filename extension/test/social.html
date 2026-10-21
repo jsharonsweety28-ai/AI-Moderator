@@ -22,6 +22,11 @@
   </section>
 
   <section>
+    <h2>Instagram, newer layout (no form; rich-text box; "Post" div[role=button]; Enter posts)</h2>
+    <div id="ig2"><div class="wrap"><div class="inner"><div contenteditable="true" role="textbox" aria-label="Add a comment…"></div></div></div><div><div role="button" tabindex="0">Post</div></div></div>
+  </section>
+
+  <section>
     <h2>WhatsApp Web (footer + contenteditable textbox + Send button; Enter sends)</h2>
     <footer id="wa"><div contenteditable="true" role="textbox" aria-label="Type a message"></div><button aria-label="Send">➤</button></footer>
   </section>
@@ -39,6 +44,12 @@
   document.querySelector('#ig [role=button]').addEventListener('click', igPost);
   igText.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); igPost(); } });
   document.getElementById('ig').addEventListener('submit', (e) => e.preventDefault());
+
+  // Fake newer Instagram: no form; the Post "button" and Enter both post.
+  const ig2Box = document.querySelector('#ig2 [contenteditable]');
+  const ig2Post = () => { if (ig2Box.innerText.trim()) { posted('instagram (new layout)', ig2Box.innerText.trim()); ig2Box.textContent = ''; } };
+  document.querySelector('#ig2 [role=button]').addEventListener('click', ig2Post);
+  ig2Box.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ig2Post(); } });
 
   // Fake WhatsApp: Send and Enter both send.
   const waBox = document.querySelector('#wa [contenteditable]');

@@ -19,7 +19,9 @@
   const SITES = {
     youtube: { composer: 'ytd-commentbox, ytm-comment-simplebox-renderer', enterSends: false },
     reddit: { composer: 'shreddit-composer, comment-composer-host, faceplate-form, form.usertext', enterSends: false },
-    instagram: { composer: 'form:has(textarea), form:has([contenteditable="true"])', enterSends: true },
+    // Instagram changes its markup often, so besides the known shapes it also finds the
+    // box by proximity: the nearest area holding both a text box and a "Post" button.
+    instagram: { composer: 'form:has(textarea), form:has([contenteditable="true"])', enterSends: true, byProximity: true },
     whatsapp: { composer: 'footer:has([contenteditable="true"])', enterSends: true, optIn: 'whatsapp', private: true },
   };
   const detectSite = (h) =>
@@ -63,8 +65,31 @@
     return null;
   }
 
+  // Composers found by proximity count as this site's own (so an unreadable one blocks).
+  const foundByProximity = new WeakSet();
+  const isSiteComposer = (el) => el.matches(SITE_COMPOSER) || foundByProximity.has(el);
+
   function composerIn(path) {
-    return asElements(path).find((el) => el.matches(COMPOSER)) || null;
+    const known = asElements(path).find((el) => el.matches(COMPOSER));
+    if (known || !CONF.byProximity) return known || null;
+    const near = composerNear(path);
+    if (near) foundByProximity.add(near);
+    return near;
+  }
+
+  // From the text box being typed in (or the Post button being clicked), walk outwards to
+  // the smallest area that contains both a text box and a submit-labelled button.
+  function composerNear(path) {
+    const start = asElements(path).find(
+      (el) => el.matches(EDITOR) || (el.matches('button, [role="button"], input[type="submit"]') && SUBMIT_LABEL.test(labelOf(el)))
+    );
+    let el = start ? start.parentElement || start.getRootNode()?.host : null;
+    for (let depth = 0; el && depth < 12; depth++) {
+      if (el === document.body) return null;
+      if (editorIn(el) && buttonIn(el)) return el;
+      el = el.parentElement || el.getRootNode()?.host || null;
+    }
+    return null;
   }
 
   // querySelector that also looks inside shadow roots (Reddit uses web components) —
@@ -530,7 +555,7 @@
       if (!enabled) return;
       const path = e.composedPath();
       const composer = composerIn(path);
-      if (!composer || !composer.matches(SITE_COMPOSER)) return;
+      if (!composer || !isSiteComposer(composer)) return;
       const editor = editorIn(composer);
       if (editor && path.includes(editor)) attach(composer, editor);
     },
@@ -559,7 +584,7 @@
     if (!composer) return;
     const editor = editorIn(composer);
     if (!editor) {
-      if (!composer.matches(SITE_COMPOSER)) return; // some other form on the page: not ours
+      if (!isSiteComposer(composer)) return; // some other form on the page: not ours
       event.preventDefault();
       event.stopImmediatePropagation();
       return show('danger', `<div class="title">Redraft couldn't read this comment box</div><div class="reason">So it can't check the comment, and won't let it post unchecked. The site may have changed its layout — update the extension, or turn it off to post.</div><div class="buttons"><button class="close" data-act="close">Close</button></div>`);
