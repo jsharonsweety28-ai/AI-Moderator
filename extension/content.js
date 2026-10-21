@@ -174,13 +174,18 @@
   const pill = (label) => (label ? `<div class="label">${esc(label)}</div>` : '');
 
   let pollTimer = null;
+  let cardKey = null; // the live-checked text the open card is about (null for Post-time cards)
+  const dismissed = new Set(); // live-checked texts whose card the writer closed: don't pop it again
   function hide() {
+    if (cardKey) dismissed.add(cardKey);
+    cardKey = null;
     card.hidden = true;
     backdrop.hidden = true;
     clearTimeout(pollTimer);
   }
   // Every card opens centred over a dimmed page. Closing it never posts anything.
-  function show(tone, html, actions = {}) {
+  // focus: false when the card opens by itself mid-typing — the cursor stays in the comment box.
+  function show(tone, html, actions = {}, { focus = true } = {}) {
     const mode = 'modal';
     if (!host.isConnected) document.documentElement.appendChild(host);
     clearTimeout(pollTimer);
@@ -191,7 +196,7 @@
     card.hidden = false;
     for (const [name, fn] of Object.entries(actions)) card.querySelector(`[data-act="${name}"]`)?.addEventListener('click', fn);
     card.querySelector('[data-act="close"]')?.addEventListener('click', hide);
-    card.querySelector('button.primary, button')?.focus();
+    if (focus) card.querySelector('button.primary, button')?.focus();
   }
   backdrop.addEventListener('click', hide);
   shadow.addEventListener('keydown', (e) => e.key === 'Escape' && hide());
@@ -339,11 +344,36 @@
     badge.hidden = false;
   }
 
+  // While the draft is flagged, the site's Post button looks and acts disabled.
+  let blockedButton = null;
+  function setButtonBlocked(composer, on) {
+    if (blockedButton && (!on || !blockedButton.isConnected)) {
+      blockedButton.style.removeProperty('opacity');
+      blockedButton.style.removeProperty('cursor');
+      blockedButton.removeAttribute('aria-disabled');
+      if (blockedButton.dataset.redraftTitle !== undefined) blockedButton.title = blockedButton.dataset.redraftTitle;
+      delete blockedButton.dataset.redraftTitle;
+      delete blockedButton.dataset.redraftBlocked;
+      blockedButton = null;
+    }
+    if (!on) return;
+    const b = buttonIn(composer);
+    if (!b) return;
+    if (!b.dataset.redraftBlocked) b.dataset.redraftTitle = b.title || '';
+    b.dataset.redraftBlocked = '1';
+    b.style.setProperty('opacity', '0.4', 'important');
+    b.style.setProperty('cursor', 'not-allowed', 'important');
+    b.setAttribute('aria-disabled', 'true');
+    b.title = 'Redraft: rewrite this comment before posting';
+    blockedButton = b;
+  }
+
   function setBadge(state) {
     badge.dataset.state = state;
     badge.textContent = state === 'clean' ? '✓' : state === 'rude' || state === 'severe' || state === 'unsure' ? '!' : 'R';
     badge.title = BADGE_TEXT[state] || BADGE_TEXT.idle;
     badge.setAttribute('aria-label', `Redraft: ${badge.title}`);
+    if (live) setButtonBlocked(live.composer, state === 'rude' || state === 'severe' || state === 'unsure');
     placeBadge();
   }
 
@@ -392,71 +422,79 @@
     const verdict = r && r.verdict && r.verdict !== 'unavailable' ? r.verdict : null;
     if (verdict) liveCache.set(key, { verdict, reason: r.reason, label: r.label });
     // The writer kept typing while we checked: show the result only if it still applies.
-    if (live && normalize(textOf(live.editor)) === key) setBadge(verdict || 'unavailable');
-    else scheduleLive();
+    if (live && normalize(textOf(live.editor)) === key) {
+      setBadge(verdict || 'unavailable');
+      // A problem: open the card by itself (once per text), without taking the cursor.
+      if ((verdict === 'rude' || verdict === 'severe' || verdict === 'unsure') && !dismissed.has(key) && card.hidden) {
+        openFromBadge({ auto: true });
+      }
+    } else scheduleLive();
   }
 
-  async function openFromBadge() {
+  // Opens the card for the current draft — by itself after a live check flags a problem
+  // (auto), or when the writer clicks the badge.
+  async function openFromBadge({ auto = false } = {}) {
     if (!live) return;
     const { editor } = live;
     const text = textOf(editor);
-    const result = liveCache.get(normalize(text));
+    const key = normalize(text);
+    const result = liveCache.get(key);
+    const opts = { focus: !auto };
+    const open = (tone, html, actions) => {
+      show(tone, html, actions, opts);
+      cardKey = key;
+    };
     const close = '<div class="buttons"><button class="close" data-act="close">Close</button></div>';
     if (!result) {
-      return show('', `<div class="title">Redraft</div><div class="reason">${esc(BADGE_TEXT[badge.dataset.state] || BADGE_TEXT.idle)}</div>${close}`);
+      return open('', `<div class="title">Redraft</div><div class="reason">${esc(BADGE_TEXT[badge.dataset.state] || BADGE_TEXT.idle)}</div>${close}`);
     }
-    if (result.verdict === 'clean') return show('ok', `<div class="title">Looks good</div>${close}`);
+    if (result.verdict === 'clean') return open('ok', `<div class="title">Looks good</div>${close}`);
     if (result.verdict === 'severe') {
-      return show(
+      return open(
         'danger',
         `${pill(result.label)}<div class="title">This can't be posted</div><div class="reason">${esc(result.reason)}</div><div class="buttons"><button class="primary" data-act="edit">Edit my comment</button></div>`,
         { edit: () => editIt(editor) }
       );
     }
     if (result.verdict === 'unsure') {
-      return show('warn', `<div class="title">Not sure how this reads</div><div class="reason">We can't read this one confidently. When you post, a moderator will check it first.</div>${close}`);
+      return open('warn', `<div class="title">Not sure how this reads</div><div class="reason">We can't read this one confidently. When you post, a moderator will check it first.</div>${close}`);
     }
-    // Rude: the suggestion is only made now, because the writer asked for it.
-    show(
-      'warn',
-      `${pill(result.label)}<div class="title">Could come across as rude</div><div class="reason">${esc(result.reason)}</div><div class="buttons"><button class="primary" data-act="suggest">Show a better way</button><button data-act="edit">Edit it myself</button></div>`,
-      {
+
+    // Rude: show the reason right away, and the better way to say it as soon as it's ready.
+    const head = `${pill(result.label)}<div class="title">Could come across as rude</div><div class="reason">${esc(result.reason)}</div>`;
+    open('warn', `${head}<div class="redraft"><div class="muted">Finding a better way to say it…</div></div><div class="buttons"><button data-act="edit">Edit it myself</button></div>`, {
+      edit: () => editIt(editor),
+    });
+    let s;
+    try {
+      s = await chrome.runtime.sendMessage({ type: 'suggest', text, replyingTo: replyingTo() });
+    } catch {
+      s = null;
+    }
+    // The writer moved on (kept typing, closed the card): drop the late answer.
+    if (textOf(editor) !== text || card.hidden || cardKey !== key) return;
+    if (!s || !s.suggestion) {
+      return open('warn', `${head}<div class="reason">Try saying how you feel about the video or post, not the person.</div><div class="buttons"><button class="primary" data-act="edit">Edit it myself</button></div>`, {
         edit: () => editIt(editor),
-        suggest: async () => {
-          show('warn', '<div class="title">Finding a better way to say it…</div>');
-          let s;
-          try {
-            s = await chrome.runtime.sendMessage({ type: 'suggest', text, replyingTo: replyingTo() });
-          } catch {
-            s = null;
-          }
-          if (textOf(editor) !== text) return hide();
-          if (!s || !s.suggestion) {
-            return show(
-              'warn',
-              `<div class="title">No good rewrite this time</div><div class="reason">Try saying how you feel about the video or post, not the person.</div><div class="buttons"><button class="primary" data-act="edit">Edit it myself</button></div>`,
-              { edit: () => editIt(editor) }
-            );
-          }
-          show(
-            'warn',
-            `<div class="title">A better way to say it</div><div class="redraft"><div class="before">${esc(text)}</div><div class="after"><span>${esc(s.suggestion)}</span></div></div><div class="buttons"><button class="primary" data-act="use">Use this</button><button data-act="edit">Edit it myself</button></div>`,
-            {
-              use: () => {
-                setText(editor, s.suggestion);
-                hide();
-                editor.focus();
-                scheduleLive();
-              },
-              edit: () => editIt(editor),
-            }
-          );
+      });
+    }
+    open(
+      'warn',
+      `${head}<div class="redraft"><div class="before">${esc(text)}</div><div class="after"><span>${esc(s.suggestion)}</span></div></div><div class="buttons"><button class="primary" data-act="use">Use this</button><button data-act="edit">Edit it myself</button></div>`,
+      {
+        use: () => {
+          setText(editor, s.suggestion);
+          cardKey = null; // not a dismissal — the text changed
+          hide();
+          editor.focus();
+          scheduleLive();
         },
+        edit: () => editIt(editor),
       }
     );
   }
 
-  badge.addEventListener('click', openFromBadge);
+  badge.addEventListener('click', () => openFromBadge());
 
   window.addEventListener(
     'focusin',
@@ -508,6 +546,20 @@
     check(composer, button || buttonIn(composer), editor, text);
   }
 
+  // Some sites act on mouse/pointer down rather than click: while the button is greyed out,
+  // those never reach the site either. (The click itself is caught by attempt() below.)
+  for (const type of ['pointerdown', 'mousedown', 'touchstart']) {
+    window.addEventListener(
+      type,
+      (e) => {
+        if (blockedButton && blockedButton.dataset.redraftBlocked && e.composedPath().includes(blockedButton)) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+        }
+      },
+      { capture: true, passive: false }
+    );
+  }
   window.addEventListener('click', (e) => attempt(e, e.composedPath()), true);
   window.addEventListener('submit', (e) => attempt(e, e.composedPath(), true), true);
   window.addEventListener(
