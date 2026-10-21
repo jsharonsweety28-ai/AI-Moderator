@@ -7,7 +7,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const FILES = { '/': ['fixtures.html', 'text/html'], '/content.js': ['../content.js', 'text/javascript'] };
+const FILES = {
+  '/': ['fixtures.html', 'text/html'],
+  '/social': ['social.html', 'text/html'],
+  '/content.js': ['../content.js', 'text/javascript'],
+};
 const API = process.env.REDRAFT_API || 'http://localhost:3000';
 const port = Number(process.env.PORT || 8792);
 

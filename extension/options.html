@@ -10,16 +10,21 @@
   label { display: block; margin-top: 10px; font-weight: 600; font-size: 13px; }
   input { box-sizing: border-box; width: 100%; margin-top: 4px; padding: 8px 10px; border: 1px solid #e3e6eb; border-radius: 8px; font: inherit; }
   button { margin-top: 14px; padding: 8px 14px; border: 0; border-radius: 8px; background: #2b4acb; color: #fff; font: 600 14px inherit; cursor: pointer; }
+  .check { display: flex; gap: 8px; align-items: center; font-weight: 600; margin-top: 14px; }
+  .check input { width: auto; margin: 0; }
+  .note { margin: 4px 0 0; font-size: 12px; }
   #saved { margin-left: 8px; color: #067647; font-size: 13px; }
 </style>
 </head>
 <body>
   <h1>Redraft</h1>
-  <p>Checks your comments on YouTube and Reddit before they post.</p>
+  <p>Checks your comments on YouTube, Reddit and Instagram before they post.</p>
   <label for="apiBase">Server address</label>
   <input id="apiBase" type="url" placeholder="http://localhost:3000">
   <label for="apiKey">Extension key (if your server uses one)</label>
   <input id="apiKey" type="text" autocomplete="off">
+  <label class="check"><input id="whatsapp" type="checkbox"> Check my WhatsApp Web messages</label>
+  <p class="note">Off by default. Messages are private: they're checked but never saved, and never shown to a moderator.</p>
   <button id="save" type="button">Save</button><span id="saved" role="status"></span>
   <script src="options.js"></script>
 </body>

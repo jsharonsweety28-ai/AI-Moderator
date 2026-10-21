@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { ExtQueueItem } from "@/lib/extension";
 import { relTime } from "@/lib/format";
 
-const SITE_NAMES: Record<string, string> = { youtube: "YouTube", reddit: "Reddit" };
+const SITE_NAMES: Record<string, string> = { youtube: "YouTube", reddit: "Reddit", instagram: "Instagram" };
 
 export function ExtReviewCard({ item }: { item: ExtQueueItem }) {
   const router = useRouter();

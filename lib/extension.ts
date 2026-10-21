@@ -6,7 +6,10 @@ import { broadcastMod } from "@/lib/broadcast";
 import { adminDb } from "@/lib/db/server";
 import { moderator } from "@/lib/moderator";
 
-export const EXT_SITES = ["youtube", "reddit"] as const;
+export const EXT_SITES = ["youtube", "reddit", "instagram", "whatsapp"] as const;
+/** Private messages: checked but never stored, never shown to a moderator. */
+const PRIVATE_SITES: readonly string[] = ["whatsapp"];
+const UNSURE_PRIVATE = "We can't read this one confidently, so it isn't sent. Try rephrasing it more clearly.";
 export type ExtSite = (typeof EXT_SITES)[number];
 
 export type ExtCheck = {
@@ -23,6 +26,11 @@ export async function checkFromExtension(text: string, site: ExtSite, replyingTo
   const result = await moderator().moderate(text, { replyingTo });
   if (result.verdict === "unavailable") {
     return { id: null, allowed: false, verdict: "unavailable", reason: result.reason, suggestion: null };
+  }
+  if (PRIVATE_SITES.includes(site)) {
+    // Nothing is stored and nothing goes to a moderator; an unclear message is rephrased.
+    const reason = result.verdict === "unsure" ? UNSURE_PRIVATE : result.reason;
+    return { id: null, allowed: result.allowed, verdict: result.verdict, reason, label: result.label ?? null, suggestion: result.suggestion };
   }
 
   // A person decides what the AI couldn't read; severe ones are kept as evidence.

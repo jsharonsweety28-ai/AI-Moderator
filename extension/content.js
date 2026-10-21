@@ -1,6 +1,6 @@
-// Redraft on YouTube and Reddit: catches the site's Post/Comment/Reply click (and
-// Ctrl/Cmd+Enter) before the site sees it, checks the text, and only lets the post
-// through when it's allowed.
+// Redraft on YouTube, Reddit, Instagram and (opt-in) WhatsApp Web: catches the site's
+// Post/Comment/Reply/Send click (and the key that sends) before the site sees it,
+// checks the text, and only lets it through when it's allowed.
 //
 //   clean       → posts, as if nothing happened
 //   rude        → blocked; reason + a better way to say it ([Use this] posts that)
@@ -11,22 +11,36 @@
   if (window.__redraftLoaded) return;
   window.__redraftLoaded = true;
 
-  const SITE = window.__REDRAFT_SITE || (location.hostname.includes('youtube') ? 'youtube' : 'reddit');
-  // Buttons that publish a comment. Matched on the visible label or aria-label.
+  // One block per site: the container that holds one comment box and its button, and
+  // whether a plain Enter sends (otherwise only Ctrl/Cmd+Enter does).
+  //   optIn:   the site is off until the writer switches it on in the settings.
+  //   private: messages, not public comments — checked but never stored, never shown to
+  //            a moderator, and no page context is sent.
+  const SITES = {
+    youtube: { composer: 'ytd-commentbox, ytm-comment-simplebox-renderer', enterSends: false },
+    reddit: { composer: 'shreddit-composer, comment-composer-host, faceplate-form, form.usertext', enterSends: false },
+    instagram: { composer: 'form:has(textarea), form:has([contenteditable="true"])', enterSends: true },
+    whatsapp: { composer: 'footer:has([contenteditable="true"])', enterSends: true, optIn: 'whatsapp', private: true },
+  };
+  const detectSite = (h) =>
+    h.includes('youtube') ? 'youtube' : h.includes('reddit') ? 'reddit' : h.includes('instagram') ? 'instagram' : h.includes('whatsapp') ? 'whatsapp' : null;
+  const SITE = window.__REDRAFT_SITE || detectSite(location.hostname);
+  const CONF = SITES[SITE];
+  if (!CONF) return;
+  // Off until switched on, for opt-in sites (WhatsApp). Read once, kept current.
+  let enabled = !CONF.optIn;
+  if (CONF.optIn) {
+    chrome.storage?.sync?.get([CONF.optIn]).then((v) => (enabled = v[CONF.optIn] === true)).catch(() => {});
+    chrome.storage?.onChanged?.addListener((ch) => {
+      if (ch[CONF.optIn]) enabled = ch[CONF.optIn].newValue === true;
+    });
+  }
+  // Buttons that publish. Matched on the visible label or aria-label.
   const SUBMIT_LABEL = /^(comment|reply|save|post|send)$/i;
-  // Containers that hold one comment box and its button, on each site.
-  // The site-specific ones: if we can't read the text inside one of these, we block
-  // rather than let an unchecked comment through (fail closed).
-  const SITE_COMPOSER = 'ytd-commentbox, ytm-comment-simplebox-renderer, shreddit-composer, comment-composer-host, faceplate-form, form.usertext';
-  const COMPOSER = [
-    'ytd-commentbox',                    // YouTube desktop
-    'ytm-comment-simplebox-renderer',    // YouTube mobile web
-    'shreddit-composer',                 // Reddit (new)
-    'comment-composer-host',             // Reddit (new)
-    'faceplate-form',                    // Reddit (new)
-    'form.usertext',                     // old.reddit.com
-    'form',
-  ].join(', ');
+  // If we can't read the text inside one of this site's boxes, we block rather than let
+  // an unchecked comment through (fail closed).
+  const SITE_COMPOSER = CONF.composer;
+  const COMPOSER = `${SITE_COMPOSER}, form`;
   const EDITOR = 'textarea, [contenteditable="true"], [contenteditable=""], [contenteditable="plaintext-only"]';
   const POLL_MS = 4000;
 
@@ -85,12 +99,16 @@
   const textOf = (editor) => (isField(editor) ? editor.value : editor.innerText || '').trim();
 
   // What the comment replies to: the video or post title. Shapes the suggestion only.
+  // Never sent for private messages.
   function replyingTo() {
+    if (CONF.private) return undefined;
     const pick = (sel) => document.querySelector(sel)?.textContent?.trim();
     const t =
       SITE === 'youtube'
         ? pick('h1.ytd-watch-metadata') || pick('#title h1') || document.title
-        : document.querySelector('shreddit-post')?.getAttribute('post-title') || pick('h1') || document.title;
+        : SITE === 'reddit'
+          ? document.querySelector('shreddit-post')?.getAttribute('post-title') || pick('h1') || document.title
+          : pick('h1') || document.title;
     return (t || '').slice(0, 300);
   }
 
@@ -262,6 +280,15 @@
     }
 
     if (r.verdict === 'unsure' && r.id) return waitForModerator(composer, button, editor, text, r.id, r.reason);
+    if (r.verdict === 'unsure') {
+      // Private messages never go to a moderator: the writer rephrases instead.
+      return show(
+        'warn',
+        `<div class="title">Not sure how this reads</div><div class="reason">We can't read this one confidently, so it isn't sent. Try rephrasing it more clearly.</div>
+         <div class="buttons"><button class="primary" data-act="edit">Edit my message</button></div>`,
+        { edit: () => editIt(editor) }
+      );
+    }
 
     return show(
       'warn',
@@ -323,7 +350,7 @@
     clean: 'Looks good',
     rude: 'Could come across as rude — click for a better way to say it',
     severe: "This can't be posted — click to see why",
-    unsure: 'Not sure how this reads — a moderator will check it when you post',
+    unsure: CONF.private ? 'Not sure how this reads — try rephrasing it' : 'Not sure how this reads — a moderator will check it when you post',
     paused: "Live checks paused for a moment — it'll still be checked when you post",
     unavailable: "Couldn't check right now — it'll be checked when you post",
   };
@@ -457,7 +484,8 @@
       );
     }
     if (result.verdict === 'unsure') {
-      return open('warn', `<div class="title">Not sure how this reads</div><div class="reason">We can't read this one confidently. When you post, a moderator will check it first.</div>${close}`);
+      const why = CONF.private ? "We can't read this one confidently, so it isn't sent. Try rephrasing it more clearly." : "We can't read this one confidently. When you post, a moderator will check it first.";
+      return open('warn', `<div class="title">Not sure how this reads</div><div class="reason">${why}</div>${close}`);
     }
 
     // Rude: show the reason right away, and the better way to say it as soon as it's ready.
@@ -499,6 +527,7 @@
   window.addEventListener(
     'focusin',
     (e) => {
+      if (!enabled) return;
       const path = e.composedPath();
       const composer = composerIn(path);
       if (!composer || !composer.matches(SITE_COMPOSER)) return;
@@ -523,6 +552,7 @@
   // ---------- catching the submit ----------
 
   function attempt(event, path, keyboard = false) {
+    if (!enabled) return;
     const button = keyboard ? null : submitButtonIn(path);
     if (!keyboard && !button) return;
     const composer = composerIn(path);
@@ -565,7 +595,10 @@
   window.addEventListener(
     'keydown',
     (e) => {
-      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) attempt(e, e.composedPath(), true);
+      // Ctrl/Cmd+Enter everywhere; a plain Enter too on sites where Enter sends (Instagram,
+      // WhatsApp). Shift+Enter is a new line; Enter while composing (IME) is not a send.
+      if (e.key !== 'Enter' || e.shiftKey || e.isComposing) return;
+      if (e.ctrlKey || e.metaKey || CONF.enterSends) attempt(e, e.composedPath(), true);
     },
     true
   );

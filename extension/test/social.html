@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Redraft test bench: Instagram + WhatsApp</title>
+<style>
+  body { font: 15px/1.5 'Segoe UI', system-ui, sans-serif; max-width: 640px; margin: 32px auto; padding: 0 16px; color: #15171c; }
+  section { border: 1px solid #e3e6eb; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  h2 { font-size: 15px; margin: 0 0 8px; }
+  textarea, [contenteditable] { display: block; width: 100%; box-sizing: border-box; min-height: 40px; border: 1px solid #ccc; border-radius: 8px; padding: 8px; margin-bottom: 8px; font: inherit; }
+  [role="button"] { display: inline-block; color: #0095f6; font-weight: 600; cursor: pointer; }
+  #posted { background: #f6f7f9; border-radius: 12px; padding: 12px; }
+</style>
+</head>
+<body>
+  <h1 style="font-size:20px">Local copies of Instagram's comment box and WhatsApp Web's message box</h1>
+  <p>Open with <code>?site=instagram</code> or <code>?site=whatsapp</code> (add <code>&amp;whatsapp=on</code> to switch WhatsApp checking on). Enter sends on both.</p>
+
+  <section>
+    <h2>Instagram (form + textarea + "Post" div[role=button]; Enter posts)</h2>
+    <form id="ig"><textarea aria-label="Add a comment…" placeholder="Add a comment…"></textarea><div role="button" tabindex="0">Post</div></form>
+  </section>
+
+  <section>
+    <h2>WhatsApp Web (footer + contenteditable textbox + Send button; Enter sends)</h2>
+    <footer id="wa"><div contenteditable="true" role="textbox" aria-label="Type a message"></div><button aria-label="Send">➤</button></footer>
+  </section>
+
+  <h2>What the sites sent</h2>
+  <ol id="posted"></ol>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const posted = (site, text) => { const li = document.createElement('li'); li.textContent = `${site}: ${text}`; document.getElementById('posted').appendChild(li); };
+
+  // Fake Instagram: the Post "button" and Enter both post.
+  const igText = document.querySelector('#ig textarea');
+  const igPost = () => { if (igText.value.trim()) { posted('instagram', igText.value.trim()); igText.value = ''; } };
+  document.querySelector('#ig [role=button]').addEventListener('click', igPost);
+  igText.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); igPost(); } });
+  document.getElementById('ig').addEventListener('submit', (e) => e.preventDefault());
+
+  // Fake WhatsApp: Send and Enter both send.
+  const waBox = document.querySelector('#wa [contenteditable]');
+  const waSend = () => { if (waBox.innerText.trim()) { posted('whatsapp', waBox.innerText.trim()); waBox.textContent = ''; } };
+  document.querySelector('#wa button').addEventListener('click', waSend);
+  waBox.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); waSend(); } });
+
+  // Stand-in for the extension's background worker and storage.
+  window.__REDRAFT_SITE = params.get('site') || 'instagram';
+  const store = { whatsapp: params.get('whatsapp') === 'on' };
+  const post = (path, body) => fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  window.chrome = {
+    storage: { sync: { get: async () => store }, onChanged: { addListener() {} } },
+    runtime: { sendMessage: async (msg) => {
+      try {
+        const res = msg.type === 'check' ? await post('/api/ext/check', { text: msg.text, site: msg.site, replyingTo: msg.replyingTo })
+          : msg.type === 'peek' ? await post('/api/ext/peek', { text: msg.text })
+          : msg.type === 'suggest' ? await post('/api/ext/suggest', { text: msg.text, replyingTo: msg.replyingTo })
+          : await fetch('/api/ext/status?id=' + encodeURIComponent(msg.id));
+        const data = await res.json();
+        if (!res.ok) return msg.type === 'check' ? { allowed: false, verdict: 'unavailable', reason: data.error } : { status: 'unknown' };
+        return data;
+      } catch (e) { return msg.type === 'check' ? { allowed: false, verdict: 'unavailable', reason: String(e) } : { status: 'unknown' }; }
+    } },
+  };
+</script>
+<script src="/content.js"></script>
+</body>
+</html>

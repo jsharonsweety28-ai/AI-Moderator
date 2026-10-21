@@ -1,11 +1,18 @@
 {
   "manifest_version": 3,
-  "name": "Redraft — think before you post",
-  "version": "0.1.0",
-  "description": "Checks your YouTube and Reddit comments before they post. Rude ones get a better way to say it; harmful ones are explained and blocked.",
-  "permissions": ["storage"],
-  "host_permissions": ["http://localhost:3000/*", "https://*.vercel.app/*"],
-  "background": { "service_worker": "background.js" },
+  "name": "Redraft \u2014 think before you post",
+  "version": "0.2.0",
+  "description": "Checks your comments on YouTube, Reddit and Instagram (and, if you switch it on, WhatsApp Web) before they post. Rude ones get a better way to say it; harmful ones are explained and blocked.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "https://*.vercel.app/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": [
@@ -13,12 +20,19 @@
         "https://m.youtube.com/*",
         "https://www.reddit.com/*",
         "https://old.reddit.com/*",
-        "https://sh.reddit.com/*"
+        "https://sh.reddit.com/*",
+        "https://www.instagram.com/*",
+        "https://web.whatsapp.com/*"
       ],
-      "js": ["content.js"],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_idle"
     }
   ],
   "options_page": "options.html",
-  "action": { "default_title": "Redraft settings", "default_popup": "options.html" }
+  "action": {
+    "default_title": "Redraft settings",
+    "default_popup": "options.html"
+  }
 }
