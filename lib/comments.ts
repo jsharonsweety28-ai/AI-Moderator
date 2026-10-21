@@ -8,8 +8,8 @@ import { moderator } from "@/lib/moderator";
 
 export type SubmitOutcome =
   | { status: "posted"; commentId: string }
-  | { status: "rude"; commentId: string; reason: string; suggestion: string | null }
-  | { status: "severe"; commentId: string; reason: string }
+  | { status: "rude"; commentId: string; reason: string; label: string | null; suggestion: string | null }
+  | { status: "severe"; commentId: string; reason: string; label: string | null }
   | { status: "unsure"; commentId: string; reason: string }
   | { status: "unavailable"; reason: string };
 
@@ -49,9 +49,9 @@ export async function submitComment(authorId: string, postId: string, text: stri
   await broadcastMod();
 
   if (result.verdict === "clean") return { status: "posted", commentId };
-  if (result.verdict === "severe") return { status: "severe", commentId, reason: result.reason };
+  if (result.verdict === "severe") return { status: "severe", commentId, reason: result.reason, label: result.label ?? null };
   if (result.verdict === "unsure") return { status: "unsure", commentId, reason: result.reason };
-  return { status: "rude", commentId, reason: result.reason, suggestion: result.suggestion };
+  return { status: "rude", commentId, reason: result.reason, label: result.label ?? null, suggestion: result.suggestion };
 }
 
 export type ActionOutcome = { ok: true; status: "posted" | "waiting"; reason?: string } | { ok: false; reason: string };

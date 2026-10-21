@@ -13,6 +13,21 @@ import { sameScript } from './lang.mjs';
 import { MEANING_CHECK_PROMPT, REWRITE_PROMPT, SCORING_PROMPT } from './prompts.mjs';
 
 const UNAVAILABLE = "We couldn't check this comment right now, so it hasn't been posted. Please try again in a moment.";
+// A short, plain name for what's wrong, shown to the writer above the reason.
+const LABELS = {
+  insult: 'Personal attack',
+  harassment: 'Harassment',
+  threat: 'Threat',
+  hate: 'Hate speech',
+  sexual: 'Unwanted sexual content',
+  self_harm: 'Encourages self-harm',
+  spam: 'Spam',
+};
+export function labelFor(verdict, category) {
+  if (verdict === 'clean' || verdict === 'unsure' || verdict === 'unavailable') return null;
+  return LABELS[category] || (verdict === 'severe' ? 'Harmful' : 'Rude');
+}
+
 const UNSURE = "We couldn't be sure what this means, so a person will check it. It will be posted if they approve it.";
 
 // Masks emails, 12-digit IDs and phone numbers before text leaves the server.
@@ -136,7 +151,8 @@ export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, unsure
     }
 
     const base = { score: scored.score, category: scored.category, reason: scored.reason, meaning: scored.meaning ?? '' };
-    if (scored.score >= severeMin) return { allowed: false, verdict: 'severe', ...base, suggestion: null };
+    const label = (verdict) => labelFor(verdict, scored.category);
+    if (scored.score >= severeMin) return { allowed: false, verdict: 'severe', ...base, label: label('severe'), suggestion: null };
     // Can't read it with confidence: don't guess either way — a person decides. Models rarely
     // admit doubt, so a non-English comment just under the line counts as unsure too.
     const borderline = scored.meaning !== '' && scored.score >= unsureMin && scored.score < cleanMax;
@@ -144,7 +160,7 @@ export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, unsure
     if (scored.score < cleanMax) return { allowed: true, verdict: 'clean', ...base, suggestion: null };
     // Rude: a failed suggestion never discards the verdict.
     const suggestion = wantSuggestion ? await suggest(original, scored.reason, replyingTo).catch(() => null) : null;
-    return { allowed: false, verdict: 'rude', ...base, suggestion };
+    return { allowed: false, verdict: 'rude', ...base, label: label('rude'), suggestion };
   }
 
   return { moderate, score, inspectDraft };

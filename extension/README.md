@@ -10,6 +10,17 @@ Checks your comment when you click **Comment / Reply / Save** (or press Ctrl/Cmd
 | The AI isn't sure (e.g. Tanglish) | **Blocked** until a moderator decides on the Redraft `/mod` page. If approved, **Post it** |
 | Can't reach the Redraft server | **Blocked** (fails closed). **Try again** |
 
+**While you type**, a small Redraft badge sits in the corner of the comment box, like Grammarly's: ✓ green (fine), ! amber (rude: click it for a better way to say it), ! red (can't be posted: click for why), ! purple (a moderator will check it when you post). The badge is only a hint; the real check happens when you click Post.
+
+### Keeping AI costs down
+
+- The badge checks only **after you pause typing** (1.5 s), never on every keystroke, and skips anything under 4 characters.
+- **The same text is never checked twice**, in your browser or on the server (the server remembers recent answers for 30 minutes).
+- Live checks ask only for the verdict (**1 AI call**). A better way to say it (3 calls) is made **only when you click the badge**.
+- When you click Post, the server usually already has the answer, so **the Post check is often free**.
+- At most **6 live checks a minute** per tab; past that the badge waits and the Post check still runs.
+- Measured: a friendly comment costs 1 call in total; a rude one with a suggestion, used and posted, costs 4 (about $0.006 on Nemotron 3 Ultra).
+
 The extension only talks to your Redraft server. Your Nebius/Nemotron key stays on the server.
 
 ## Install (Chrome, Edge, Brave)

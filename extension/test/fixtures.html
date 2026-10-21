@@ -58,8 +58,10 @@
   window.__REDRAFT_SITE = 'youtube';
   window.chrome = { runtime: { sendMessage: async (msg) => {
     try {
-      const res = msg.type === 'check'
-        ? await fetch('/api/ext/check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: msg.text, site: msg.site, replyingTo: msg.replyingTo }) })
+      const post = (path, body) => fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const res = msg.type === 'check' ? await post('/api/ext/check', { text: msg.text, site: msg.site, replyingTo: msg.replyingTo })
+        : msg.type === 'peek' ? await post('/api/ext/peek', { text: msg.text })
+        : msg.type === 'suggest' ? await post('/api/ext/suggest', { text: msg.text, replyingTo: msg.replyingTo })
         : await fetch('/api/ext/status?id=' + encodeURIComponent(msg.id));
       const data = await res.json();
       if (!res.ok) return msg.type === 'check' ? { allowed: false, verdict: 'unavailable', reason: data.error } : { status: 'unknown' };

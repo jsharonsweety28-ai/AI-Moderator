@@ -23,6 +23,10 @@ async function handle(msg) {
       return await call('/api/ext/check', { method: 'POST', body: JSON.stringify({ text: msg.text, site: msg.site, replyingTo: msg.replyingTo }) });
     }
     if (msg.type === 'status') return await call(`/api/ext/status?id=${encodeURIComponent(msg.id)}`);
+    if (msg.type === 'peek') return await call('/api/ext/peek', { method: 'POST', body: JSON.stringify({ text: msg.text }) });
+    if (msg.type === 'suggest') {
+      return await call('/api/ext/suggest', { method: 'POST', body: JSON.stringify({ text: msg.text, replyingTo: msg.replyingTo }) });
+    }
     return { error: 'unknown message' };
   } catch (err) {
     // Fail closed: if we can't check, the comment is not allowed.

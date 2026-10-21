@@ -10,6 +10,8 @@ export type ModerationResult = {
   reason: string;
   /** The model's plain-English reading of a non-English comment ("" for English). */
   meaning?: string;
+  /** A short name for what's wrong ("Personal attack", "Threat"…), for rude and severe; otherwise absent. */
+  label?: string | null;
   /** A checked, safe rewrite for rude comments; null otherwise. */
   suggestion: string | null;
 };
@@ -37,6 +39,7 @@ export type Moderator = {
 export function createModerator(options?: ModeratorOptions): Moderator;
 export function inspectDraft(text: string): { hint: "threat" | "check" | null; message: string | null };
 export function redact(text: string): string;
+export function labelFor(verdict: Verdict, category: string | null): string | null;
 export function createNemotron(options?: { apiKey?: string; baseUrl?: string; model?: string; timeoutMs?: number }): ModelCall;
 export function parseJson(text: string): unknown;
 

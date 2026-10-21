@@ -9,8 +9,8 @@ import { inspectDraft } from "@/plugin/src/moderator.mjs";
 
 type Answer =
   | { kind: "none" }
-  | { kind: "rude"; commentId: string; original: string; reason: string; suggestion: string | null }
-  | { kind: "severe"; commentId: string; reason: string }
+  | { kind: "rude"; commentId: string; original: string; reason: string; label: string | null; suggestion: string | null }
+  | { kind: "severe"; commentId: string; reason: string; label: string | null }
   | { kind: "unavailable"; reason: string };
 
 export function Composer({ postId }: { postId: string }) {
@@ -37,14 +37,14 @@ export function Composer({ postId }: { postId: string }) {
         setAnswer({ kind: "none" });
         router.refresh();
       } else if (out.status === "rude") {
-        setAnswer({ kind: "rude", commentId: out.commentId, original: body, reason: out.reason, suggestion: out.suggestion });
+        setAnswer({ kind: "rude", commentId: out.commentId, original: body, reason: out.reason, label: out.label ?? null, suggestion: out.suggestion });
       } else if (out.status === "unsure") {
         // It now waits for a person; the thread shows it with that status.
         setText("");
         setAnswer({ kind: "none" });
         router.refresh();
       } else if (out.status === "severe") {
-        setAnswer({ kind: "severe", commentId: out.commentId, reason: out.reason });
+        setAnswer({ kind: "severe", commentId: out.commentId, reason: out.reason, label: out.label ?? null });
       } else {
         setAnswer({ kind: "unavailable", reason: out.reason ?? "We couldn't check this comment, so it hasn't been posted." });
       }
@@ -119,6 +119,9 @@ export function Composer({ postId }: { postId: string }) {
 
       {answer.kind === "rude" && (
         <div className="reveal mt-3 rounded-xl border border-warn-line bg-warn-soft p-4">
+          {answer.label && (
+            <span className="mb-1.5 inline-block rounded-full bg-warn-line px-2.5 py-0.5 text-xs font-semibold text-warn">{answer.label}</span>
+          )}
           <p className="text-sm font-semibold text-warn">Not posted yet</p>
           <p className="mt-1 text-sm leading-relaxed text-warn">{answer.reason}</p>
           {answer.suggestion ? (
@@ -164,6 +167,9 @@ export function Composer({ postId }: { postId: string }) {
 
       {answer.kind === "severe" && (
         <div className="reveal mt-3 rounded-xl border border-danger-line bg-danger-soft p-4">
+          {answer.label && (
+            <span className="mb-1.5 inline-block rounded-full bg-danger-line px-2.5 py-0.5 text-xs font-semibold text-danger">{answer.label}</span>
+          )}
           <p className="text-sm font-semibold text-danger">This can&apos;t be posted</p>
           <p className="mt-1 text-sm leading-relaxed text-danger">{answer.reason}</p>
           <div className="mt-3 flex flex-wrap items-center gap-3">

@@ -129,6 +129,8 @@
     .card[data-tone="danger"] { background: #fef3f2; border-color: #f9d0cc; }
     .card[data-tone="ok"] { background: #ecfdf3; border-color: #b7ebc9; }
     .brand { font-size: 12px; color: #6a7180; margin-bottom: 4px; }
+    .label { display: inline-block; margin-bottom: 6px; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 650; background: #fde8c4; color: #8a4b08; }
+    [data-tone="danger"] .label { background: #fbd5d1; color: #b42318; }
     .title { font-weight: 650; }
     [data-tone="warn"] .title, [data-tone="warn"] .reason { color: #8a4b08; }
     [data-tone="danger"] .title, [data-tone="danger"] .reason { color: #b42318; }
@@ -145,24 +147,55 @@
     button.close { margin-left: auto; border: 0; background: transparent; color: #6a7180; padding: 4px 6px; }
     .muted { color: #6a7180; font-size: 13px; }
     button:focus-visible { outline: 2px solid #2b4acb; outline-offset: 2px; }
-  </style><div class="card" role="status" hidden></div>`;
+    /* The live badge: sits in the comment box's bottom-right corner, like Grammarly's. */
+    .badge { position: fixed; z-index: 2147483645; width: 26px; height: 26px; border-radius: 50%; padding: 0;
+      display: grid; place-items: center; font: 700 12px 'Segoe UI', system-ui, sans-serif; cursor: pointer;
+      border: 2px solid #c5cad3; background: #fff; color: #6a7180; box-shadow: 0 2px 6px rgba(21,23,28,.15); }
+    .badge[hidden] { display: none; }
+    .badge[data-state="checking"] { border-color: #2b4acb; border-top-color: transparent; animation: spin .8s linear infinite; }
+    .badge[data-state="clean"] { border-color: #12b76a; background: #ecfdf3; color: #067647; }
+    .badge[data-state="rude"] { border-color: #f79009; background: #fff8eb; color: #8a4b08; }
+    .badge[data-state="severe"] { border-color: #d92d20; background: #fef3f2; color: #b42318; }
+    .badge[data-state="unsure"] { border-color: #7a5af8; background: #f4f3ff; color: #5925dc; }
+    /* Every Redraft card: centred, page dimmed behind it — it can't be missed. */
+    .backdrop { position: fixed; inset: 0; z-index: 2147483646; background: rgba(21,23,28,.45); }
+    .backdrop[hidden] { display: none; }
+    .card[data-mode="modal"] { right: auto; bottom: auto; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      width: min(440px, calc(100vw - 32px)); padding: 20px; font-size: 15px; box-shadow: 0 20px 60px rgba(21,23,28,.35); }
+    .card[data-mode="modal"] .title { font-size: 17px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .badge[data-state="checking"] { animation: none; } }
+  </style><div class="backdrop" hidden></div><div class="card" role="status" hidden></div><button class="badge" type="button" hidden aria-label="Redraft">R</button>`;
   const card = shadow.querySelector('.card');
+  const badge = shadow.querySelector('.badge');
+  const backdrop = shadow.querySelector('.backdrop');
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  // What's wrong, in two words ("Personal attack", "Threat"), above the title.
+  const pill = (label) => (label ? `<div class="label">${esc(label)}</div>` : '');
 
   let pollTimer = null;
   function hide() {
     card.hidden = true;
+    backdrop.hidden = true;
     clearTimeout(pollTimer);
   }
+  // Every card opens centred over a dimmed page. Closing it never posts anything.
   function show(tone, html, actions = {}) {
+    const mode = 'modal';
     if (!host.isConnected) document.documentElement.appendChild(host);
     clearTimeout(pollTimer);
     card.dataset.tone = tone;
+    card.dataset.mode = mode;
     card.innerHTML = `<div class="brand">Redraft</div>${html}`;
+    backdrop.hidden = false;
     card.hidden = false;
     for (const [name, fn] of Object.entries(actions)) card.querySelector(`[data-act="${name}"]`)?.addEventListener('click', fn);
     card.querySelector('[data-act="close"]')?.addEventListener('click', hide);
+    card.querySelector('button.primary, button')?.focus();
   }
+  backdrop.addEventListener('click', hide);
+  shadow.addEventListener('keydown', (e) => e.key === 'Escape' && hide());
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && !card.hidden && hide());
 
   // ---------- the flow ----------
 
@@ -201,7 +234,7 @@
         : `<div class="reason">Try saying how you feel about the video or post, not the person.</div>`;
       return show(
         'warn',
-        `<div class="title">Not posted yet</div><div class="reason">${esc(r.reason)}</div>${redraft}
+        `${pill(r.label)}<div class="title">Not posted yet</div><div class="reason">${esc(r.reason)}</div>${redraft}
          <div class="buttons">${r.suggestion ? '<button class="primary" data-act="use">Use this</button>' : ''}<button data-act="edit">Edit</button></div>`,
         {
           use: () => {
@@ -217,7 +250,7 @@
     if (r.verdict === 'severe') {
       return show(
         'danger',
-        `<div class="title">This can't be posted</div><div class="reason">${esc(r.reason)}</div>
+        `${pill(r.label)}<div class="title">This can't be posted</div><div class="reason">${esc(r.reason)}</div>
          <div class="buttons"><button class="primary" data-act="edit">Edit my comment</button><span class="muted">A moderator can see this.</span></div>`,
         { edit: () => editIt(editor) }
       );
@@ -271,6 +304,183 @@
     };
     pollTimer = setTimeout(poll, POLL_MS);
   }
+
+  // ---------- live check while typing (Grammarly-style badge) ----------
+  // Only a hint: the real check still runs when the writer clicks Post. Built to be cheap:
+  // checks only after a typing pause, never the same text twice, verdict only (one model
+  // call), suggestions only on request, and at most LIVE_PER_MINUTE checks a minute.
+  const LIVE_PAUSE_MS = 1500;
+  const LIVE_MIN_CHARS = 4;
+  const LIVE_PER_MINUTE = 6;
+  const BADGE_TEXT = {
+    idle: 'Redraft checks your comment when you pause typing',
+    checking: 'Checking…',
+    clean: 'Looks good',
+    rude: 'Could come across as rude — click for a better way to say it',
+    severe: "This can't be posted — click to see why",
+    unsure: 'Not sure how this reads — a moderator will check it when you post',
+    paused: "Live checks paused for a moment — it'll still be checked when you post",
+    unavailable: "Couldn't check right now — it'll be checked when you post",
+  };
+  const liveCache = new Map(); // normalized text -> { verdict, reason }
+  const liveTimes = [];
+  let live = null; // { composer, editor }
+  let liveTimer = null;
+  let liveInFlight = false;
+
+  const normalize = (t) => t.trim().replace(/\s+/g, ' ').toLowerCase();
+
+  function placeBadge() {
+    if (!live || !live.editor.isConnected) return (badge.hidden = true);
+    const r = live.editor.getBoundingClientRect();
+    if (r.width === 0 || r.bottom < 0 || r.top > innerHeight) return (badge.hidden = true);
+    badge.style.left = `${Math.min(r.right - 32, innerWidth - 32)}px`;
+    badge.style.top = `${Math.min(r.bottom - 32, innerHeight - 32)}px`;
+    badge.hidden = false;
+  }
+
+  function setBadge(state) {
+    badge.dataset.state = state;
+    badge.textContent = state === 'clean' ? '✓' : state === 'rude' || state === 'severe' || state === 'unsure' ? '!' : 'R';
+    badge.title = BADGE_TEXT[state] || BADGE_TEXT.idle;
+    badge.setAttribute('aria-label', `Redraft: ${badge.title}`);
+    placeBadge();
+  }
+
+  function attach(composer, editor) {
+    if (live && live.editor === editor) return;
+    live = { composer, editor };
+    if (!host.isConnected) document.documentElement.appendChild(host);
+    const cached = liveCache.get(normalize(textOf(editor)));
+    setBadge(cached ? cached.verdict : 'idle');
+  }
+
+  function scheduleLive() {
+    clearTimeout(liveTimer);
+    if (!live) return;
+    const key = normalize(textOf(live.editor));
+    if (key.length < LIVE_MIN_CHARS) return setBadge('idle');
+    const cached = liveCache.get(key);
+    if (cached) return setBadge(cached.verdict); // never pay twice for the same text
+    setBadge('idle');
+    liveTimer = setTimeout(runLive, LIVE_PAUSE_MS);
+  }
+
+  async function runLive() {
+    if (!live || liveInFlight) return;
+    const text = textOf(live.editor);
+    const key = normalize(text);
+    if (key.length < LIVE_MIN_CHARS || liveCache.has(key)) return scheduleLive();
+    const now = Date.now();
+    while (liveTimes.length && now - liveTimes[0] > 60_000) liveTimes.shift();
+    if (liveTimes.length >= LIVE_PER_MINUTE) {
+      setBadge('paused');
+      liveTimer = setTimeout(runLive, 60_000 - (now - liveTimes[0]) + 50);
+      return;
+    }
+    liveTimes.push(now);
+    liveInFlight = true;
+    setBadge('checking');
+    let r;
+    try {
+      r = await chrome.runtime.sendMessage({ type: 'peek', text });
+    } catch {
+      r = null;
+    } finally {
+      liveInFlight = false;
+    }
+    const verdict = r && r.verdict && r.verdict !== 'unavailable' ? r.verdict : null;
+    if (verdict) liveCache.set(key, { verdict, reason: r.reason, label: r.label });
+    // The writer kept typing while we checked: show the result only if it still applies.
+    if (live && normalize(textOf(live.editor)) === key) setBadge(verdict || 'unavailable');
+    else scheduleLive();
+  }
+
+  async function openFromBadge() {
+    if (!live) return;
+    const { editor } = live;
+    const text = textOf(editor);
+    const result = liveCache.get(normalize(text));
+    const close = '<div class="buttons"><button class="close" data-act="close">Close</button></div>';
+    if (!result) {
+      return show('', `<div class="title">Redraft</div><div class="reason">${esc(BADGE_TEXT[badge.dataset.state] || BADGE_TEXT.idle)}</div>${close}`);
+    }
+    if (result.verdict === 'clean') return show('ok', `<div class="title">Looks good</div>${close}`);
+    if (result.verdict === 'severe') {
+      return show(
+        'danger',
+        `${pill(result.label)}<div class="title">This can't be posted</div><div class="reason">${esc(result.reason)}</div><div class="buttons"><button class="primary" data-act="edit">Edit my comment</button></div>`,
+        { edit: () => editIt(editor) }
+      );
+    }
+    if (result.verdict === 'unsure') {
+      return show('warn', `<div class="title">Not sure how this reads</div><div class="reason">We can't read this one confidently. When you post, a moderator will check it first.</div>${close}`);
+    }
+    // Rude: the suggestion is only made now, because the writer asked for it.
+    show(
+      'warn',
+      `${pill(result.label)}<div class="title">Could come across as rude</div><div class="reason">${esc(result.reason)}</div><div class="buttons"><button class="primary" data-act="suggest">Show a better way</button><button data-act="edit">Edit it myself</button></div>`,
+      {
+        edit: () => editIt(editor),
+        suggest: async () => {
+          show('warn', '<div class="title">Finding a better way to say it…</div>');
+          let s;
+          try {
+            s = await chrome.runtime.sendMessage({ type: 'suggest', text, replyingTo: replyingTo() });
+          } catch {
+            s = null;
+          }
+          if (textOf(editor) !== text) return hide();
+          if (!s || !s.suggestion) {
+            return show(
+              'warn',
+              `<div class="title">No good rewrite this time</div><div class="reason">Try saying how you feel about the video or post, not the person.</div><div class="buttons"><button class="primary" data-act="edit">Edit it myself</button></div>`,
+              { edit: () => editIt(editor) }
+            );
+          }
+          show(
+            'warn',
+            `<div class="title">A better way to say it</div><div class="redraft"><div class="before">${esc(text)}</div><div class="after"><span>${esc(s.suggestion)}</span></div></div><div class="buttons"><button class="primary" data-act="use">Use this</button><button data-act="edit">Edit it myself</button></div>`,
+            {
+              use: () => {
+                setText(editor, s.suggestion);
+                hide();
+                editor.focus();
+                scheduleLive();
+              },
+              edit: () => editIt(editor),
+            }
+          );
+        },
+      }
+    );
+  }
+
+  badge.addEventListener('click', openFromBadge);
+
+  window.addEventListener(
+    'focusin',
+    (e) => {
+      const path = e.composedPath();
+      const composer = composerIn(path);
+      if (!composer || !composer.matches(SITE_COMPOSER)) return;
+      const editor = editorIn(composer);
+      if (editor && path.includes(editor)) attach(composer, editor);
+    },
+    true
+  );
+  window.addEventListener(
+    'input',
+    (e) => {
+      if (live && e.composedPath().includes(live.editor)) {
+        hide();
+        scheduleLive();
+      }
+    },
+    true
+  );
+  window.addEventListener('scroll', placeBadge, true);
+  window.addEventListener('resize', placeBadge);
 
   // ---------- catching the submit ----------
 

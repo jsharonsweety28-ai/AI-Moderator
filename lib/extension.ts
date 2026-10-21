@@ -14,6 +14,8 @@ export type ExtCheck = {
   allowed: boolean;
   verdict: "clean" | "rude" | "severe" | "unsure" | "unavailable";
   reason: string;
+  /** "Personal attack", "Threat"… — what's wrong, in two words. */
+  label?: string | null;
   suggestion: string | null;
 };
 
@@ -44,7 +46,7 @@ export async function checkFromExtension(text: string, site: ExtSite, replyingTo
     return { id: null, allowed: false, verdict: "unavailable", reason: "We couldn't check this comment right now, so it hasn't been posted. Please try again in a moment.", suggestion: null };
   }
   if (review_status) await broadcastMod();
-  return { id: (data as { id: string }).id, allowed: result.allowed, verdict: result.verdict, reason: result.reason, suggestion: result.suggestion };
+  return { id: (data as { id: string }).id, allowed: result.allowed, verdict: result.verdict, reason: result.reason, label: result.label ?? null, suggestion: result.suggestion };
 }
 
 export type ExtStatus = "pending" | "approved" | "rejected" | "expired" | "none";
@@ -111,4 +113,19 @@ export async function resolveExt(id: string, reviewerId: string, decision: "appr
   if (error) return { ok: false, error: "Couldn't save that. Please try again." };
   await broadcastMod();
   return { ok: true };
+}
+
+export type ExtPeek = { verdict: ExtCheck["verdict"]; reason: string; label: string | null };
+
+/** The live hint while typing: verdict only (one model call), nothing stored, nothing sent
+ *  to moderators. The real check still happens when the writer clicks Post. */
+export async function peekFromExtension(text: string): Promise<ExtPeek> {
+  const r = await moderator().moderate(text, { suggest: false });
+  return { verdict: r.verdict, reason: r.reason, label: r.label ?? null };
+}
+
+/** A better way to say a rude draft — only made when the writer asks for it (badge click). */
+export async function suggestFromExtension(text: string, replyingTo?: string): Promise<{ suggestion: string | null; reason: string }> {
+  const r = await moderator().moderate(text, { replyingTo });
+  return { suggestion: r.verdict === "rude" ? r.suggestion : null, reason: r.reason };
 }
