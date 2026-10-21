@@ -10,6 +10,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FILES = {
   '/': ['fixtures.html', 'text/html'],
   '/social': ['social.html', 'text/html'],
+  '/direct/t/test': ['social.html', 'text/html'], // an Instagram-messages-like path
   '/content.js': ['../content.js', 'text/javascript'],
 };
 const API = process.env.REDRAFT_API || 'http://localhost:3000';

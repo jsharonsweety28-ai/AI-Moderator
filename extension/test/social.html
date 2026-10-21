@@ -27,6 +27,11 @@
   </section>
 
   <section>
+    <h2>Instagram messages (rich-text box; icon-only send button: the "Send" label is on the svg inside)</h2>
+    <div id="igdm"><div><div contenteditable="true" role="textbox" aria-label="Message"></div></div><div role="button" tabindex="0"><svg aria-label="Send" width="24" height="24" viewBox="0 0 24 24"><path d="M2 21 23 12 2 3v7l15 2-15 2z"/></svg></div></div>
+  </section>
+
+  <section>
     <h2>WhatsApp Web (footer + contenteditable textbox + Send button; Enter sends)</h2>
     <footer id="wa"><div contenteditable="true" role="textbox" aria-label="Type a message"></div><button aria-label="Send">➤</button></footer>
   </section>
@@ -51,6 +56,12 @@
   document.querySelector('#ig2 [role=button]').addEventListener('click', ig2Post);
   ig2Box.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ig2Post(); } });
 
+  // Fake Instagram messages: the icon button and Enter both send.
+  const dmBox = document.querySelector('#igdm [contenteditable]');
+  const dmSend = () => { if (dmBox.innerText.trim()) { posted('instagram message', dmBox.innerText.trim()); dmBox.textContent = ''; } };
+  document.querySelector('#igdm [role=button]').addEventListener('click', dmSend);
+  dmBox.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); dmSend(); } });
+
   // Fake WhatsApp: Send and Enter both send.
   const waBox = document.querySelector('#wa [contenteditable]');
   const waSend = () => { if (waBox.innerText.trim()) { posted('whatsapp', waBox.innerText.trim()); waBox.textContent = ''; } };
@@ -59,7 +70,7 @@
 
   // Stand-in for the extension's background worker and storage.
   window.__REDRAFT_SITE = params.get('site') || 'instagram';
-  const store = { whatsapp: params.get('whatsapp') === 'on' };
+  const store = { messages: params.get('messages') === 'on' || params.get('whatsapp') === 'on' };
   const post = (path, body) => fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   window.chrome = {
     storage: { sync: { get: async () => store }, onChanged: { addListener() {} } },

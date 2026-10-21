@@ -6,10 +6,10 @@ Checks your comment when you click **Comment / Reply / Save / Post / Send** (or 
 |---|---|---|
 | YouTube | Comments and replies | Comment button, Ctrl/Cmd+Enter |
 | Reddit (new and old) | Comments and replies | Comment/Save button, Ctrl/Cmd+Enter |
-| Instagram (web) | Comments on posts | Post, Enter |
-| WhatsApp Web | Messages, **only if you switch it on** in the settings | Send, Enter |
+| Instagram (web) | Comments on posts; messages **only if you switch private messages on** | Post / Send icon, Enter |
+| WhatsApp Web | Messages, **only if you switch private messages on** | Send, Enter |
 
-WhatsApp messages are private, so they're handled differently: **checked but never saved** on the server, never shown to a moderator, and no page context is sent. A message the AI can't read with confidence is blocked with "try rephrasing it" instead of going to a moderator.
+Private messages (WhatsApp Web, Instagram DMs) are handled differently: **checked but never saved** on the server, never shown to a moderator, and no page context is sent. A message the AI can't read with confidence is blocked with "try rephrasing it" instead of going to a moderator.
 
 
 | Your comment | What happens |
@@ -41,7 +41,7 @@ The extension only talks to your Redraft server. Your Nebius/Nemotron key stays 
 4. Click **Load unpacked** and choose this `extension` folder.
 5. Click the Redraft icon in the toolbar. Check that **Server address** is `http://localhost:3000` (or your deployed URL) and click **Save**.
 6. Open a YouTube video, a Reddit post or an Instagram post, write a comment and click **Comment** / **Post**.
-7. For WhatsApp Web: tick **Check my WhatsApp Web messages** in the Redraft settings, click **Save**, and reload web.whatsapp.com.
+7. For WhatsApp Web and Instagram messages: tick **Check my private messages** in the Redraft settings, click **Save**, and reload the tab.
 
 Moderators approve or reject waiting comments at `http://localhost:3000/mod`, under "From the browser extension".
 

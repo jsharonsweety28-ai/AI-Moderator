@@ -6,9 +6,9 @@ import { broadcastMod } from "@/lib/broadcast";
 import { adminDb } from "@/lib/db/server";
 import { moderator } from "@/lib/moderator";
 
-export const EXT_SITES = ["youtube", "reddit", "instagram", "whatsapp"] as const;
+export const EXT_SITES = ["youtube", "reddit", "instagram", "instagram_dm", "whatsapp"] as const;
 /** Private messages: checked but never stored, never shown to a moderator. */
-const PRIVATE_SITES: readonly string[] = ["whatsapp"];
+const PRIVATE_SITES: readonly string[] = ["whatsapp", "instagram_dm"];
 const UNSURE_PRIVATE = "We can't read this one confidently, so it isn't sent. Try rephrasing it more clearly.";
 export type ExtSite = (typeof EXT_SITES)[number];
 

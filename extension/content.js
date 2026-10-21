@@ -13,30 +13,37 @@
 
   // One block per site: the container that holds one comment box and its button, and
   // whether a plain Enter sends (otherwise only Ctrl/Cmd+Enter does).
-  //   optIn:   the site is off until the writer switches it on in the settings.
-  //   private: messages, not public comments — checked but never stored, never shown to
-  //            a moderator, and no page context is sent.
+  //   private:      the whole site is private messages (WhatsApp).
+  //   privatePaths: pages of an otherwise public site that are private messages (Instagram DMs).
+  // Private messages are off until the writer switches them on, and are checked but never
+  // stored, never shown to a moderator, and sent without page context.
   const SITES = {
     youtube: { composer: 'ytd-commentbox, ytm-comment-simplebox-renderer', enterSends: false },
     reddit: { composer: 'shreddit-composer, comment-composer-host, faceplate-form, form.usertext', enterSends: false },
     // Instagram changes its markup often, so besides the known shapes it also finds the
-    // box by proximity: the nearest area holding both a text box and a "Post" button.
-    instagram: { composer: 'form:has(textarea), form:has([contenteditable="true"])', enterSends: true, byProximity: true },
-    whatsapp: { composer: 'footer:has([contenteditable="true"])', enterSends: true, optIn: 'whatsapp', private: true },
+    // box by proximity: the nearest area holding both a text box and a Post/Send button.
+    instagram: { composer: 'form:has(textarea), form:has([contenteditable="true"])', enterSends: true, byProximity: true, privatePaths: /^\/direct\// },
+    whatsapp: { composer: 'footer:has([contenteditable="true"])', enterSends: true, private: true },
   };
   const detectSite = (h) =>
     h.includes('youtube') ? 'youtube' : h.includes('reddit') ? 'reddit' : h.includes('instagram') ? 'instagram' : h.includes('whatsapp') ? 'whatsapp' : null;
   const SITE = window.__REDRAFT_SITE || detectSite(location.hostname);
   const CONF = SITES[SITE];
   if (!CONF) return;
-  // Off until switched on, for opt-in sites (WhatsApp). Read once, kept current.
-  let enabled = !CONF.optIn;
-  if (CONF.optIn) {
-    chrome.storage?.sync?.get([CONF.optIn]).then((v) => (enabled = v[CONF.optIn] === true)).catch(() => {});
-    chrome.storage?.onChanged?.addListener((ch) => {
-      if (ch[CONF.optIn]) enabled = ch[CONF.optIn].newValue === true;
-    });
-  }
+  // Private messages: this page (checked on each use — Instagram is a single-page app).
+  const isPrivate = () => !!CONF.private || !!CONF.privatePaths?.test(location.pathname);
+  // The writer's switch for private messages ("messages"; older versions saved it as "whatsapp").
+  let messagesOn = false;
+  chrome.storage?.sync
+    ?.get(['messages', 'whatsapp'])
+    .then((v) => (messagesOn = v.messages === true || v.whatsapp === true))
+    .catch(() => {});
+  chrome.storage?.onChanged?.addListener((ch) => {
+    if (ch.messages) messagesOn = ch.messages.newValue === true;
+  });
+  const active = () => !isPrivate() || messagesOn;
+  // What the server is told this is: private pages are reported as such, so they're never stored.
+  const siteForServer = () => (isPrivate() && SITE === 'instagram' ? 'instagram_dm' : SITE);
   // Buttons that publish. Matched on the visible label or aria-label.
   const SUBMIT_LABEL = /^(comment|reply|save|post|send)$/i;
   // If we can't read the text inside one of this site's boxes, we block rather than let
@@ -54,8 +61,13 @@
 
   const asElements = (path) => path.filter((n) => n instanceof Element);
 
+  // A button's name: its own label or text — or, for icon-only buttons (Instagram's and
+  // WhatsApp's send arrows), the label of the icon inside it.
   function labelOf(el) {
-    return (el.getAttribute('aria-label') || el.value || el.textContent || '').trim();
+    const own = (el.getAttribute('aria-label') || el.getAttribute('title') || el.value || el.textContent || '').trim();
+    if (own) return own;
+    const icon = el.querySelector('[aria-label], title, [data-icon]');
+    return (icon?.getAttribute('aria-label') || icon?.getAttribute('data-icon') || icon?.textContent || '').trim();
   }
 
   function submitButtonIn(path) {
@@ -126,7 +138,7 @@
   // What the comment replies to: the video or post title. Shapes the suggestion only.
   // Never sent for private messages.
   function replyingTo() {
-    if (CONF.private) return undefined;
+    if (isPrivate()) return undefined;
     const pick = (sel) => document.querySelector(sel)?.textContent?.trim();
     const t =
       SITE === 'youtube'
@@ -264,7 +276,7 @@
     show('', '<div class="title">Checking your comment…</div>');
     let r;
     try {
-      r = await chrome.runtime.sendMessage({ type: 'check', text, site: SITE, replyingTo: replyingTo() });
+      r = await chrome.runtime.sendMessage({ type: 'check', text, site: siteForServer(), replyingTo: replyingTo() });
     } catch {
       r = null;
     } finally {
@@ -375,7 +387,7 @@
     clean: 'Looks good',
     rude: 'Could come across as rude — click for a better way to say it',
     severe: "This can't be posted — click to see why",
-    unsure: CONF.private ? 'Not sure how this reads — try rephrasing it' : 'Not sure how this reads — a moderator will check it when you post',
+    unsure: 'Not sure how this reads — a moderator will check it when you post',
     paused: "Live checks paused for a moment — it'll still be checked when you post",
     unavailable: "Couldn't check right now — it'll be checked when you post",
   };
@@ -423,7 +435,7 @@
   function setBadge(state) {
     badge.dataset.state = state;
     badge.textContent = state === 'clean' ? '✓' : state === 'rude' || state === 'severe' || state === 'unsure' ? '!' : 'R';
-    badge.title = BADGE_TEXT[state] || BADGE_TEXT.idle;
+    badge.title = state === 'unsure' && isPrivate() ? 'Not sure how this reads — try rephrasing it' : BADGE_TEXT[state] || BADGE_TEXT.idle;
     badge.setAttribute('aria-label', `Redraft: ${badge.title}`);
     if (live) setButtonBlocked(live.composer, state === 'rude' || state === 'severe' || state === 'unsure');
     placeBadge();
@@ -509,7 +521,7 @@
       );
     }
     if (result.verdict === 'unsure') {
-      const why = CONF.private ? "We can't read this one confidently, so it isn't sent. Try rephrasing it more clearly." : "We can't read this one confidently. When you post, a moderator will check it first.";
+      const why = isPrivate() ? "We can't read this one confidently, so it isn't sent. Try rephrasing it more clearly." : "We can't read this one confidently. When you post, a moderator will check it first.";
       return open('warn', `<div class="title">Not sure how this reads</div><div class="reason">${why}</div>${close}`);
     }
 
@@ -552,7 +564,7 @@
   window.addEventListener(
     'focusin',
     (e) => {
-      if (!enabled) return;
+      if (!active()) return;
       const path = e.composedPath();
       const composer = composerIn(path);
       if (!composer || !isSiteComposer(composer)) return;
@@ -577,7 +589,7 @@
   // ---------- catching the submit ----------
 
   function attempt(event, path, keyboard = false) {
-    if (!enabled) return;
+    if (!active()) return;
     const button = keyboard ? null : submitButtonIn(path);
     if (!keyboard && !button) return;
     const composer = composerIn(path);
