@@ -38,7 +38,11 @@ All model calls go through [`plugin/src/nemotron.mjs`](plugin/src/nemotron.mjs),
 
 ### Evaluation
 
-[`scripts/eval-set.ts`](scripts/eval-set.ts) holds 63 hand-labelled comments: praise, disagreement, profanity used for emphasis, reports *of* abuse, insults, sarcasm, violent hyperbole, prompt-injection attempts, threats, doxxing, self-harm encouragement, and Hindi and Spanish cases. Fresh runs, no cache:
+[`scripts/eval-set.ts`](scripts/eval-set.ts) holds 85 hand-labelled comments: praise, disagreement, profanity used for emphasis, reports *of* abuse, insults, sarcasm, violent hyperbole, prompt-injection attempts, threats, doxxing, self-harm encouragement, Spanish, and Indian languages — Tamil in its own script and typed in English letters (Tanglish, including compliments vs insults and alternate spellings), Hindi and Hinglish.
+
+**Current (85 cases, Nemotron 3 Ultra): 98.8% (84/85), severe caught 17/17, 0 failed closed.** Two Tanglish comments the model couldn't read with confidence went to a person instead of being guessed.
+
+The model comparison below was run on the first 63 cases, fresh runs, no cache:
 
 | Model on Token Factory | Accuracy | Severe caught | Failed closed |
 |---|---|---|---|
@@ -78,7 +82,7 @@ Open http://localhost:8790 for the drop-in widget on its own. See [`plugin/READM
 | Command | What it does |
 |---|---|
 | `npm test` | Plugin tests with a stub model (no network, no cost) |
-| `npm run eval` | The 63-case set against the real model |
+| `npm run eval` | The 85-case set against the real model |
 | `npm run seed` | Reset the demo data |
 
 ## Project layout

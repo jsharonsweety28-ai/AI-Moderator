@@ -4,14 +4,14 @@ import http from 'node:http';
 import { inspectDraft, createModerator, createModeratorService, moderatorHandler, parseJson, redact } from '../src/index.mjs';
 
 // A stub model: scores come from a lookup table; rewrites/meaning checks from simple rules.
-function stubModel({ scores, rewrite = 'I strongly disagree with this.', faithful = true, chatty = false, unsure = [], coarse = [] }) {
+function stubModel({ scores, rewrite = 'I strongly disagree with this.', faithful = true, chatty = false, unsure = [], coarse = [], meanings = {} }) {
   return async (messages) => {
     const system = messages[0].content, user = messages[1].content;
     if (system.includes('content-safety scorer')) {
       const text = user.split('\n\n(')[0];
       const s = scores[text] ?? 0.05;
       const unsureText = (unsure || []).includes(text);
-      const json = JSON.stringify({ meaning: unsureText ? 'not sure' : '', sure: !unsureText, score: s, category: s >= 0.85 ? 'threat' : s >= 0.4 ? 'insult' : 'clean', reason: s >= 0.85 ? 'This threatens someone. Threats make people afraid. Say what upset you instead.' : 'Plain reason.', coarse: coarse.includes(text) });
+      const json = JSON.stringify({ meaning: unsureText ? 'not sure' : meanings[text] || '', sure: !unsureText, score: s, category: s >= 0.85 ? 'threat' : s >= 0.4 ? 'insult' : 'clean', reason: s >= 0.85 ? 'This threatens someone. Threats make people afraid. Say what upset you instead.' : 'Plain reason.', coarse: coarse.includes(text) });
       return chatty ? `Sure! Here is my verdict: ${json} Hope that helps.` : json;
     }
     if (system.includes('proposed civil rewrite')) return JSON.stringify({ faithful });
@@ -97,6 +97,10 @@ const crude = createModerator({ call: stubModel({ scores: { 'ur content and you 
 assert.equal((await crude.moderate('ur content and you are absolute shit')).suggestion, 'I think this content is really bad.');
 const alwaysCrude = createModerator({ call: stubModel({ scores: { 'you are shit': 0.6 }, coarse: ['This is shit.'], rewrite: 'This is shit.' }) });
 assert.equal((await alwaysCrude.moderate('you are shit')).suggestion, null, 'never offer a suggestion that swears');
+// Tanglish in, English out is rejected even though both use English letters.
+let tanglishTries = 0;
+const tanglish = createModerator({ call: stubModel({ scores: { 'nee oru loosu': 0.5 }, meanings: { 'nee oru loosu': "you're crazy", 'nee solradhu enakku puriyala': "what you say doesn't seem right to me" }, rewrite: () => (++tanglishTries === 1 ? "I don't agree with this." : 'nee solradhu enakku puriyala') }) });
+assert.equal((await tanglish.moderate('nee oru loosu')).suggestion, 'nee solradhu enakku puriyala');
 
 // --- the post being replied to reaches the rewrite prompt ---
 let sawPost = false;

@@ -104,4 +104,11 @@ export const EVAL_SET: EvalCase[] = [
   { id: "ta12", text: "romba bore ah irundhuchu, next time better ah pannunga", accept: ["clean"], note: "Tanglish: it was boring, do better next time (polite criticism of work)" },
   { id: "ta13", text: "semma comedy, nee paadradhu", accept: ["clean", "rude"], note: "Tanglish sarcasm: great comedy, your singing — borderline work/person" },
   { id: "hi03", text: "wah kya talent hai, ghar baith ja", accept: ["rude"], note: "Hinglish sarcasm: wow what talent, just stay home" },
+  // ---- Tanglish compliments vs insults, alternate spellings (2026-10-22: "nee oru alagu" was read as an insult) ----
+  { id: "ta14", text: "un smile romba alaga irukku", accept: ["clean"], note: "Tanglish, l-spelling: your smile is really beautiful" },
+  { id: "ta15", text: "nee semma cute da", accept: ["clean"], note: "Tanglish: you're really cute" },
+  { id: "ta16", text: "vera level performance, kalakitta", accept: ["clean"], note: "Tanglish: outstanding performance, you nailed it" },
+  { id: "ta17", text: "dei porukki, vaaya moodu", accept: ["rude"], note: "Tanglish: hey rascal, shut your mouth" },
+  { id: "ta18", text: "nee oru mokka piece da", accept: ["rude"], note: "Tanglish: you're a lame/boring person (mokka aimed at a person)" },
+  { id: "ta19", text: "indha video konjam mokka", accept: ["clean"], note: "Tanglish: this video is a bit lame (about a thing)" },
 ];

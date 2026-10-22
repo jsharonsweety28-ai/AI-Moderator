@@ -109,7 +109,8 @@ export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, unsure
   // A suggestion is offered only if it is in the writer's script, keeps their
   // meaning, and itself scores clean with no swearing. Two attempts; otherwise null (the writer
   // still gets the reason, and can edit).
-  async function suggest(text, reason, replyingTo) {
+  // meaning: the scorer's English reading of the comment ('' when it is English).
+  async function suggest(text, reason, replyingTo, meaning = '') {
     const context = replyingTo ? `Post being replied to: ${String(replyingTo).trim().slice(0, 300)}\n` : '';
     let feedback = '';
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -125,8 +126,13 @@ export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, unsure
       else {
         const check = await score(rewrite).catch(() => null);
         if (!check) continue;
-        if (check.score < cleanMax && !check.coarse) return rewrite;
-        why = check.score < cleanMax ? 'it still had swear words or crude language in it' : check.reason;
+        // Same alphabet isn't enough: Tanglish in, English out is still the wrong language.
+        // The scorer reads English with an empty "meaning", so that tells us.
+        const wrongLanguage = meaning !== '' && check.meaning === '';
+        if (check.score < cleanMax && !check.coarse && !wrongLanguage) return rewrite;
+        why = check.score >= cleanMax ? check.reason
+          : wrongLanguage ? 'it was in English, but the comment was not — write it in the same language as the comment, typed the same way'
+          : 'it still had swear words or crude language in it';
       }
       feedback = `\nYour previous rewrite was: ${rewrite}\nIt was rejected because: ${why}\nTry again — the author's point, minus the abuse, in the exact language and script of the original.`;
     }
@@ -161,7 +167,7 @@ export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, unsure
     if (scored.unsure || borderline) return { allowed: false, verdict: 'unsure', ...base, reason: UNSURE, suggestion: null };
     if (scored.score < cleanMax) return { allowed: true, verdict: 'clean', ...base, suggestion: null };
     // Rude: a failed suggestion never discards the verdict.
-    const suggestion = wantSuggestion ? await suggest(original, scored.reason, replyingTo).catch(() => null) : null;
+    const suggestion = wantSuggestion ? await suggest(original, scored.reason, replyingTo, scored.meaning).catch(() => null) : null;
     return { allowed: false, verdict: 'rude', ...base, label: label('rude'), suggestion };
   }
 

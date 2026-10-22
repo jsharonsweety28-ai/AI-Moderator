@@ -97,7 +97,7 @@ Only these tables are used: `users`, `posts`, `comments` (`visibility` is `publi
 - Every function that leaves a comment unposted writes the `reason`.
 - Server-side checking only. A client-side check is a client-side bypass (the keyword hint in the composer is display-only).
 - In development every model call is logged to `logs/llm-calls.jsonl` — you will need these when tuning.
-- `npm test` runs the plugin's tests (stub model, no network). `npm run eval` runs the 63-case set against the real model.
+- `npm test` runs the plugin's tests (stub model, no network). `npm run eval` runs the 85-case set against the real model.
 
 ## Demo data
 
