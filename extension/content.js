@@ -22,7 +22,8 @@
     reddit: { composer: 'shreddit-composer, comment-composer-host, faceplate-form, form.usertext', enterSends: false },
     // Instagram changes its markup often, so besides the known shapes it also finds the
     // box by proximity: the nearest area holding both a text box and a Post/Send button.
-    instagram: { composer: 'form:has(textarea), form:has([contenteditable="true"])', enterSends: true, byProximity: true, privatePaths: /^\/direct\// },
+    // DMs: the /direct/ pages, and the pop-up chat on any page (its box is labelled "Message").
+    instagram: { composer: 'form:has(textarea), form:has([contenteditable="true"])', enterSends: true, byProximity: true, privatePaths: /^\/direct\//, privateBox: /^message/i },
     whatsapp: { composer: 'footer:has([contenteditable="true"])', enterSends: true, private: true },
   };
   const detectSite = (h) =>
@@ -30,8 +31,11 @@
   const SITE = window.__REDRAFT_SITE || detectSite(location.hostname);
   const CONF = SITES[SITE];
   if (!CONF) return;
-  // Private messages: this page (checked on each use — Instagram is a single-page app).
-  const isPrivate = () => !!CONF.private || !!CONF.privatePaths?.test(location.pathname);
+  // Private messages: by the page (checked on each use — Instagram is a single-page app) or
+  // by the box itself. Defaults to the box being watched.
+  const boxName = (el) => (el.getAttribute('aria-label') || el.getAttribute('aria-placeholder') || el.getAttribute('placeholder') || '').trim();
+  const isPrivate = (editor = live && live.editor) =>
+    !!CONF.private || !!CONF.privatePaths?.test(location.pathname) || (!!CONF.privateBox && !!editor && CONF.privateBox.test(boxName(editor)));
   // The writer's switch for private messages ("messages"; older versions saved it as "whatsapp").
   let messagesOn = false;
   chrome.storage?.sync
@@ -41,9 +45,9 @@
   chrome.storage?.onChanged?.addListener((ch) => {
     if (ch.messages) messagesOn = ch.messages.newValue === true;
   });
-  const active = () => !isPrivate() || messagesOn;
+  const active = (editor) => !isPrivate(editor) || messagesOn;
   // What the server is told this is: private pages are reported as such, so they're never stored.
-  const siteForServer = () => (isPrivate() && SITE === 'instagram' ? 'instagram_dm' : SITE);
+  const siteForServer = (editor) => (isPrivate(editor) && SITE === 'instagram' ? 'instagram_dm' : SITE);
   // Buttons that publish. Matched on the visible label or aria-label.
   const SUBMIT_LABEL = /^(comment|reply|save|post|send)$/i;
   // If we can't read the text inside one of this site's boxes, we block rather than let
@@ -139,8 +143,8 @@
 
   // What the comment replies to: the video or post title. Shapes the suggestion only.
   // Never sent for private messages.
-  function replyingTo() {
-    if (isPrivate()) return undefined;
+  function replyingTo(editor) {
+    if (isPrivate(editor)) return undefined;
     const pick = (sel) => document.querySelector(sel)?.textContent?.trim();
     const t =
       SITE === 'youtube'
@@ -151,25 +155,45 @@
     return (t || '').slice(0, 300);
   }
 
-  function setText(editor, value) {
+  // Puts the text in the box. Resolves true only once the box really shows it.
+  async function setText(editor, value) {
+    const done = () => normalize(textOf(editor)) === normalize(value);
+    const tick = (ms) => new Promise((r) => setTimeout(r, ms));
     editor.focus();
     if (isField(editor)) {
       // React-controlled fields ignore .value = ...; use the native setter and fire input.
       const setter = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(editor), 'value').set;
       setter.call(editor, value);
       editor.dispatchEvent(new Event('input', { bubbles: true }));
-      return;
+      return done();
     }
-    const range = document.createRange();
-    range.selectNodeContents(editor);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-    // Goes through the editor's own input handling (YouTube, Reddit's editor).
+    const selectAll = () => {
+      const range = document.createRange();
+      range.selectNodeContents(editor);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    };
+    selectAll();
+    await tick(30); // editors like Lexical pick up the selection a moment later
+    // Rich editors that keep their own copy of the text (Instagram's Lexical) undo direct
+    // edits but accept a paste — the same way the writer would put text in.
+    const data = new DataTransfer();
+    data.setData('text/plain', value);
+    const paste = new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true });
+    editor.dispatchEvent(paste);
+    if (paste.defaultPrevented) {
+      await tick(60);
+      if (done()) return true;
+      selectAll();
+    }
+    // Plain boxes (YouTube, Reddit's editor): through the browser's own editing.
     if (!document.execCommand('insertText', false, value)) {
       editor.textContent = value;
       editor.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: value }));
     }
+    await tick(60);
+    return done();
   }
 
   // ---------- the card ----------
@@ -214,15 +238,19 @@
     .badge[data-state="rude"] { border-color: #f79009; background: #fff8eb; color: #8a4b08; }
     .badge[data-state="severe"] { border-color: #d92d20; background: #fef3f2; color: #b42318; }
     .badge[data-state="unsure"] { border-color: #7a5af8; background: #f4f3ff; color: #5925dc; }
-    /* Every Redraft card: centred, page dimmed behind it — it can't be missed. */
-    .backdrop { position: fixed; inset: 0; z-index: 2147483646; background: rgba(21,23,28,.45); }
-    .backdrop[hidden] { display: none; }
-    .card[data-mode="modal"] { right: auto; bottom: auto; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    /* Every Redraft card: centred on the screen, page dimmed behind it — it can't be missed.
+       The dimmed layer is a popover, so it opens in the browser's top layer: above everything,
+       and centred on the screen whatever the site's own layout does (Instagram's moved it). */
+    .backdrop { position: fixed; inset: 0; width: auto; height: auto; max-width: none; max-height: none; margin: 0;
+      padding: 16px; border: 0; box-sizing: border-box; z-index: 2147483646; background: rgba(21,23,28,.45);
+      display: none; place-items: center; overflow: auto; }
+    .backdrop:popover-open, .backdrop.open { display: grid; }
+    .card[data-mode="modal"] { position: relative; right: auto; bottom: auto; left: auto; top: auto;
       width: min(440px, calc(100vw - 32px)); padding: 20px; font-size: 15px; box-shadow: 0 20px 60px rgba(21,23,28,.35); }
     .card[data-mode="modal"] .title { font-size: 17px; }
     @keyframes spin { to { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce) { .badge[data-state="checking"] { animation: none; } }
-  </style><div class="backdrop" hidden></div><div class="card" role="status" hidden></div><button class="badge" type="button" hidden aria-label="Redraft">R</button>`;
+  </style><div class="backdrop" popover="manual"><div class="card" role="status" hidden></div></div><button class="badge" type="button" hidden aria-label="Redraft">R</button>`;
   const card = shadow.querySelector('.card');
   const badge = shadow.querySelector('.badge');
   const backdrop = shadow.querySelector('.backdrop');
@@ -237,7 +265,8 @@
     if (cardKey) dismissed.add(cardKey);
     cardKey = null;
     card.hidden = true;
-    backdrop.hidden = true;
+    if (backdrop.matches?.(':popover-open')) backdrop.hidePopover();
+    backdrop.classList.remove('open');
     clearTimeout(pollTimer);
   }
   // Every card opens centred over a dimmed page. Closing it never posts anything.
@@ -249,13 +278,16 @@
     card.dataset.tone = tone;
     card.dataset.mode = mode;
     card.innerHTML = `<div class="brand">Redraft</div>${html}`;
-    backdrop.hidden = false;
     card.hidden = false;
+    if (backdrop.showPopover) {
+      if (!backdrop.matches(':popover-open')) backdrop.showPopover();
+    } else backdrop.classList.add('open'); // older browsers: a plain fixed layer
     for (const [name, fn] of Object.entries(actions)) card.querySelector(`[data-act="${name}"]`)?.addEventListener('click', fn);
     card.querySelector('[data-act="close"]')?.addEventListener('click', hide);
     if (focus) card.querySelector('button.primary, button')?.focus();
   }
-  backdrop.addEventListener('click', hide);
+  // A click on the dimmed area (not the card) closes it. Closing never posts anything.
+  backdrop.addEventListener('click', (e) => e.target === backdrop && hide());
   shadow.addEventListener('keydown', (e) => e.key === 'Escape' && hide());
   document.addEventListener('keydown', (e) => e.key === 'Escape' && !card.hidden && hide());
 
@@ -272,13 +304,22 @@
     editor.focus();
   }
 
+  // The site wouldn't take the text from us: let the writer paste it in themselves.
+  function couldNotInsert(text) {
+    show('warn', `<div class="title">Paste it in yourself</div><div class="reason">This site didn't let Redraft change the text. Copy the better version, then paste it over your message.</div><div class="redraft"><div class="after"><span>${esc(text)}</span></div></div><div class="buttons"><button class="primary" data-act="copy">Copy</button><button class="close" data-act="close">Close</button></div>`, {
+      copy: async (e) => {
+        try { await navigator.clipboard.writeText(text); e.target.textContent = 'Copied'; } catch { e.target.textContent = 'Select and copy it above'; }
+      },
+    });
+  }
+
   async function check(composer, button, editor, text) {
     if (busy.has(composer)) return;
     busy.add(composer);
     show('', '<div class="title">Checking your comment…</div>');
     let r;
     try {
-      r = await chrome.runtime.sendMessage({ type: 'check', text, site: siteForServer(), replyingTo: replyingTo() });
+      r = await chrome.runtime.sendMessage({ type: 'check', text, site: siteForServer(editor), replyingTo: replyingTo(editor) });
     } catch (e) {
       r = { error: whyUnreachable(e) };
     } finally {
@@ -296,16 +337,16 @@
     if (r.verdict === 'rude') {
       const redraft = r.suggestion
         ? `<div class="redraft"><div class="before">${esc(text)}</div><div class="after"><span>${esc(r.suggestion)}</span></div></div>`
-        : `<div class="reason">Try saying how you feel about the video or post, not the person.</div>`;
+        : `<div class="reason">${isPrivate(editor) ? 'Try saying what upset you, without attacking the person.' : 'Try saying how you feel about the video or post, not the person.'}</div>`;
       return show(
         'warn',
         `${pill(r.label)}<div class="title">Not posted yet</div><div class="reason">${esc(r.reason)}</div>${redraft}
          <div class="buttons">${r.suggestion ? '<button class="primary" data-act="use">Use this</button>' : ''}<button data-act="edit">Edit</button></div>`,
         {
-          use: () => {
-            setText(editor, r.suggestion);
-            // The suggestion already passed the check; post exactly that.
-            setTimeout(() => postNow(composer, button, r.suggestion), 50);
+          use: async () => {
+            // The suggestion already passed the check; post exactly that — once it's really in the box.
+            if (await setText(editor, r.suggestion)) return postNow(composer, button, r.suggestion);
+            couldNotInsert(r.suggestion);
           },
           edit: () => editIt(editor),
         }
@@ -425,9 +466,9 @@
     badge.hidden = false;
   }
 
-  // While the draft is flagged, the site's Post button looks and acts disabled.
+  // Until the draft is checked and fine, the site's Post/Send button looks and acts disabled.
   let blockedButton = null;
-  function setButtonBlocked(composer, on) {
+  function setButtonBlocked(composer, on, why = 'Redraft: rewrite this comment before posting') {
     if (blockedButton && (!on || !blockedButton.isConnected)) {
       blockedButton.style.removeProperty('opacity');
       blockedButton.style.removeProperty('cursor');
@@ -445,7 +486,7 @@
     b.style.setProperty('opacity', '0.4', 'important');
     b.style.setProperty('cursor', 'not-allowed', 'important');
     b.setAttribute('aria-disabled', 'true');
-    b.title = 'Redraft: rewrite this comment before posting';
+    b.title = why;
     blockedButton = b;
   }
 
@@ -453,10 +494,15 @@
     badge.dataset.state = state;
     badge.textContent = state === 'clean' ? '✓' : state === 'rude' || state === 'severe' || state === 'unsure' ? '!' : 'R';
     badge.title = state === 'unsure' && isPrivate() ? 'Not sure how this reads — try rephrasing it'
-      : state === 'unavailable' && liveError ? `${liveError} (It'll still be checked when you post.)`
+      : state === 'unavailable' && liveError ? `${liveError} It will be checked when you ${isPrivate() ? 'send' : 'post'} it.`
       : BADGE_TEXT[state] || BADGE_TEXT.idle;
     badge.setAttribute('aria-label', `Redraft: ${badge.title}`);
-    if (live) setButtonBlocked(live.composer, state === 'rude' || state === 'severe' || state === 'unsure');
+    if (live) {
+      const flagged = state === 'rude' || state === 'severe' || state === 'unsure';
+      const hasText = normalize(textOf(live.editor)).length > 0;
+      setButtonBlocked(live.composer, flagged || (state !== 'clean' && hasText),
+        flagged ? 'Redraft: rewrite this before sending' : 'Redraft: checking this first — click to check now');
+    }
     placeBadge();
   }
 
@@ -503,7 +549,8 @@
       liveInFlight = false;
     }
     const verdict = r && r.verdict && r.verdict !== 'unavailable' ? r.verdict : null;
-    liveError = verdict ? '' : whyUnreachable(r && (r.error || r.reason));
+    // Server reached but the AI didn't answer in time: say so plainly.
+    liveError = verdict ? '' : r && r.verdict === 'unavailable' ? "The AI checker is slow right now, so this hasn't been checked yet." : whyUnreachable(r && (r.error || r.reason));
     if (verdict) liveCache.set(key, { verdict, reason: r.reason, label: r.label });
     // The writer kept typing while we checked: show the result only if it still applies.
     if (live && normalize(textOf(live.editor)) === key) {
@@ -530,6 +577,11 @@
     };
     const close = '<div class="buttons"><button class="close" data-act="close">Close</button></div>';
     if (!result) {
+      if (badge.dataset.state === 'unavailable') {
+        return open('', `<div class="title">Not checked yet</div><div class="reason">${esc(badge.title)}</div><div class="buttons"><button class="primary" data-act="retry">Try again</button><button class="close" data-act="close">Close</button></div>`, {
+          retry: () => { hide(); runLive(); },
+        });
+      }
       return open('', `<div class="title">Redraft</div><div class="reason">${esc(badge.title.replace(/^Redraft: /, ''))}</div>${close}`);
     }
     if (result.verdict === 'clean') return open('ok', `<div class="title">Looks good</div>${close}`);
@@ -567,11 +619,11 @@
       'warn',
       `${head}<div class="redraft"><div class="before">${esc(text)}</div><div class="after"><span>${esc(s.suggestion)}</span></div></div><div class="buttons"><button class="primary" data-act="use">Use this</button><button data-act="edit">Edit it myself</button></div>`,
       {
-        use: () => {
+        use: async () => {
           // Our own suggestion already scored clean on the server: no live check for it,
           // and the server answers the Post check from memory (no new AI call).
           liveCache.set(normalize(s.suggestion), { verdict: 'clean', reason: '', label: null });
-          setText(editor, s.suggestion);
+          if (!(await setText(editor, s.suggestion))) return couldNotInsert(s.suggestion);
           cardKey = null; // not a dismissal — the text changed
           hide();
           editor.focus();
@@ -587,12 +639,11 @@
   window.addEventListener(
     'focusin',
     (e) => {
-      if (!active()) return;
       const path = e.composedPath();
       const composer = composerIn(path);
       if (!composer || !isSiteComposer(composer)) return;
       const editor = editorIn(composer);
-      if (editor && path.includes(editor)) attach(composer, editor);
+      if (editor && path.includes(editor) && active(editor)) attach(composer, editor);
     },
     true
   );
@@ -602,17 +653,16 @@
   // a moment after it, because Instagram's DM box only draws its Send button once there's text.
   let lastSeen = '';
   function onEdit(e) {
-    if (!active()) return;
     const path = e.composedPath();
     setTimeout(() => {
       if (!live || !live.editor.isConnected || !path.includes(live.editor)) {
         const composer = composerIn(path);
         if (!composer || !isSiteComposer(composer)) return;
         const editor = editorIn(composer);
-        if (!editor || !path.includes(editor)) return;
+        if (!editor || !path.includes(editor) || !active(editor)) return;
         attach(composer, editor);
       }
-      if (!live) return;
+      if (!live || !active()) return;
       const now = normalize(textOf(live.editor));
       if (now === lastSeen) return; // a key that didn't change the text (arrows, Shift…)
       lastSeen = now;
@@ -629,7 +679,6 @@
   // ---------- catching the submit ----------
 
   function attempt(event, path, keyboard = false) {
-    if (!active()) return;
     // The button we greyed out is always a submit, whatever it's called now.
     const onBlocked = !keyboard && blockedButton && path.includes(blockedButton);
     const button = keyboard ? null : onBlocked ? blockedButton : submitButtonIn(path);
@@ -646,6 +695,7 @@
       event.stopImmediatePropagation();
       return show('danger', `<div class="title">Redraft couldn't read this comment box</div><div class="reason">So it can't check the comment, and won't let it post unchecked. The site may have changed its layout — update the extension, or turn it off to post.</div><div class="buttons"><button class="close" data-act="close">Close</button></div>`);
     }
+    if (!active(editor)) return; // a private message, and the writer hasn't switched those on
     const text = textOf(editor);
     if (!text) return;
 

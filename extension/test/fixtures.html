@@ -55,7 +55,7 @@
   document.getElementById('old').addEventListener('submit', (e) => { e.preventDefault(); const t = e.target.text; posted('old.reddit', t.value.trim()); t.value = ''; });
 
   // Stand-in for the extension's background worker: same calls, through this page's server.
-  window.__REDRAFT_SITE = 'youtube';
+  window.__REDRAFT_SITE = new URLSearchParams(location.search).get('site') || 'youtube';
   window.chrome = { runtime: { id: "bench", sendMessage: async (msg) => {
     try {
       const post = (path, body) => fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
