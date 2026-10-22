@@ -277,12 +277,15 @@
     let r;
     try {
       r = await chrome.runtime.sendMessage({ type: 'check', text, site: siteForServer(), replyingTo: replyingTo() });
-    } catch {
-      r = null;
+    } catch (e) {
+      r = { error: whyUnreachable(e) };
     } finally {
       busy.delete(composer);
     }
-    if (!r || r.error) r = { allowed: false, verdict: 'unavailable', reason: (r && r.error) || "We couldn't check this comment right now, so it hasn't been posted." };
+    if (!r || r.error || r.verdict === 'unavailable') {
+      const why = whyUnreachable(r && (r.error || r.reason));
+      r = { allowed: false, verdict: 'unavailable', reason: /posted/i.test(why) ? why : `${why} It hasn't been posted.` };
+    }
     // The writer changed the text while we were checking: start over on their next click.
     if (textOf(editor) !== text) return hide();
 
@@ -391,6 +394,18 @@
     paused: "Live checks paused for a moment — it'll still be checked when you post",
     unavailable: "Couldn't check right now — it'll be checked when you post",
   };
+  // Says why the extension couldn't get an answer, so the writer knows what to fix.
+  function whyUnreachable(err) {
+    const msg = String((err && err.message) || err || '');
+    if (!chrome.runtime || !chrome.runtime.id || /context invalidated/i.test(msg)) {
+      return 'Redraft was reloaded or updated. Reload this page (F5) to turn it back on.';
+    }
+    if (/failed to fetch|networkerror|load failed/i.test(msg)) {
+      return "Can't reach the Redraft server. Check it's running and that the Server address in Redraft's settings is right.";
+    }
+    return msg || "Couldn't check right now.";
+  }
+  let liveError = '';
   const liveCache = new Map(); // normalized text -> { verdict, reason }
   const liveTimes = [];
   let live = null; // { composer, editor }
@@ -435,7 +450,9 @@
   function setBadge(state) {
     badge.dataset.state = state;
     badge.textContent = state === 'clean' ? '✓' : state === 'rude' || state === 'severe' || state === 'unsure' ? '!' : 'R';
-    badge.title = state === 'unsure' && isPrivate() ? 'Not sure how this reads — try rephrasing it' : BADGE_TEXT[state] || BADGE_TEXT.idle;
+    badge.title = state === 'unsure' && isPrivate() ? 'Not sure how this reads — try rephrasing it'
+      : state === 'unavailable' && liveError ? `${liveError} (It'll still be checked when you post.)`
+      : BADGE_TEXT[state] || BADGE_TEXT.idle;
     badge.setAttribute('aria-label', `Redraft: ${badge.title}`);
     if (live) setButtonBlocked(live.composer, state === 'rude' || state === 'severe' || state === 'unsure');
     placeBadge();
@@ -478,12 +495,13 @@
     let r;
     try {
       r = await chrome.runtime.sendMessage({ type: 'peek', text });
-    } catch {
-      r = null;
+    } catch (e) {
+      r = { error: whyUnreachable(e) };
     } finally {
       liveInFlight = false;
     }
     const verdict = r && r.verdict && r.verdict !== 'unavailable' ? r.verdict : null;
+    liveError = verdict ? '' : whyUnreachable(r && (r.error || r.reason));
     if (verdict) liveCache.set(key, { verdict, reason: r.reason, label: r.label });
     // The writer kept typing while we checked: show the result only if it still applies.
     if (live && normalize(textOf(live.editor)) === key) {
@@ -510,7 +528,7 @@
     };
     const close = '<div class="buttons"><button class="close" data-act="close">Close</button></div>';
     if (!result) {
-      return open('', `<div class="title">Redraft</div><div class="reason">${esc(BADGE_TEXT[badge.dataset.state] || BADGE_TEXT.idle)}</div>${close}`);
+      return open('', `<div class="title">Redraft</div><div class="reason">${esc(badge.title.replace(/^Redraft: /, ''))}</div>${close}`);
     }
     if (result.verdict === 'clean') return open('ok', `<div class="title">Looks good</div>${close}`);
     if (result.verdict === 'severe') {
@@ -548,6 +566,9 @@
       `${head}<div class="redraft"><div class="before">${esc(text)}</div><div class="after"><span>${esc(s.suggestion)}</span></div></div><div class="buttons"><button class="primary" data-act="use">Use this</button><button data-act="edit">Edit it myself</button></div>`,
       {
         use: () => {
+          // Our own suggestion already scored clean on the server: no live check for it,
+          // and the server answers the Post check from memory (no new AI call).
+          liveCache.set(normalize(s.suggestion), { verdict: 'clean', reason: '', label: null });
           setText(editor, s.suggestion);
           cardKey = null; // not a dismissal — the text changed
           hide();
@@ -573,16 +594,32 @@
     },
     true
   );
-  window.addEventListener(
-    'input',
-    (e) => {
-      if (live && e.composedPath().includes(live.editor)) {
-        hide();
-        scheduleLive();
-      }
-    },
-    true
-  );
+  // Typing. Instagram's editor (Lexical) inserts the text itself and swallows the normal
+  // 'input' event, so we also watch keys, paste and IME, and act only when the text changed.
+  // It can also swap the box out mid-typing, so the box is found again from the event.
+  let lastSeen = '';
+  function onEdit(e) {
+    if (!active()) return;
+    const path = e.composedPath();
+    if (!live || !live.editor.isConnected || !path.includes(live.editor)) {
+      const composer = composerIn(path);
+      if (!composer || !isSiteComposer(composer)) return;
+      const editor = editorIn(composer);
+      if (!editor || !path.includes(editor)) return;
+      attach(composer, editor);
+    }
+    setTimeout(() => {
+      if (!live) return;
+      const now = normalize(textOf(live.editor));
+      if (now === lastSeen) return; // a key that didn't change the text (arrows, Shift…)
+      lastSeen = now;
+      hide();
+      scheduleLive();
+    }, 0);
+  }
+  for (const type of ['input', 'beforeinput', 'keyup', 'paste', 'cut', 'compositionend']) {
+    window.addEventListener(type, onEdit, true);
+  }
   window.addEventListener('scroll', placeBadge, true);
   window.addEventListener('resize', placeBadge);
 

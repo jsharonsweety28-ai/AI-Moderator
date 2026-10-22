@@ -27,6 +27,11 @@
   </section>
 
   <section>
+    <h2>Instagram, Lexical editor (inserts text itself; no 'input' event; Enter posts)</h2>
+    <div id="ig3"><div><div contenteditable="true" role="textbox" aria-label="Add a comment…"><p><br></p></div></div><div role="button" tabindex="0">Post</div></div>
+  </section>
+
+  <section>
     <h2>Instagram messages (rich-text box; icon-only send button: the "Send" label is on the svg inside)</h2>
     <div id="igdm"><div><div contenteditable="true" role="textbox" aria-label="Message"></div></div><div role="button" tabindex="0"><svg aria-label="Send" width="24" height="24" viewBox="0 0 24 24"><path d="M2 21 23 12 2 3v7l15 2-15 2z"/></svg></div></div>
   </section>
@@ -56,6 +61,24 @@
   document.querySelector('#ig2 [role=button]').addEventListener('click', ig2Post);
   ig2Box.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ig2Post(); } });
 
+  // Fake Lexical (what Instagram uses): it cancels beforeinput and edits the DOM itself,
+  // so the browser never fires 'input'.
+  const ig3Box = document.querySelector('#ig3 [contenteditable]');
+  ig3Box.addEventListener('beforeinput', (e) => {
+    e.preventDefault();
+    const p = ig3Box.querySelector('p');
+    const t = p.textContent;
+    if (e.inputType === 'insertText' && e.data) p.textContent = t + e.data;
+    else if (e.inputType === 'deleteContentBackward') p.textContent = t.slice(0, -1);
+    else if (e.inputType === 'insertFromPaste') p.textContent = t + (e.dataTransfer?.getData('text/plain') || '');
+    if (!p.textContent) p.innerHTML = '<br>';
+    const r = document.createRange(); r.selectNodeContents(p); r.collapse(false);
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  });
+  const ig3Post = () => { const t = ig3Box.innerText.trim(); if (t) { posted('instagram (Lexical)', t); ig3Box.innerHTML = '<p><br></p>'; } };
+  document.querySelector('#ig3 [role=button]').addEventListener('click', ig3Post);
+  ig3Box.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ig3Post(); } });
+
   // Fake Instagram messages: the icon button and Enter both send.
   const dmBox = document.querySelector('#igdm [contenteditable]');
   const dmSend = () => { if (dmBox.innerText.trim()) { posted('instagram message', dmBox.innerText.trim()); dmBox.textContent = ''; } };
@@ -74,7 +97,7 @@
   const post = (path, body) => fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   window.chrome = {
     storage: { sync: { get: async () => store }, onChanged: { addListener() {} } },
-    runtime: { sendMessage: async (msg) => {
+    runtime: { id: "bench", sendMessage: async (msg) => {
       try {
         const res = msg.type === 'check' ? await post('/api/ext/check', { text: msg.text, site: msg.site, replyingTo: msg.replyingTo })
           : msg.type === 'peek' ? await post('/api/ext/peek', { text: msg.text })

@@ -11,7 +11,8 @@ export function createNemotron({
   return async function call(messages, maxTokens = 400) {
     if (!apiKey) throw new Error('The moderator model is not configured. Set NEBIUS_API_KEY.');
     let response;
-    // Rate limits (429) and server hiccups (5xx) get two backoff retries.
+    // Rate limits (429) and server hiccups (5xx) get two backoff retries; a dropped or
+    // refused connection gets one. A real timeout is not retried (the writer is waiting).
     for (let attempt = 0; ; attempt++) {
       try {
         response = await fetch(url, {
@@ -22,7 +23,13 @@ export function createNemotron({
           // comment instead of judging it.
           body: JSON.stringify({ model, messages, temperature: 0, max_tokens: maxTokens, chat_template_kwargs: { enable_thinking: false } }),
         });
-      } catch { throw new Error('The moderator model could not be reached.'); }
+      } catch (err) {
+        if (err?.name !== 'TimeoutError' && attempt < 1) {
+          await new Promise(r => setTimeout(r, 1000));
+          continue;
+        }
+        throw new Error('The moderator model could not be reached.');
+      }
       if ((response.status === 429 || response.status >= 500) && attempt < 2) {
         await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
         continue;

@@ -4,14 +4,14 @@ import http from 'node:http';
 import { inspectDraft, createModerator, createModeratorService, moderatorHandler, parseJson, redact } from '../src/index.mjs';
 
 // A stub model: scores come from a lookup table; rewrites/meaning checks from simple rules.
-function stubModel({ scores, rewrite = 'I strongly disagree with this.', faithful = true, chatty = false, unsure = [] }) {
+function stubModel({ scores, rewrite = 'I strongly disagree with this.', faithful = true, chatty = false, unsure = [], coarse = [] }) {
   return async (messages) => {
     const system = messages[0].content, user = messages[1].content;
     if (system.includes('content-safety scorer')) {
       const text = user.split('\n\n(')[0];
       const s = scores[text] ?? 0.05;
       const unsureText = (unsure || []).includes(text);
-      const json = JSON.stringify({ meaning: unsureText ? 'not sure' : '', sure: !unsureText, score: s, category: s >= 0.85 ? 'threat' : s >= 0.4 ? 'insult' : 'clean', reason: s >= 0.85 ? 'This threatens someone. Threats make people afraid. Say what upset you instead.' : 'Plain reason.' });
+      const json = JSON.stringify({ meaning: unsureText ? 'not sure' : '', sure: !unsureText, score: s, category: s >= 0.85 ? 'threat' : s >= 0.4 ? 'insult' : 'clean', reason: s >= 0.85 ? 'This threatens someone. Threats make people afraid. Say what upset you instead.' : 'Plain reason.', coarse: coarse.includes(text) });
       return chatty ? `Sure! Here is my verdict: ${json} Hope that helps.` : json;
     }
     if (system.includes('proposed civil rewrite')) return JSON.stringify({ faithful });
@@ -91,6 +91,12 @@ const tamil = createModerator({ call: stubModel({ scores: { 'நீ ஒரு �
 assert.equal((await tamil.moderate('நீ ஒரு முட்டாள்')).suggestion, null, 'Tamil in must not get English out');
 const unfaithful = createModerator({ call: stubModel({ scores: { 'you are an idiot': 0.55 }, faithful: false }) });
 assert.equal((await unfaithful.moderate('you are an idiot')).suggestion, null);
+// A suggestion that scores clean but still swears is not offered; the retry is.
+let tries = 0;
+const crude = createModerator({ call: stubModel({ scores: { 'ur content and you are absolute shit': 0.6 }, coarse: ['This content is absolute shit.'], rewrite: () => (++tries === 1 ? 'This content is absolute shit.' : 'I think this content is really bad.') }) });
+assert.equal((await crude.moderate('ur content and you are absolute shit')).suggestion, 'I think this content is really bad.');
+const alwaysCrude = createModerator({ call: stubModel({ scores: { 'you are shit': 0.6 }, coarse: ['This is shit.'], rewrite: 'This is shit.' }) });
+assert.equal((await alwaysCrude.moderate('you are shit')).suggestion, null, 'never offer a suggestion that swears');
 
 // --- the post being replied to reaches the rewrite prompt ---
 let sawPost = false;

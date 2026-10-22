@@ -61,6 +61,7 @@ Rules:
 - NEVER invent an argument, opinion, or fact the author did not express. A rewrite that says something the author didn't mean is worse than no rewrite at all.
 - When the comment challenges the author's standing or credibility ("u dont even play basketball"), keep that exact doubt in civil words — {"rewrite": "It feels off coming from someone who doesn't play basketball."} — never flip it into its opposite, and never a generic line about their "argument".
 - The rewrite must be publishable on its own: no name-calling, no digs, no mockery of the author. Bluntness about the work is fine; bluntness about the person is not.
+- No swear words, slurs or vulgar words in the rewrite — not even about the work. Keep the strength with plain words: "ur content and you are absolute shit" -> {"rewrite": "I think this content is really bad."}, never "This content is absolute shit." This overrides matching the author's voice.
 - Do not add apologies, hedging, or politeness padding the author didn't have. One blunt sentence stays one blunt sentence.
 - Before answering, check your rewrite: does it still say anything about the person rather than the thing? If yes, cut it.
 - Example: "delete your account, you have zero taste" -> {"rewrite": "This one really isn't for me — I think it misses badly."}

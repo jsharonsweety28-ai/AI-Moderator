@@ -93,6 +93,8 @@ export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, unsure
       meaning: typeof out.meaning === 'string' ? out.meaning.trim() : '',
       // Only non-English comments can be unsure; an English one is always read as written.
       unsure: out.sure === false && typeof out.meaning === 'string' && out.meaning.trim() !== '',
+      // Swearing or vulgarity, harmful or not. Never changes the verdict; a suggestion must not have it.
+      coarse: out.coarse === true,
     };
   }
 
@@ -105,7 +107,7 @@ export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, unsure
   }
 
   // A suggestion is offered only if it is in the writer's script, keeps their
-  // meaning, and itself scores clean. Two attempts; otherwise null (the writer
+  // meaning, and itself scores clean with no swearing. Two attempts; otherwise null (the writer
   // still gets the reason, and can edit).
   async function suggest(text, reason, replyingTo) {
     const context = replyingTo ? `Post being replied to: ${String(replyingTo).trim().slice(0, 300)}\n` : '';
@@ -123,8 +125,8 @@ export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, unsure
       else {
         const check = await score(rewrite).catch(() => null);
         if (!check) continue;
-        if (check.score < cleanMax) return rewrite;
-        why = check.reason;
+        if (check.score < cleanMax && !check.coarse) return rewrite;
+        why = check.score < cleanMax ? 'it still had swear words or crude language in it' : check.reason;
       }
       feedback = `\nYour previous rewrite was: ${rewrite}\nIt was rejected because: ${why}\nTry again — the author's point, minus the abuse, in the exact language and script of the original.`;
     }

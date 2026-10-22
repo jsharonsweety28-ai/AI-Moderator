@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Redraft \u2014 think before you post",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Checks your comments on YouTube, Reddit and Instagram (and, if you switch it on, WhatsApp Web) before they post. Rude ones get a better way to say it; harmful ones are explained and blocked.",
   "permissions": [
     "storage"
