@@ -64,7 +64,9 @@
   // A button's name: its own label or text — or, for icon-only buttons (Instagram's and
   // WhatsApp's send arrows), the label of the icon inside it.
   function labelOf(el) {
-    const own = (el.getAttribute('aria-label') || el.getAttribute('title') || el.value || el.textContent || '').trim();
+    // A button we greyed out carries our tooltip as its title: read the site's own title.
+    const title = el.dataset && el.dataset.redraftBlocked ? el.dataset.redraftTitle : el.getAttribute('title');
+    const own = (el.getAttribute('aria-label') || title || el.value || el.textContent || '').trim();
     if (own) return own;
     const icon = el.querySelector('[aria-label], title, [data-icon]');
     return (icon?.getAttribute('aria-label') || icon?.getAttribute('data-icon') || icon?.textContent || '').trim();
@@ -596,26 +598,27 @@
   );
   // Typing. Instagram's editor (Lexical) inserts the text itself and swallows the normal
   // 'input' event, so we also watch keys, paste and IME, and act only when the text changed.
-  // It can also swap the box out mid-typing, so the box is found again from the event.
+  // It can also swap the box out mid-typing, so the box is found again from the event —
+  // a moment after it, because Instagram's DM box only draws its Send button once there's text.
   let lastSeen = '';
   function onEdit(e) {
     if (!active()) return;
     const path = e.composedPath();
-    if (!live || !live.editor.isConnected || !path.includes(live.editor)) {
-      const composer = composerIn(path);
-      if (!composer || !isSiteComposer(composer)) return;
-      const editor = editorIn(composer);
-      if (!editor || !path.includes(editor)) return;
-      attach(composer, editor);
-    }
     setTimeout(() => {
+      if (!live || !live.editor.isConnected || !path.includes(live.editor)) {
+        const composer = composerIn(path);
+        if (!composer || !isSiteComposer(composer)) return;
+        const editor = editorIn(composer);
+        if (!editor || !path.includes(editor)) return;
+        attach(composer, editor);
+      }
       if (!live) return;
       const now = normalize(textOf(live.editor));
       if (now === lastSeen) return; // a key that didn't change the text (arrows, Shift…)
       lastSeen = now;
       hide();
       scheduleLive();
-    }, 0);
+    }, 60); // after the page has redrawn (React commits within a frame)
   }
   for (const type of ['input', 'beforeinput', 'keyup', 'paste', 'cut', 'compositionend']) {
     window.addEventListener(type, onEdit, true);
@@ -627,9 +630,14 @@
 
   function attempt(event, path, keyboard = false) {
     if (!active()) return;
-    const button = keyboard ? null : submitButtonIn(path);
+    // The button we greyed out is always a submit, whatever it's called now.
+    const onBlocked = !keyboard && blockedButton && path.includes(blockedButton);
+    const button = keyboard ? null : onBlocked ? blockedButton : submitButtonIn(path);
     if (!keyboard && !button) return;
-    const composer = composerIn(path);
+    // Safety net: a box we're already watching (or its greyed button) never sends unchecked,
+    // even if the site has redrawn it so we can't find it the usual way.
+    const watched = live && (path.includes(live.editor) || onBlocked) ? live.composer : null;
+    const composer = composerIn(path) || watched;
     if (!composer) return;
     const editor = editorIn(composer);
     if (!editor) {

@@ -32,8 +32,8 @@
   </section>
 
   <section>
-    <h2>Instagram messages (rich-text box; icon-only send button: the "Send" label is on the svg inside)</h2>
-    <div id="igdm"><div><div contenteditable="true" role="textbox" aria-label="Message"></div></div><div role="button" tabindex="0"><svg aria-label="Send" width="24" height="24" viewBox="0 0 24 24"><path d="M2 21 23 12 2 3v7l15 2-15 2z"/></svg></div></div>
+    <h2>Instagram messages (Lexical box; "Send" appears only after typing; Enter sends)</h2>
+    <div id="igdm"><div><div contenteditable="true" role="textbox" aria-label="Message"><p><br></p></div></div><div class="dm-actions"><div role="button" tabindex="0" aria-label="Voice clip">🎤</div><div role="button" tabindex="0" aria-label="Like">♡</div></div></div>
   </section>
 
   <section>
@@ -79,11 +79,30 @@
   document.querySelector('#ig3 [role=button]').addEventListener('click', ig3Post);
   ig3Box.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ig3Post(); } });
 
-  // Fake Instagram messages: the icon button and Enter both send.
+  // Fake Instagram messages, like the real box: a Lexical editor (no 'input' event), and the
+  // "Send" button exists only while there is text — when empty, mic and like icons instead.
   const dmBox = document.querySelector('#igdm [contenteditable]');
-  const dmSend = () => { if (dmBox.innerText.trim()) { posted('instagram message', dmBox.innerText.trim()); dmBox.textContent = ''; } };
-  document.querySelector('#igdm [role=button]').addEventListener('click', dmSend);
-  dmBox.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); dmSend(); } });
+  const dmActions = document.querySelector('#igdm .dm-actions');
+  const dmEmpty = dmActions.innerHTML;
+  const dmText = () => dmBox.innerText.trim();
+  const dmRender = () => {
+    dmActions.innerHTML = dmText() ? '<div role="button" tabindex="0">Send</div>' : dmEmpty;
+    dmActions.querySelector('[role=button]').addEventListener('click', () => dmText() && dmSend());
+  };
+  const dmSend = () => { posted('instagram message', dmText()); dmBox.innerHTML = '<p><br></p>'; dmRender(); };
+  dmBox.addEventListener('beforeinput', (e) => {
+    e.preventDefault();
+    const p = dmBox.querySelector('p'); const t = p.textContent;
+    if (e.inputType === 'insertText' && e.data) p.textContent = t + e.data;
+    else if (e.inputType === 'deleteContentBackward') p.textContent = t.slice(0, -1);
+    else if (e.inputType === 'insertFromPaste') p.textContent = t + (e.dataTransfer?.getData('text/plain') || '');
+    if (!p.textContent) p.innerHTML = '<br>';
+    const r = document.createRange(); r.selectNodeContents(p); r.collapse(false);
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    dmRender();
+  });
+  dmBox.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (dmText()) dmSend(); } });
+  dmRender();
 
   // Fake WhatsApp: Send and Enter both send.
   const waBox = document.querySelector('#wa [contenteditable]');
