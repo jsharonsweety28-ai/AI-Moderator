@@ -31,6 +31,8 @@
   const SITE = window.__REDRAFT_SITE || detectSite(location.hostname);
   const CONF = SITES[SITE];
   if (!CONF) return;
+  // Shows in the page's DevTools Console (filter: Redraft) — so a writer can tell us what they see.
+  console.info(`[Redraft] running on ${SITE}`, chrome.runtime?.getManifest?.().version || '');
   // Private messages: by the page (checked on each use — Instagram is a single-page app) or
   // by the box itself. Defaults to the box being watched.
   const boxName = (el) => (el.getAttribute('aria-label') || el.getAttribute('aria-placeholder') || el.getAttribute('placeholder') || '').trim();
@@ -636,12 +638,28 @@
 
   badge.addEventListener('click', () => openFromBadge());
 
+  // A text box Redraft doesn't recognise: print its structure once, for fixing the site setup.
+  const reported = new WeakSet();
+  function reportUnknownBox(path) {
+    const start = asElements(path).find((el) => el.matches(EDITOR));
+    if (!start || reported.has(start)) return;
+    reported.add(start);
+    const lines = [];
+    for (let el = start, i = 0; el && i < 14; i++) {
+      const a = (n) => el.getAttribute?.(n);
+      const buttons = [...el.querySelectorAll('button, [role="button"]'), ...(el.shadowRoot?.querySelectorAll('button, [role="button"]') || [])].map((b) => labelOf(b).slice(0, 14)).filter(Boolean);
+      lines.push(`${el.tagName.toLowerCase()}${el.id ? '#' + el.id : ''}${a('slot') ? ' slot=' + a('slot') : ''}${el.matches(EDITOR) ? ' [editable]' : ''}${a('role') ? ' role=' + a('role') : ''}${a('aria-label') ? ` "${a('aria-label')}"` : ''}${el.shadowRoot ? ' (shadow)' : ''} buttons: ${buttons.join(' | ')}`);
+      el = el.parentElement || el.getRootNode?.().host || null;
+    }
+    console.info(`[Redraft] didn't recognise this text box on ${SITE}. Its structure:\n${lines.join('\n')}`);
+  }
+
   window.addEventListener(
     'focusin',
     (e) => {
       const path = e.composedPath();
       const composer = composerIn(path);
-      if (!composer || !isSiteComposer(composer)) return;
+      if (!composer || !isSiteComposer(composer)) return reportUnknownBox(path);
       const editor = editorIn(composer);
       if (editor && path.includes(editor) && active(editor)) attach(composer, editor);
     },
