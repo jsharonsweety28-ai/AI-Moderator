@@ -38,7 +38,7 @@
 
   <section>
     <h2>WhatsApp Web (footer + contenteditable textbox + Send button; Enter sends)</h2>
-    <footer id="wa"><div contenteditable="true" role="textbox" aria-label="Type a message"></div><button aria-label="Send">➤</button></footer>
+    <div id="main"><header><span dir="auto">Priya</span></header><footer id="wa"><div contenteditable="true" role="textbox" aria-label="Type a message"></div><button aria-label="Send">➤</button></footer></div>
   </section>
 
   <h2>What the sites sent</h2>
@@ -120,7 +120,9 @@
   const store = { messages: params.get('messages') === 'on' || params.get('whatsapp') === 'on' };
   const post = (path, body) => fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   window.chrome = {
-    storage: { sync: { get: async () => store }, onChanged: { addListener() {} } },
+    storage: { sync: { get: async () => store }, onChanged: { addListener() {} },
+      // In-memory stand-in for chrome.storage.local (repeat-harshness history).
+      local: { mem: {}, async get(k) { return { [k]: this.mem[k] }; }, async set(o) { Object.assign(this.mem, JSON.parse(JSON.stringify(o))); }, async remove(k) { delete this.mem[k]; } } },
     runtime: { id: "bench", sendMessage: async (msg) => {
       try {
         const res = msg.type === 'check' ? await post('/api/ext/check', { text: msg.text, site: msg.site, replyingTo: msg.replyingTo })

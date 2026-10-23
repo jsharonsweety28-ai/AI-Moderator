@@ -20,6 +20,8 @@ Private messages (WhatsApp Web, Instagram DMs) are handled differently: **checke
 | The AI isn't sure (e.g. Tanglish) | **Blocked** until a moderator decides on the Redraft `/mod` page. If approved, **Post it**. (WhatsApp: rephrase it instead) |
 | Can't reach the Redraft server | **Blocked** (fails closed). **Try again** |
 
+**Repeated harshness.** From the 3rd harsh message to the same person (the open chat on WhatsApp Web and Instagram DMs), or the 3rd harsh comment on the same post or video, within 7 days, the card adds a line: *"This is your 3rd harsh message to this person this week."* Only the writer sees it, and it never changes what's allowed. It is kept in this browser only (`chrome.storage.local`): who it was to is stored as a hash, never the name or the message, and entries are erased after 30 days. **Clear my history** in the settings removes it all. Only sends blocked as rude or harmful count, not drafts flagged while typing.
+
 **While you type**, a small Redraft badge sits in the corner of the comment box, like Grammarly's: ✓ green (fine), ! amber (rude: click it for a better way to say it), ! red (can't be posted: click for why), ! purple (a moderator will check it when you post). The badge is only a hint; the real check happens when you click Post.
 
 ### Keeping AI costs down

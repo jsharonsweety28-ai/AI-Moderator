@@ -229,6 +229,7 @@
     [data-tone="danger"] button.primary { background: #b42318; border-color: #b42318; }
     button.close { margin-left: auto; border: 0; background: transparent; color: #6a7180; padding: 4px 6px; }
     .muted { color: #6a7180; font-size: 13px; }
+    .pattern { margin-top: 10px; padding: 8px 10px; border-radius: 10px; background: #f4f3ff; color: #5925dc; font-size: 13px; font-weight: 600; }
     button:focus-visible { outline: 2px solid #2b4acb; outline-offset: 2px; }
     /* The live badge: sits in the comment box's bottom-right corner, like Grammarly's. */
     .badge { position: fixed; z-index: 2147483645; width: 26px; height: 26px; border-radius: 50%; padding: 0;
@@ -315,6 +316,69 @@
     });
   }
 
+  // ---------- repeat harshness (only the writer sees it; stays in this browser) ----------
+  // From the 3rd harsh send to the same person (or on the same post) within a week, the card
+  // says so. A nudge only: it never changes what is allowed. Who it was to is stored as a hash,
+  // never the text, and entries go after 30 days. Settings has "Clear my history".
+  const REPEAT = { WINDOW_MS: 7 * 24 * 3600_000, KEEP_MS: 30 * 24 * 3600_000, FROM: 3 };
+  async function hashOf(value) {
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+    return [...new Uint8Array(digest)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  const ordinal = (n) => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
+
+  // Who this goes to: the open chat for private messages, the post or video for comments.
+  // null when we can't tell — then nothing is counted rather than counted against the wrong person.
+  function conversationOf(editor) {
+    if (SITE === 'whatsapp') {
+      const name = document.querySelector('#main header span[dir="auto"]')?.textContent?.trim();
+      return name ? { key: name, person: true } : null;
+    }
+    if (SITE === 'instagram' && isPrivate(editor)) {
+      const thread = location.pathname.match(/^\/direct\/t\/([^/]+)/);
+      if (thread) return { key: 'thread:' + thread[1], person: true };
+      // The pop-up chat: the profile link in the chat panel around the box (the panel is narrow,
+      // so the page's own navigation links, further out, are never reached).
+      for (let el = editor.parentElement, i = 0; el && i < 20; el = el.parentElement, i++) {
+        if (el.getBoundingClientRect().width > 700) break;
+        const link = [...el.querySelectorAll('a[href]')].find((a) => /^\/[A-Za-z0-9._]+\/?$/.test(a.getAttribute('href')) && !/^\/(direct|explore|reels|accounts)\/?$/.test(a.getAttribute('href')));
+        if (link) return { key: 'user:' + link.getAttribute('href').replace(/\//g, ''), person: true };
+      }
+      return null;
+    }
+    if (SITE === 'youtube') return { key: new URLSearchParams(location.search).get('v') || location.pathname, person: false };
+    if (SITE === 'instagram') {
+      const post = editor.closest('article')?.querySelector('a[href*="/p/"], a[href*="/reel/"]')?.getAttribute('href');
+      return { key: post || location.pathname, person: false };
+    }
+    return { key: location.pathname, person: false };
+  }
+
+  // Records a harsh send and returns the card's line once it's a pattern ('' otherwise).
+  async function noteRepeat(editor, text) {
+    const conv = conversationOf(editor);
+    if (!conv || !chrome.storage?.local) return '';
+    try {
+      const [who, which] = await Promise.all([hashOf(SITE + '|' + conv.key), hashOf(normalize(text))]);
+      const now = Date.now();
+      const { harshLog = {} } = await chrome.storage.local.get('harshLog');
+      for (const k of Object.keys(harshLog)) {
+        harshLog[k] = harshLog[k].filter((e) => now - e.t < REPEAT.KEEP_MS);
+        if (!harshLog[k].length) delete harshLog[k];
+      }
+      const list = harshLog[who] || [];
+      if (!list.some((e) => e.x === which)) list.push({ t: now, x: which }); // the same text tried again counts once
+      harshLog[who] = list;
+      await chrome.storage.local.set({ harshLog });
+      const n = list.filter((e) => now - e.t < REPEAT.WINDOW_MS).length;
+      if (n < REPEAT.FROM) return '';
+      const what = conv.person ? 'message to this person' : `comment on this ${SITE === 'youtube' ? 'video' : 'post'}`;
+      return `<div class="pattern">This is your ${ordinal(n)} harsh ${what} this week. Take a moment before you ${conv.person ? 'send' : 'post'} it.</div>`;
+    } catch {
+      return '';
+    }
+  }
+
   async function check(composer, button, editor, text) {
     if (busy.has(composer)) return;
     busy.add(composer);
@@ -335,6 +399,7 @@
     if (textOf(editor) !== text) return hide();
 
     if (r.allowed) return postNow(composer, button, text);
+    const pattern = r.verdict === 'rude' || r.verdict === 'severe' ? await noteRepeat(editor, text) : '';
 
     if (r.verdict === 'rude') {
       const redraft = r.suggestion
@@ -342,7 +407,7 @@
         : `<div class="reason">${isPrivate(editor) ? 'Try saying what upset you, without attacking the person.' : 'Try saying how you feel about the video or post, not the person.'}</div>`;
       return show(
         'warn',
-        `${pill(r.label)}<div class="title">Not posted yet</div><div class="reason">${esc(r.reason)}</div>${redraft}
+        `${pill(r.label)}<div class="title">Not posted yet</div><div class="reason">${esc(r.reason)}</div>${redraft}${pattern}
          <div class="buttons">${r.suggestion ? '<button class="primary" data-act="use">Use this</button>' : ''}<button data-act="edit">Edit</button></div>`,
         {
           use: async () => {
@@ -358,8 +423,8 @@
     if (r.verdict === 'severe') {
       return show(
         'danger',
-        `${pill(r.label)}<div class="title">This can't be posted</div><div class="reason">${esc(r.reason)}</div>
-         <div class="buttons"><button class="primary" data-act="edit">Edit my comment</button><span class="muted">A moderator can see this.</span></div>`,
+        `${pill(r.label)}<div class="title">This can't be posted</div><div class="reason">${esc(r.reason)}</div>${pattern}
+         <div class="buttons"><button class="primary" data-act="edit">Edit my ${isPrivate(editor) ? 'message' : 'comment'}</button>${isPrivate(editor) ? '' : '<span class="muted">A moderator can see this.</span>'}</div>`,
         { edit: () => editIt(editor) }
       );
     }

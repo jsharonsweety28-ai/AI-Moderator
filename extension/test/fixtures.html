@@ -102,7 +102,8 @@
 
   // Stand-in for the extension's background worker: same calls, through this page's server.
   window.__REDRAFT_SITE = new URLSearchParams(location.search).get('site') || 'youtube';
-  window.chrome = { runtime: { id: "bench", sendMessage: async (msg) => {
+  window.chrome = { storage: { local: { mem: {}, async get(k) { return { [k]: this.mem[k] }; }, async set(o) { Object.assign(this.mem, JSON.parse(JSON.stringify(o))); }, async remove(k) { delete this.mem[k]; } } },
+    runtime: { id: "bench", sendMessage: async (msg) => {
     try {
       const post = (path, body) => fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const res = msg.type === 'check' ? await post('/api/ext/check', { text: msg.text, site: msg.site, replyingTo: msg.replyingTo })

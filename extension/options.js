@@ -9,3 +9,8 @@ $('save').addEventListener('click', async () => {
   $('saved').textContent = 'Saved';
   setTimeout(() => ($('saved').textContent = ''), 1500);
 });
+$('clear').addEventListener('click', async () => {
+  await chrome.storage.local.remove('harshLog');
+  $('cleared').textContent = 'Cleared';
+  setTimeout(() => ($('cleared').textContent = ''), 1500);
+});
