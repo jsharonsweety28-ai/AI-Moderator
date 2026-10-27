@@ -7,6 +7,7 @@
   const TITLES = {
     clean: 'Looks good — ready to post',
     rude: "Not posted yet — here's another way to say it",
+    rudeNoSuggestion: 'Not posted yet — try saying it another way',
     severe: "Can't be posted",
     unsure: 'A person will check this',
     unavailable: "Couldn't check right now",
@@ -38,7 +39,8 @@
 
     function show(result) {
       box.dataset.verdict = result.verdict;
-      box.innerHTML = `<strong>${esc(TITLES[result.verdict] || result.verdict)}</strong>`
+      const title = result.verdict === 'rude' && !result.suggestion ? TITLES.rudeNoSuggestion : TITLES[result.verdict] || result.verdict;
+      box.innerHTML = `<strong>${esc(title)}</strong>`
         + (result.verdict !== 'clean' ? `<p>${esc(result.reason)}</p>` : '')
         + (result.review?.status === 'flagged' ? '<p>It was also sent to a moderator automatically.</p>' : '')
         + (result.suggestion ? `<blockquote>${esc(result.suggestion)}</blockquote>` : '')
