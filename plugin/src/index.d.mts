@@ -46,13 +46,66 @@ export function parseJson(text: string): unknown;
 export class ModeratorError extends Error {
   status: number;
 }
+
+/** waiting: a person will decide (times out). flagged: severe, sent to moderators, never posted. */
+export type ReviewStatus = "none" | "waiting" | "flagged" | "approved" | "upheld" | "expired";
+export const REVIEW_REASONS: Record<"waiting" | "flagged" | "approved" | "upheld" | "expired", string>;
+
+export type Decision = ModerationResult & {
+  id: string;
+  original_text: string;
+  created_at: string;
+  accepted: boolean;
+  review: { status: ReviewStatus; requested_at: string; resolved_at: string | null; decision: "approve" | "uphold" | null } | null;
+  storage?: string;
+};
+
+export type ReviewState = {
+  id: string;
+  status: ReviewStatus;
+  /** Post only when this is true (a moderator approved it). */
+  allowed: boolean;
+  /** The approved text; null until approved. */
+  text: string | null;
+  reason: string;
+  expires_at: string | null;
+};
+
+export type QueueItem = {
+  id: string;
+  text: string;
+  verdict: Verdict;
+  reason: string;
+  meaning: string;
+  status: "waiting" | "flagged";
+  requested_at: string;
+  expires_at: string | null;
+};
+
+export type ModeratorService = {
+  decisions: Decision[];
+  preview(text: string): { hint: "threat" | "check" | null; message: string | null };
+  check(text: string, replyingTo?: string): Promise<Decision>;
+  accept(id: string): Promise<{ text: string; allowed: true; storage: string }>;
+  /** [Ask a moderator]: the comment waits, unposted, for a person. */
+  ask(id: string): Promise<ReviewState>;
+  status(id: string): Promise<ReviewState>;
+  /** Open reviews, oldest first. */
+  queue(): Promise<QueueItem[]>;
+  /** Severe comments can only be upheld. */
+  resolve(id: string, decision: "approve" | "uphold"): Promise<ReviewState>;
+  recent(n?: number): Decision[];
+};
+
 export function createModeratorService(options?: {
   moderator?: Moderator;
-  decisions?: unknown[];
-  persist?: (item: unknown, decisions: unknown[]) => Promise<string>;
+  decisions?: Decision[];
+  persist?: (item: Decision, decisions: Decision[]) => Promise<string>;
   limit?: number;
-}): unknown;
+  /** Default 10 minutes. A waiting review nobody answers stays unposted. */
+  reviewTimeoutMs?: number;
+}): ModeratorService;
 export function moderatorHandler(
-  service?: unknown,
-  options?: { base?: string; secret?: string | null; perMinute?: number }
+  service?: ModeratorService,
+  options?: { base?: string; secret?: string | null; moderatorSecret?: string | null; perMinute?: number }
 ): (req: unknown, res: unknown, next?: () => void) => Promise<void>;

@@ -130,6 +130,58 @@ try {
   assert.equal(history.decisions.find(d => d.id === checked.data.id).accepted, true);
 } finally { server.close(); }
 
+// --- moderator review: ask, unsure waits, severe flagged, approve/uphold, timeout fails closed ---
+const reviewModerator = createModerator({ call: stubModel({ scores: { 'you are an idiot': 0.55, 'I will hurt you': 0.95, 'enna idhu da': 0.1 }, unsure: ['enna idhu da'] }) });
+const reviews = createModeratorService({ moderator: reviewModerator, reviewTimeoutMs: 60_000 });
+const rude = await reviews.check('you are an idiot');
+assert.equal(rude.review, null, 'rude waits for the writer, not a moderator');
+let state = await reviews.ask(rude.id);
+assert.equal(state.status, 'waiting'); assert.equal(state.allowed, false); assert.equal(state.text, null); assert.ok(state.reason);
+const unsureItem = await reviews.check('enna idhu da');
+assert.equal(unsureItem.review.status, 'waiting', 'unsure goes to a person on its own');
+const severeItem = await reviews.check('I will hurt you');
+assert.equal(severeItem.review.status, 'flagged', 'severe goes to moderators automatically');
+assert.deepEqual((await reviews.queue()).map(q => q.id), [rude.id, unsureItem.id, severeItem.id]);
+await assert.rejects(reviews.resolve(severeItem.id, 'approve'), /can't be approved/);
+assert.equal((await reviews.ask(severeItem.id)).allowed, false, 'asking about severe never opens a way to post');
+state = await reviews.resolve(rude.id, 'approve');
+assert.equal(state.allowed, true); assert.equal(state.text, 'you are an idiot');
+assert.equal((await reviews.status(rude.id)).allowed, true);
+await assert.rejects(reviews.resolve(rude.id, 'uphold'), /already handled/);
+state = await reviews.resolve(unsureItem.id, 'uphold');
+assert.equal(state.status, 'upheld'); assert.equal(state.allowed, false);
+await assert.rejects(reviews.ask(unsureItem.id), /kept it unposted/);
+await assert.rejects(reviews.ask((await reviews.check('Great post!')).id), /already be posted/);
+// Nobody answers in time → stays unposted.
+const quick = createModeratorService({ moderator: reviewModerator, reviewTimeoutMs: 20 });
+const late = await quick.check('you are an idiot');
+await quick.ask(late.id);
+await new Promise(r => setTimeout(r, 40));
+state = await quick.status(late.id);
+assert.equal(state.status, 'expired'); assert.equal(state.allowed, false);
+await assert.rejects(quick.resolve(late.id, 'approve'), /already handled/);
+assert.equal((await quick.queue()).length, 0);
+assert.equal((await quick.ask(late.id)).status, 'waiting', 'the writer may ask again after a timeout');
+
+// HTTP: writer can ask and read status; moderator routes need their own secret, and are off without one.
+const reviewServer = http.createServer(moderatorHandler(reviews, { moderatorSecret: 'mod' })).listen(0);
+const openServer = http.createServer(moderatorHandler(reviews)).listen(0);
+try {
+  const rb = `http://127.0.0.1:${reviewServer.address().port}/api/plugin`;
+  const call = (action, body, headers = {}) => fetch(`${rb}/${action}`, { method: body ? 'POST' : 'GET', headers: { 'Content-Type': 'application/json', ...headers }, body: body && JSON.stringify(body) }).then(async res => ({ status: res.status, data: await res.json() }));
+  const fresh = await call('check', { text: 'you are an idiot' });
+  assert.equal((await call('ask', { id: fresh.data.id })).data.status, 'waiting');
+  assert.equal((await call('status', { id: fresh.data.id })).data.allowed, false);
+  assert.equal((await call('status', { id: 'missing' })).status, 404);
+  assert.equal((await call('queue')).status, 401);
+  assert.equal((await call('resolve', { id: fresh.data.id, decision: 'approve' })).status, 401, 'a writer cannot approve their own comment');
+  assert.ok((await call('queue', null, { 'x-moderator-admin': 'mod' })).data.queue.some(q => q.id === fresh.data.id));
+  assert.equal((await call('resolve', { id: fresh.data.id, decision: 'approve' }, { 'x-moderator-admin': 'mod' })).data.allowed, true);
+  assert.equal((await call('status', { id: fresh.data.id })).data.text, 'you are an idiot');
+  const openBase = `http://127.0.0.1:${openServer.address().port}/api/plugin`;
+  assert.equal((await fetch(`${openBase}/queue`)).status, 404, 'no moderatorSecret → no moderator routes');
+} finally { reviewServer.close(); openServer.close(); }
+
 const locked = http.createServer(moderatorHandler(service, { secret: 's3cret' })).listen(0);
 try {
   const url = `http://127.0.0.1:${locked.address().port}/api/plugin/preview`;

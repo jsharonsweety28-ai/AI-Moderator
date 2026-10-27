@@ -12,6 +12,12 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["extension/test/serve.mjs"],
       "port": 8792
+    },
+    {
+      "name": "plugin-demo",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--env-file=.env.local", "plugin/demo/server.mjs"],
+      "port": 8790
     }
   ]
 }

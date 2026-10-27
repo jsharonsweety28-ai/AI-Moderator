@@ -7,7 +7,8 @@ import { moderatorHandler, createModeratorService } from '../src/index.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const FILES = { '/': ['demo/index.html', 'text/html'], '/moderator-widget.js': ['widget/moderator-widget.js', 'text/javascript'], '/moderator-widget.css': ['widget/moderator-widget.css', 'text/css'] };
-const api = moderatorHandler(createModeratorService(), { base: '/api/plugin' });
+// The demo page has a moderator panel, so it carries this secret. A real site keeps it off writer pages.
+const api = moderatorHandler(createModeratorService(), { base: '/api/plugin', moderatorSecret: 'demo-moderator' });
 const port = Number(process.env.PORT || 8790);
 
 http.createServer((req, res) => {

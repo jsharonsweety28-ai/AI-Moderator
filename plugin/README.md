@@ -4,8 +4,11 @@ Checks each comment with NVIDIA Nemotron (on Nebius Token Factory) before it pos
 
 - **Clean** → allowed.
 - **Rude** → not allowed. A plain reason, plus a better way to say the same thing that has already passed the check. The writer can use it, edit, or ask a moderator.
-- **Severe** (threats, hate, doxxing, self-harm encouragement) → not allowed. An explanation of what's wrong, why, and what to say instead. The writer rewrites it themselves; there's no AI rewrite.
+- **Severe** (threats, hate, doxxing, self-harm encouragement) → not allowed. An explanation of what's wrong, why, and what to say instead. The writer rewrites it themselves; there's no AI rewrite. It is also sent to the moderator queue automatically, and a moderator can never approve it.
+- **Unsure** → not allowed yet. A non-English comment the model can't read with confidence (or one that scores just under the line, 0.25–0.40) isn't guessed at; it goes to a moderator.
 - **Model unavailable** → not allowed (fail closed), and the writer is told.
+
+A comment waiting for a moderator (asked for, or unsure) stays unposted until they approve it. If nobody answers within 10 minutes it stays unposted, and the writer can edit it or ask again.
 
 Your app has one rule: **post the comment only when `allowed` is true.**
 
@@ -38,7 +41,22 @@ const moderation = moderatorHandler(createModeratorService(), {
 // Plain http: http.createServer((req, res) => moderation(req, res, () => yourRoutes(req, res)));
 ```
 
-This adds `POST /preview` (instant typing hint), `POST /check` (`{ text, replyingTo? }`), `POST /accept` (`{ id }`, returns the exact suggestion shown) and `GET /decisions`.
+This adds:
+
+| Route | Body | Returns |
+|---|---|---|
+| `POST /preview` | `{ text }` | Instant typing hint (no model call; never allows anything) |
+| `POST /check` | `{ text, replyingTo? }` | The verdict, with an `id`. `review` is set for unsure (`waiting`) and severe (`flagged`) |
+| `POST /accept` | `{ id }` | The exact suggestion that was shown, `allowed: true` |
+| `POST /ask` | `{ id }` | [Ask a moderator] for a rude comment → `{ status: 'waiting', allowed: false, reason, expires_at }` |
+| `POST /status` | `{ id }` | Where a review stands: `waiting`, `flagged`, `approved` (`allowed: true`, `text` = the approved words), `upheld` or `expired` |
+| `GET /decisions` | | Recent checks |
+
+### Moderator queue
+
+Open reviews (asked for, unsure and severe) come from `service.queue()`, and a moderator decides with `service.resolve(id, 'approve' | 'uphold')`. Call these from your own admin page, behind your own login.
+
+Or pass `moderatorSecret` to `moderatorHandler` to mount `GET /queue` and `POST /resolve` (`{ id, decision }`). They need the header `x-moderator-admin: <moderatorSecret>`; without the option they don't exist, so a writer can never approve their own comment. Keep that secret on your server — don't put it in a page writers can open.
 
 ```html
 <link rel="stylesheet" href="/moderator-widget.css">
@@ -53,6 +71,8 @@ This adds `POST /preview` (instant typing hint), `POST /check` (`{ text, replyin
 </script>
 ```
 
+For a rude comment the widget shows **Use this**, **Edit it myself** and **Ask a moderator**. While a comment waits for a moderator it checks `/status` every 5 seconds (`pollEvery`) and calls `onAllowed` with the approved words if they approve. Editing the draft stops the wait; the new text is checked from the top.
+
 Restyle the widget with the `--aim-*` CSS variables on `.aim`.
 
 ## Options
@@ -65,6 +85,8 @@ Restyle the widget with the `--aim-*` CSS variables on `.aim`.
 | `createModerator({ call })` | Nemotron | Any `async (messages, maxTokens) => string`, to use another model |
 | `createModerator({ cleanMax, severeMin })` | `0.40`, `0.85` | Verdict thresholds |
 | `createModeratorService({ persist })` | memory only | `async (item, decisions) => 'storage label'`, to save decisions |
+| `createModeratorService({ reviewTimeoutMs })` | 10 minutes | How long a comment waits for a moderator before it stays unposted |
+| `moderatorHandler(service, { moderatorSecret })` | off | Mounts the `/queue` and `/resolve` moderator routes |
 
 ## Privacy
 
@@ -74,5 +96,5 @@ Emails, phone numbers and 12-digit ID numbers are masked before text is sent to 
 
 ```bash
 npm test                              # stub model, no network
-NEBIUS_API_KEY=your-key npm run demo  # widget demo on http://localhost:8790
+NEBIUS_API_KEY=your-key npm run demo  # widget + moderator panel on http://localhost:8790
 ```
