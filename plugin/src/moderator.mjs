@@ -155,7 +155,7 @@ export function createModerator({ call, cleanMax = 0.4, severeMin = 0.85, unsure
 
     // The typing hint can only make things stricter, never looser.
     if (inspectDraft(original).hint === 'threat' && scored.score < severeMin) {
-      scored = { score: severeMin, category: 'threat', reason: 'This reads as a threat to hurt someone, whatever you meant by it. It can\'t be posted. If you\'re angry, say what upset you instead.' };
+      scored = { score: severeMin, category: 'threat', reason: 'This reads as a threat to hurt someone, whatever you meant by it. It can\'t be posted.' };
     }
 
     const base = { score: scored.score, category: scored.category, reason: scored.reason, meaning: scored.meaning ?? '' };

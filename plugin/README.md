@@ -4,7 +4,7 @@ Checks each comment with NVIDIA Nemotron (on Nebius Token Factory) before it pos
 
 - **Clean** → allowed.
 - **Rude** → not allowed. A plain reason, plus a better way to say the same thing that has already passed the check. The writer can use it, edit, or ask a moderator.
-- **Severe** (threats, hate, doxxing, self-harm encouragement) → not allowed. An explanation of what's wrong, why, and what to say instead. The writer rewrites it themselves; there's no AI rewrite. It is also sent to the moderator queue automatically, and a moderator can never approve it.
+- **Severe** (threats, hate, doxxing, self-harm encouragement) → not allowed. An explanation of what's wrong and why — no suggestion, since we can't know what they meant. The writer rewrites it themselves; there's no AI rewrite. It is also sent to the moderator queue automatically, and a moderator can never approve it.
 - **Unsure** → not allowed yet. A non-English comment the model can't read with confidence (or one that scores just under the line, 0.25–0.40) isn't guessed at; it goes to a moderator.
 - **Model unavailable** → not allowed (fail closed), and the writer is told.
 

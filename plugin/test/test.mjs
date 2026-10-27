@@ -11,7 +11,7 @@ function stubModel({ scores, rewrite = 'I strongly disagree with this.', faithfu
       const text = user.split('\n\n(')[0];
       const s = scores[text] ?? 0.05;
       const unsureText = (unsure || []).includes(text);
-      const json = JSON.stringify({ meaning: unsureText ? 'not sure' : meanings[text] || '', sure: !unsureText, score: s, category: s >= 0.85 ? 'threat' : s >= 0.4 ? 'insult' : 'clean', reason: s >= 0.85 ? 'This threatens someone. Threats make people afraid. Say what upset you instead.' : 'Plain reason.', coarse: coarse.includes(text) });
+      const json = JSON.stringify({ meaning: unsureText ? 'not sure' : meanings[text] || '', sure: !unsureText, score: s, category: s >= 0.85 ? 'threat' : s >= 0.4 ? 'insult' : 'clean', reason: s >= 0.85 ? 'This threatens someone. Threats make people afraid.' : 'Plain reason.', coarse: coarse.includes(text) });
       return chatty ? `Sure! Here is my verdict: ${json} Hope that helps.` : json;
     }
     if (system.includes('proposed civil rewrite')) return JSON.stringify({ faithful });
@@ -48,7 +48,7 @@ assert.equal(r.verdict, 'rude'); assert.equal(r.allowed, false); assert.equal(r.
 // --- severe: not allowed, explanation, NO AI rewrite ---
 r = await m.moderate('I will hurt you');
 assert.equal(r.verdict, 'severe'); assert.equal(r.allowed, false); assert.equal(r.suggestion, null);
-assert.match(r.reason, /instead/);
+assert.ok(r.reason);
 
 // --- a threat the model under-scores is still severe (hint escalates) ---
 const optimistic = createModerator({ call: stubModel({ scores: { 'I will kill him': 0.1 } }) });

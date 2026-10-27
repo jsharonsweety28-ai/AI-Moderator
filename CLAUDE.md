@@ -32,7 +32,7 @@ Design invariants. Do not break them for convenience; flag it if a requested cha
 1. **Every comment is checked on its own words. Always.** No whitelist, no fast lane, no trusted users.
 2. **Context can only make things stricter or the suggestion better, never the verdict looser.** The post being replied to may shape the *suggestion*; it never lowers a score. The local keyword hint can escalate a verdict, never allow one.
 3. **Post only when `allowed` is true.** That is the plugin's whole contract with the host.
-4. **Severe comments are not posted, and are explained, not just blocked.** The writer is told what the comment does, why it is harmful or wrong, and what they could say instead — then they edit it themselves. **No AI rewrite of threats, hate, doxxing or self-harm encouragement.** Severe comments also go to the moderator queue automatically.
+4. **Severe comments are not posted, and are explained, not just blocked.** The writer is told what the comment does and why it is harmful or wrong — then they edit it themselves. No "say this instead" either: we can't know what they meant. **No AI rewrite of threats, hate, doxxing or self-harm encouragement.** Severe comments also go to the moderator queue automatically.
 5. **Nothing is refused silently.** Every unposted comment has a plain-language reason the writer can read.
 6. **Fail closed.** If the model errors, times out or returns junk, nothing is posted and the writer is told. Never default to posting.
 7. **The suggestion is offered, never forced.** `[Use this]`, `[Edit]` and `[Ask a moderator]` are always present for a rude comment. If no good suggestion passes the checks, show the reason without one.

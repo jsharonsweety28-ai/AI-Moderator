@@ -6,7 +6,7 @@ export type ModerationResult = {
   verdict: Verdict;
   score: number | null;
   category: string | null;
-  /** Plain-language reason shown to the writer. For severe: what is wrong, why, and what to say instead. */
+  /** Plain-language reason shown to the writer. For severe: what is wrong and why. */
   reason: string;
   /** The model's plain-English reading of a non-English comment ("" for English). */
   meaning?: string;
