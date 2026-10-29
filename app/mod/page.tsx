@@ -59,7 +59,7 @@ export default async function ModPage() {
           <section>
             <h2 className="text-base font-semibold">From the browser extension ({extQueue.length})</h2>
             <p className="text-sm text-muted">
-              Comments people tried to post on YouTube or Reddit. The extension keeps the Post button blocked until you decide.
+              Comments people tried to post on YouTube, Reddit or Instagram. The extension keeps the Post button blocked until you decide.
             </p>
             <div className="mt-3 space-y-3">
               {extQueue.length === 0 ? (
