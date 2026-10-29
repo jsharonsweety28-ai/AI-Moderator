@@ -37,15 +37,15 @@ The extension only talks to your Argus server. Your Nebius/Nemotron key stays on
 
 ## Install (Chrome, Edge, Brave)
 
-1. Start the Argus server (`npm run dev` in the project folder), or use your deployed URL.
+1. Download [`argus-extension.zip`](../argus-extension.zip?raw=1) and unzip it (or use this `extension` folder from the repo).
 2. Open `chrome://extensions` (Edge: `edge://extensions`).
 3. Turn on **Developer mode** (top right).
-4. Click **Load unpacked** and choose this `extension` folder.
-5. Click the Argus icon in the toolbar. Check that **Server address** is `http://localhost:3000` (or your deployed URL) and click **Save**.
+4. Click **Load unpacked** and choose the unzipped folder.
+5. It uses the live demo server, `https://redraft-nine.vercel.app`, out of the box. To use your own (for example `npm run dev` at `http://localhost:3000`), click the Argus icon in the toolbar, change **Server address** and click **Save**.
 6. Open a YouTube video, a Reddit post or an Instagram post, write a comment and click **Comment** / **Post**.
 7. For WhatsApp Web and Instagram messages: tick **Check my private messages** in the Argus settings, click **Save**, and reload the tab.
 
-Moderators approve or reject waiting comments at `http://localhost:3000/mod`, under "From the browser extension".
+Moderators approve or reject waiting comments at [`/mod`](https://redraft-nine.vercel.app/mod) on the server, under "From the browser extension".
 
 ## Limits
 

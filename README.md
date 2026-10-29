@@ -2,7 +2,8 @@
 
 > Most moderators say no. Argus says why, and shows you what you could say instead. Built on NVIDIA Nemotron.
 
-- **Live demo:** _TODO: deployed URL_
+- **Live demo:** https://redraft-nine.vercel.app (moderator queue at [`/mod`](https://redraft-nine.vercel.app/mod))
+- **Browser extension:** [download `argus-extension.zip`](argus-extension.zip?raw=1), then [install it](extension/README.md#install-chrome-edge-brave). It uses the live demo server out of the box
 - **Demo video:** _TODO: YouTube link_
 
 Argus is a drop-in comment moderator. When someone writes a rude comment, it doesn't just block it. It shows a better way to say the same thing, and the writer chooses **Use this**, **Edit** or **Ask a moderator**. When a comment is genuinely harmful (a threat, hate, someone's private phone number), it isn't posted, and the writer is told **what's wrong and why** so they can rewrite it themselves.

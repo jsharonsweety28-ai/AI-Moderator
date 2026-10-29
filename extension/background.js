@@ -1,6 +1,6 @@
 // Talks to the Argus server for the content script. The model key stays on the
 // server; the extension only knows the server's address (and an optional shared key).
-const DEFAULTS = { apiBase: 'http://localhost:3000', apiKey: '' };
+const DEFAULTS = { apiBase: 'https://redraft-nine.vercel.app', apiKey: '' };
 const UNAVAILABLE = "We couldn't check this comment right now, so it hasn't been posted. Please try again in a moment.";
 
 async function settings() {
