@@ -193,7 +193,7 @@ export function Composer({ postId }: { postId: string }) {
               if (!flagged) void post();
             }
           }}
-          className="min-h-11 w-full resize-none rounded-xl border border-line bg-canvas py-2.5 pr-10 pl-3.5 text-[15px] leading-relaxed placeholder:text-muted focus:border-accent focus:bg-surface focus:outline-none"
+          className="field-sizing-content min-h-11 max-h-40 w-full resize-none rounded-xl border border-line bg-canvas py-2.5 pr-10 pl-3.5 text-[15px] leading-relaxed placeholder:text-muted focus:border-accent focus:bg-surface focus:outline-none"
         />
           {badge && (
             <span
