@@ -15,7 +15,7 @@ async function wipe(table: string, column = "created_at") {
 async function main() {
   // FK order. The older tables (signals, reports, blocks, relationships) are no longer
   // used by the app but are emptied so they hold no stale demo data.
-  for (const t of ["signals", "reports", "reviews", "blocks", "comments", "posts"]) await wipe(t);
+  for (const t of ["signals", "reports", "reviews", "blocks", "comments", "posts", "ext_checks"]) await wipe(t);
   await wipe("relationships", "first_seen");
   await wipe("users");
 
