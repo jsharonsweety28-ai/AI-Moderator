@@ -8,7 +8,7 @@ const instrument = Instrument_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Redraft",
+  title: "Argus",
   description: "Comments that get a better way to say it, not just a block.",
 };
 

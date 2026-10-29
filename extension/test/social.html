@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Redraft test bench: Instagram + WhatsApp</title>
+<title>Argus test bench: Instagram + WhatsApp</title>
 <style>
   body { font: 15px/1.5 'Segoe UI', system-ui, sans-serif; max-width: 640px; margin: 32px auto; padding: 0 16px; color: #15171c; }
   section { border: 1px solid #e3e6eb; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
@@ -116,7 +116,7 @@
   waBox.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); waSend(); } });
 
   // Stand-in for the extension's background worker and storage.
-  window.__REDRAFT_SITE = params.get('site') || 'instagram';
+  window.__ARGUS_SITE = params.get('site') || 'instagram';
   const store = { messages: params.get('messages') === 'on' || params.get('whatsapp') === 'on' };
   const post = (path, body) => fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   window.chrome = {

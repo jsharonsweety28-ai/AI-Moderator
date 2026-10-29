@@ -39,7 +39,7 @@ body {
 }
 
 /* The suggestion, marked like an editor's correction. */
-.redraft-mark {
+.argus-mark {
   background: linear-gradient(transparent 12%, var(--color-mark) 12%, var(--color-mark) 88%, transparent 88%);
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;

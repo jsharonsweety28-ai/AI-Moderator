@@ -198,7 +198,7 @@ export function Composer({ postId }: { postId: string }) {
           {badge && (
             <span
               role="img"
-              aria-label={`Redraft: ${badge.title}`}
+              aria-label={`Argus: ${badge.title}`}
               title={badge.title}
               className={`absolute right-2.5 bottom-2.5 flex h-6 w-6 items-center justify-center rounded-full border-2 text-xs font-bold ${badge.cls}`}
             >
@@ -234,7 +234,7 @@ export function Composer({ postId }: { postId: string }) {
               ) : liveCard.suggestion === null ? (
                 <span className="text-muted">Try saying how you feel about the post, not the person.</span>
               ) : (
-                <span className="redraft-mark">{liveCard.suggestion}</span>
+                <span className="argus-mark">{liveCard.suggestion}</span>
               )}
             </p>
           </div>
@@ -303,7 +303,7 @@ export function Composer({ postId }: { postId: string }) {
             <div className="mt-3 rounded-lg bg-surface p-3">
               <p className="text-[15px] leading-relaxed text-muted line-through decoration-muted/60">{answer.original}</p>
               <p className="mt-1.5 text-[15px] leading-relaxed">
-                <span className="redraft-mark">{answer.suggestion}</span>
+                <span className="argus-mark">{answer.suggestion}</span>
               </p>
             </div>
           ) : (

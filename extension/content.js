@@ -1,4 +1,4 @@
-// Redraft on YouTube, Reddit, Instagram and (opt-in) WhatsApp Web: catches the site's
+// Argus on YouTube, Reddit, Instagram and (opt-in) WhatsApp Web: catches the site's
 // Post/Comment/Reply/Send click (and the key that sends) before the site sees it,
 // checks the text, and only lets it through when it's allowed.
 //
@@ -8,8 +8,8 @@
 //   unsure      → blocked; a moderator decides; approved → [Post it]
 //   unavailable → blocked (fail closed); [Try again]
 (() => {
-  if (window.__redraftLoaded) return;
-  window.__redraftLoaded = true;
+  if (window.__argusLoaded) return;
+  window.__argusLoaded = true;
 
   // One block per site: the container that holds one comment box and its button, and
   // whether a plain Enter sends (otherwise only Ctrl/Cmd+Enter does).
@@ -28,11 +28,11 @@
   };
   const detectSite = (h) =>
     h.includes('youtube') ? 'youtube' : h.includes('reddit') ? 'reddit' : h.includes('instagram') ? 'instagram' : h.includes('whatsapp') ? 'whatsapp' : null;
-  const SITE = window.__REDRAFT_SITE || detectSite(location.hostname);
+  const SITE = window.__ARGUS_SITE || detectSite(location.hostname);
   const CONF = SITES[SITE];
   if (!CONF) return;
-  // Shows in the page's DevTools Console (filter: Redraft) — so a writer can tell us what they see.
-  console.info(`[Redraft] running on ${SITE}`, chrome.runtime?.getManifest?.().version || '');
+  // Shows in the page's DevTools Console (filter: Argus) — so a writer can tell us what they see.
+  console.info(`[Argus] running on ${SITE}`, chrome.runtime?.getManifest?.().version || '');
   // Private messages: by the page (checked on each use — Instagram is a single-page app) or
   // by the box itself. Defaults to the box being watched.
   const boxName = (el) => (el.getAttribute('aria-label') || el.getAttribute('aria-placeholder') || el.getAttribute('placeholder') || '').trim();
@@ -71,7 +71,7 @@
   // WhatsApp's send arrows), the label of the icon inside it.
   function labelOf(el) {
     // A button we greyed out carries our tooltip as its title: read the site's own title.
-    const title = el.dataset && el.dataset.redraftBlocked ? el.dataset.redraftTitle : el.getAttribute('title');
+    const title = el.dataset && el.dataset.argusBlocked ? el.dataset.argusTitle : el.getAttribute('title');
     const own = (el.getAttribute('aria-label') || title || el.value || el.textContent || '').trim();
     if (own) return own;
     const icon = el.querySelector('[aria-label], title, [data-icon]');
@@ -201,7 +201,7 @@
   // ---------- the card ----------
 
   const host = document.createElement('div');
-  host.id = 'redraft-card-host';
+  host.id = 'argus-card-host';
   const shadow = host.attachShadow({ mode: 'open' });
   shadow.innerHTML = `<style>
     :host { all: initial; }
@@ -219,7 +219,7 @@
     [data-tone="danger"] .title, [data-tone="danger"] .reason { color: #b42318; }
     [data-tone="ok"] .title { color: #067647; }
     .reason { margin-top: 4px; }
-    .redraft { margin-top: 10px; padding: 10px 12px; background: #fff; border-radius: 10px; }
+    .argus { margin-top: 10px; padding: 10px 12px; background: #fff; border-radius: 10px; }
     .before { color: #6a7180; text-decoration: line-through; }
     .after { margin-top: 6px; }
     .after span { background: linear-gradient(transparent 12%, #fff3b0 12%, #fff3b0 88%, transparent 88%); padding: 0 2px; }
@@ -241,7 +241,7 @@
     .badge[data-state="rude"] { border-color: #f79009; background: #fff8eb; color: #8a4b08; }
     .badge[data-state="severe"] { border-color: #d92d20; background: #fef3f2; color: #b42318; }
     .badge[data-state="unsure"] { border-color: #7a5af8; background: #f4f3ff; color: #5925dc; }
-    /* Every Redraft card: centred on the screen, page dimmed behind it — it can't be missed.
+    /* Every Argus card: centred on the screen, page dimmed behind it — it can't be missed.
        The dimmed layer is a popover, so it opens in the browser's top layer: above everything,
        and centred on the screen whatever the site's own layout does (Instagram's moved it). */
     .backdrop { position: fixed; inset: 0; width: auto; height: auto; max-width: none; max-height: none; margin: 0;
@@ -253,7 +253,7 @@
     .card[data-mode="modal"] .title { font-size: 17px; }
     @keyframes spin { to { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce) { .badge[data-state="checking"] { animation: none; } }
-  </style><div class="backdrop" popover="manual"><div class="card" role="status" hidden></div></div><button class="badge" type="button" hidden aria-label="Redraft">R</button>`;
+  </style><div class="backdrop" popover="manual"><div class="card" role="status" hidden></div></div><button class="badge" type="button" hidden aria-label="Argus">A</button>`;
   const card = shadow.querySelector('.card');
   const badge = shadow.querySelector('.badge');
   const backdrop = shadow.querySelector('.backdrop');
@@ -280,7 +280,7 @@
     clearTimeout(pollTimer);
     card.dataset.tone = tone;
     card.dataset.mode = mode;
-    card.innerHTML = `<div class="brand">Redraft</div>${html}`;
+    card.innerHTML = `<div class="brand">Argus</div>${html}`;
     card.hidden = false;
     if (backdrop.showPopover) {
       if (!backdrop.matches(':popover-open')) backdrop.showPopover();
@@ -309,7 +309,7 @@
 
   // The site wouldn't take the text from us: let the writer paste it in themselves.
   function couldNotInsert(text) {
-    show('warn', `<div class="title">Paste it in yourself</div><div class="reason">This site didn't let Redraft change the text. Copy the better version, then paste it over your message.</div><div class="redraft"><div class="after"><span>${esc(text)}</span></div></div><div class="buttons"><button class="primary" data-act="copy">Copy</button><button class="close" data-act="close">Close</button></div>`, {
+    show('warn', `<div class="title">Paste it in yourself</div><div class="reason">This site didn't let Argus change the text. Copy the better version, then paste it over your message.</div><div class="argus"><div class="after"><span>${esc(text)}</span></div></div><div class="buttons"><button class="primary" data-act="copy">Copy</button><button class="close" data-act="close">Close</button></div>`, {
       copy: async (e) => {
         try { await navigator.clipboard.writeText(text); e.target.textContent = 'Copied'; } catch { e.target.textContent = 'Select and copy it above'; }
       },
@@ -402,12 +402,12 @@
     const pattern = r.verdict === 'rude' || r.verdict === 'severe' ? await noteRepeat(editor, text) : '';
 
     if (r.verdict === 'rude') {
-      const redraft = r.suggestion
-        ? `<div class="redraft"><div class="before">${esc(text)}</div><div class="after"><span>${esc(r.suggestion)}</span></div></div>`
+      const argus = r.suggestion
+        ? `<div class="argus"><div class="before">${esc(text)}</div><div class="after"><span>${esc(r.suggestion)}</span></div></div>`
         : `<div class="reason">${isPrivate(editor) ? 'Try saying what upset you, without attacking the person.' : 'Try saying how you feel about the video or post, not the person.'}</div>`;
       return show(
         'warn',
-        `${pill(r.label)}<div class="title">Not posted yet</div><div class="reason">${esc(r.reason)}</div>${redraft}${pattern}
+        `${pill(r.label)}<div class="title">Not posted yet</div><div class="reason">${esc(r.reason)}</div>${argus}${pattern}
          <div class="buttons">${r.suggestion ? '<button class="primary" data-act="use">Use this</button>' : ''}<button data-act="edit">Edit</button></div>`,
         {
           use: async () => {
@@ -495,7 +495,7 @@
   const LIVE_MIN_CHARS = 4;
   const LIVE_PER_MINUTE = 6;
   const BADGE_TEXT = {
-    idle: 'Redraft checks your comment when you pause typing',
+    idle: 'Argus checks your comment when you pause typing',
     checking: 'Checking…',
     clean: 'Looks good',
     rude: 'Could come across as rude — click for a better way to say it',
@@ -508,10 +508,10 @@
   function whyUnreachable(err) {
     const msg = String((err && err.message) || err || '');
     if (!chrome.runtime || !chrome.runtime.id || /context invalidated/i.test(msg)) {
-      return 'Redraft was reloaded or updated. Reload this page (F5) to turn it back on.';
+      return 'Argus was reloaded or updated. Reload this page (F5) to turn it back on.';
     }
     if (/failed to fetch|networkerror|load failed/i.test(msg)) {
-      return "Can't reach the Redraft server. Check it's running and that the Server address in Redraft's settings is right.";
+      return "Can't reach the Argus server. Check it's running and that the Server address in Argus's settings is right.";
     }
     return msg || "Couldn't check right now.";
   }
@@ -535,21 +535,21 @@
 
   // Until the draft is checked and fine, the site's Post/Send button looks and acts disabled.
   let blockedButton = null;
-  function setButtonBlocked(composer, on, why = 'Redraft: rewrite this comment before posting') {
+  function setButtonBlocked(composer, on, why = 'Argus: rewrite this comment before posting') {
     if (blockedButton && (!on || !blockedButton.isConnected)) {
       blockedButton.style.removeProperty('opacity');
       blockedButton.style.removeProperty('cursor');
       blockedButton.removeAttribute('aria-disabled');
-      if (blockedButton.dataset.redraftTitle !== undefined) blockedButton.title = blockedButton.dataset.redraftTitle;
-      delete blockedButton.dataset.redraftTitle;
-      delete blockedButton.dataset.redraftBlocked;
+      if (blockedButton.dataset.argusTitle !== undefined) blockedButton.title = blockedButton.dataset.argusTitle;
+      delete blockedButton.dataset.argusTitle;
+      delete blockedButton.dataset.argusBlocked;
       blockedButton = null;
     }
     if (!on) return;
     const b = buttonIn(composer);
     if (!b) return;
-    if (!b.dataset.redraftBlocked) b.dataset.redraftTitle = b.title || '';
-    b.dataset.redraftBlocked = '1';
+    if (!b.dataset.argusBlocked) b.dataset.argusTitle = b.title || '';
+    b.dataset.argusBlocked = '1';
     b.style.setProperty('opacity', '0.4', 'important');
     b.style.setProperty('cursor', 'not-allowed', 'important');
     b.setAttribute('aria-disabled', 'true');
@@ -563,12 +563,12 @@
     badge.title = state === 'unsure' && isPrivate() ? 'Not sure how this reads — try rephrasing it'
       : state === 'unavailable' && liveError ? `${liveError} It will be checked when you ${isPrivate() ? 'send' : 'post'} it.`
       : BADGE_TEXT[state] || BADGE_TEXT.idle;
-    badge.setAttribute('aria-label', `Redraft: ${badge.title}`);
+    badge.setAttribute('aria-label', `Argus: ${badge.title}`);
     if (live) {
       const flagged = state === 'rude' || state === 'severe' || state === 'unsure';
       const hasText = normalize(textOf(live.editor)).length > 0;
       setButtonBlocked(live.composer, flagged || (state !== 'clean' && hasText),
-        flagged ? 'Redraft: rewrite this before sending' : 'Redraft: checking this first — click to check now');
+        flagged ? 'Argus: rewrite this before sending' : 'Argus: checking this first — click to check now');
     }
     placeBadge();
   }
@@ -649,7 +649,7 @@
           retry: () => { hide(); runLive(); },
         });
       }
-      return open('', `<div class="title">Redraft</div><div class="reason">${esc(badge.title.replace(/^Redraft: /, ''))}</div>${close}`);
+      return open('', `<div class="title">Argus</div><div class="reason">${esc(badge.title.replace(/^Argus: /, ''))}</div>${close}`);
     }
     if (result.verdict === 'clean') return open('ok', `<div class="title">Looks good</div>${close}`);
     if (result.verdict === 'severe') {
@@ -666,7 +666,7 @@
 
     // Rude: show the reason right away, and the better way to say it as soon as it's ready.
     const head = `${pill(result.label)}<div class="title">Could come across as rude</div><div class="reason">${esc(result.reason)}</div>`;
-    open('warn', `${head}<div class="redraft"><div class="muted">Finding a better way to say it…</div></div><div class="buttons"><button data-act="edit">Edit it myself</button></div>`, {
+    open('warn', `${head}<div class="argus"><div class="muted">Finding a better way to say it…</div></div><div class="buttons"><button data-act="edit">Edit it myself</button></div>`, {
       edit: () => editIt(editor),
     });
     let s;
@@ -684,7 +684,7 @@
     }
     open(
       'warn',
-      `${head}<div class="redraft"><div class="before">${esc(text)}</div><div class="after"><span>${esc(s.suggestion)}</span></div></div><div class="buttons"><button class="primary" data-act="use">Use this</button><button data-act="edit">Edit it myself</button></div>`,
+      `${head}<div class="argus"><div class="before">${esc(text)}</div><div class="after"><span>${esc(s.suggestion)}</span></div></div><div class="buttons"><button class="primary" data-act="use">Use this</button><button data-act="edit">Edit it myself</button></div>`,
       {
         use: async () => {
           // Our own suggestion already scored clean on the server: no live check for it,
@@ -703,7 +703,7 @@
 
   badge.addEventListener('click', () => openFromBadge());
 
-  // A text box Redraft doesn't recognise: print its structure once, for fixing the site setup.
+  // A text box Argus doesn't recognise: print its structure once, for fixing the site setup.
   const reported = new WeakSet();
   function reportUnknownBox(path) {
     const start = asElements(path).find((el) => el.matches(EDITOR));
@@ -716,7 +716,7 @@
       lines.push(`${el.tagName.toLowerCase()}${el.id ? '#' + el.id : ''}${a('slot') ? ' slot=' + a('slot') : ''}${el.matches(EDITOR) ? ' [editable]' : ''}${a('role') ? ' role=' + a('role') : ''}${a('aria-label') ? ` "${a('aria-label')}"` : ''}${el.shadowRoot ? ' (shadow)' : ''} buttons: ${buttons.join(' | ')}`);
       el = el.parentElement || el.getRootNode?.().host || null;
     }
-    console.info(`[Redraft] didn't recognise this text box on ${SITE}. Its structure:\n${lines.join('\n')}`);
+    console.info(`[Argus] didn't recognise this text box on ${SITE}. Its structure:\n${lines.join('\n')}`);
   }
 
   window.addEventListener(
@@ -776,7 +776,7 @@
       if (!isSiteComposer(composer)) return; // some other form on the page: not ours
       event.preventDefault();
       event.stopImmediatePropagation();
-      return show('danger', `<div class="title">Redraft couldn't read this comment box</div><div class="reason">So it can't check the comment, and won't let it post unchecked. The site may have changed its layout — update the extension, or turn it off to post.</div><div class="buttons"><button class="close" data-act="close">Close</button></div>`);
+      return show('danger', `<div class="title">Argus couldn't read this comment box</div><div class="reason">So it can't check the comment, and won't let it post unchecked. The site may have changed its layout — update the extension, or turn it off to post.</div><div class="buttons"><button class="close" data-act="close">Close</button></div>`);
     }
     if (!active(editor)) return; // a private message, and the writer hasn't switched those on
     const text = textOf(editor);
@@ -797,7 +797,7 @@
     window.addEventListener(
       type,
       (e) => {
-        if (blockedButton && blockedButton.dataset.redraftBlocked && e.composedPath().includes(blockedButton)) {
+        if (blockedButton && blockedButton.dataset.argusBlocked && e.composedPath().includes(blockedButton)) {
           e.preventDefault();
           e.stopImmediatePropagation();
         }

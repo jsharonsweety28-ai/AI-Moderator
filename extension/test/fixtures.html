@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Redraft extension test bench</title>
+<title>Argus extension test bench</title>
 <style>
   body { font: 15px/1.5 'Segoe UI', system-ui, sans-serif; max-width: 640px; margin: 32px auto; padding: 0 16px; color: #15171c; }
   section { border: 1px solid #e3e6eb; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
@@ -101,7 +101,7 @@
   document.getElementById('old').addEventListener('submit', (e) => { e.preventDefault(); const t = e.target.text; posted('old.reddit', t.value.trim()); t.value = ''; });
 
   // Stand-in for the extension's background worker: same calls, through this page's server.
-  window.__REDRAFT_SITE = new URLSearchParams(location.search).get('site') || 'youtube';
+  window.__ARGUS_SITE = new URLSearchParams(location.search).get('site') || 'youtube';
   window.chrome = { storage: { local: { mem: {}, async get(k) { return { [k]: this.mem[k] }; }, async set(o) { Object.assign(this.mem, JSON.parse(JSON.stringify(o))); }, async remove(k) { delete this.mem[k]; } } },
     runtime: { id: "bench", sendMessage: async (msg) => {
     try {

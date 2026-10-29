@@ -21,7 +21,7 @@ export default async function Home() {
       <LiveRefresh config={realtimeConfig()} />
       <header className="flex flex-wrap items-center justify-between gap-4 py-8">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Redraft</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Argus</h1>
           <p className="text-sm text-muted">Rude replies get a better way to say it, not just a block.</p>
         </div>
         {viewer && users.length > 0 && <UserSwitcher users={users} currentId={viewer.id} />}

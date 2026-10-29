@@ -10,7 +10,7 @@ On Maya's post *"Got invited to sing at a big event next month!! Pray for me"*, 
 
 It isn't posted. Point at the card: the original is struck through, and underneath is **"I'm not a fan of your singing."** The opinion survives; the attack doesn't. It knew the post was about singing. Tap **Use this** and it posts.
 
-Say the pitch: *"Every moderation system tells you what you can't say. This one tells you what you could say instead."*
+Say the pitch: *"Most moderators say no. Argus says why, and shows you what you could say instead."*
 
 ## 2. Harmful → explained, not just blocked
 
@@ -18,7 +18,7 @@ Same post:
 
 > Women shouldn't be allowed to sing on stage. Go back to the kitchen.
 
-**This can't be posted**, followed by an explanation of what's wrong and why, and what to say instead. No AI rewrite of hate or threats: the writer has to rewrite it themselves. Switch to the `/mod` window: it's already there under "Sent automatically".
+**This can't be posted**, followed by an explanation of what's wrong and why. No AI rewrite of hate or threats: the writer has to rewrite it themselves. Switch to the `/mod` window: it's already there under "Sent automatically".
 
 ## 3. Disagree with the AI → ask a person
 

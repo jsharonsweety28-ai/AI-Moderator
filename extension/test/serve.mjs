@@ -1,5 +1,5 @@
 // Test bench for the extension: serves the local copies of the YouTube/Reddit comment
-// boxes plus content.js, and forwards /api/* to the Redraft dev server (localhost:3000).
+// boxes plus content.js, and forwards /api/* to the Argus dev server (localhost:3000).
 // Run: node extension/test/serve.mjs  →  http://localhost:8792
 import http from 'node:http';
 import fs from 'node:fs';
@@ -13,7 +13,7 @@ const FILES = {
   '/direct/t/test': ['social.html', 'text/html'], // an Instagram-messages-like path
   '/content.js': ['../content.js', 'text/javascript'],
 };
-const API = process.env.REDRAFT_API || 'http://localhost:3000';
+const API = process.env.ARGUS_API || 'http://localhost:3000';
 const port = Number(process.env.PORT || 8792);
 
 http.createServer(async (req, res) => {
@@ -31,7 +31,7 @@ http.createServer(async (req, res) => {
       res.end(await upstream.text());
     } catch {
       res.writeHead(502, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Redraft server is not running.' }));
+      res.end(JSON.stringify({ error: 'Argus server is not running.' }));
     }
     return;
   }
